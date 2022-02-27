@@ -1,10 +1,26 @@
 <resources>
     <string name="app_name">StudentPal</string>
-    <string name="sign_in">sign in</string>
-    <string name="sign_up">sign up</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="sign_up">SIGN UP</string>
     <string name="let_s_get_started">Let\'s get Started</string>
     <string name="logo_name">logo name</string>
     <string name="intro_text_description">Connect and Plan Together across StudentPal\'s minimalistic interface</string>
     <string name="student_image_icon">student image icon</string>
+
+    <!-- Strings related to login -->
+    <string name="title_activity_signup">SignupActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="sign_up_description_text">Enter your name, email id and password, to register with us.</string>
+    <string name="sign_in_description_text">Enter your email id and password, to sign in to your account</string>
+    <string name="name">Name</string>
+
 
 </resources>

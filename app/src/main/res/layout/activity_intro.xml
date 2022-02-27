@@ -12,15 +12,15 @@
     <ImageView
         android:id="@+id/tv_app_name"
         android:layout_width="wrap_content"
-        android:layout_height="68dp"
+        android:layout_height="142dp"
         android:layout_marginTop="@dimen/intro_screen_title_text_marginTop"
         android:contentDescription="@string/logo_name"
-        android:src="@drawable/logo_name_transparent_background" />
+        android:src="@drawable/logo_name_icon_transparent_background" />
 
     <ImageView
         android:layout_width="299dp"
-        android:layout_height="139dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="158dp"
+        android:layout_marginTop="40dp"
         android:contentDescription="@string/student_image_icon"
         android:src="@drawable/student_icon" />
 
@@ -55,7 +55,7 @@
         android:layout_marginTop="@dimen/intro_screen_sign_in_btn_marginTop"
         android:layout_marginEnd="@dimen/btn_marginStartEnd"
         android:background = "@drawable/shape_button_rounded"
-        android:foreground="?attr/selectableItemBackground"
+
         android:gravity="center"
         android:text="@string/sign_in"
         android:textColor="@color/white"
@@ -70,7 +70,6 @@
         android:layout_marginTop="@dimen/intro_screen_sign_up_btn_marginTop"
         android:layout_marginEnd="@dimen/btn_marginStartEnd"
         android:background = "@drawable/white_border_shape_button_rounded"
-        android:foreground="?attr/selectableItemBackground"
         android:gravity="center"
         android:text="@string/sign_up"
         android:paddingTop="@dimen/btn_paddingTopBottom"
