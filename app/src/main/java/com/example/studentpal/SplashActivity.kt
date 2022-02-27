@@ -3,6 +3,7 @@ package com.example.studentpal
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ImageView
 
 import android.widget.TextView
 
@@ -11,10 +12,9 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val typeFace: Typeface = Typeface.createFromAsset(assets,"fonts/Font-Nongman.ttf" )
-        val tvappname : TextView = findViewById(R.id.tv_app_name)
-        tvappname.typeface = typeFace
-
-
+        //sets size of logo on splashscreen
+        val logo_image : ImageView = findViewById(R.id.logo)
+        logo_image.layoutParams.width = 1000
+        logo_image.layoutParams.height = 1000
     }
 }

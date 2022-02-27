@@ -10,11 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentPal">
         <activity
+            android:name=".IntroActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
+        <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" >
-
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             //Intent filter sets the splash activity as the launcher activity
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,12 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true"></activity>
     </application>
 
 </manifest>

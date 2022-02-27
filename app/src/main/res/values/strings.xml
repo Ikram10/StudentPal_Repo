@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">StudentPal</string>
+    <string name="sign_in">sign in</string>
+    <string name="sign_up">sign up</string>
+    <string name="let_s_get_started">Let\'s get Started</string>
+    <string name="logo_name">logo name</string>
+    <string name="intro_text_description">Connect and Plan Together across StudentPal\'s minimalistic interface</string>
+    <string name="student_image_icon">student image icon</string>
+
 </resources>
