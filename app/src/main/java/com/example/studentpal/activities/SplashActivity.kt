@@ -1,4 +1,4 @@
-package com.example.studentpal
+package com.example.studentpal.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -11,6 +11,7 @@ import android.widget.ImageView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.example.studentpal.R
 
 
 @SuppressLint("CustomSplashScreen")

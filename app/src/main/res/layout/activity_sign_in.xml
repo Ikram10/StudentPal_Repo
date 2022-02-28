@@ -6,7 +6,7 @@
     android:background="@color/bg_color"
     android:orientation="vertical"
     android:padding="@dimen/general_padding"
-    tools:context=".SignUpActivity"
+    tools:context=".activities.SignUpActivity"
     >
 
     <androidx.appcompat.widget.Toolbar
@@ -31,7 +31,7 @@
         android:layout_width="246dp"
         android:layout_height="94dp"
         android:layout_gravity="center"
-        android:layout_margin="20dp"
+        android:layout_marginBottom="30dp"
         android:src="@drawable/logo_icon_transparent_background" />
 
     <TextView
@@ -51,7 +51,6 @@
         android:layout_marginEnd="@dimen/authentication_screen_marginStartEnd"
         android:elevation="@dimen/card_view_elevation"
         app:cardCornerRadius="@dimen/card_view_corner_radius"
-        android:background="@color/white"
         android:backgroundTint="@color/salmon">
 
         <LinearLayout
@@ -70,14 +69,14 @@
                 android:textColorHint="@color/secondary_text_color">
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/et_email"
+                    android:id="@+id/et_email_sign_in"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/bg_color"
                     android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress"
-                    android:textSize="@dimen/et_text_size"
-                    android:background="@color/bg_color"
-                    android:textColor="@color/black">
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/et_text_size">
                 </androidx.appcompat.widget.AppCompatEditText>
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,7 +88,7 @@
                 android:textColorHint="@color/secondary_text_color">
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/et_password"
+                    android:id="@+id/et_password_sign_in"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_password"
@@ -101,7 +100,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_sign_up"
+                android:id="@+id/btn_sign_in"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

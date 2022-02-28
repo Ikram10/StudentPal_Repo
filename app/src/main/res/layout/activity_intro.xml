@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".IntroActivity"
+    tools:context=".activities.IntroActivity"
     android:orientation="vertical"
     android:background="@color/bg_color"
     android:gravity="center_horizontal">
@@ -12,15 +11,15 @@
     <ImageView
         android:id="@+id/tv_app_name"
         android:layout_width="wrap_content"
-        android:layout_height="142dp"
+        android:layout_height="152dp"
         android:layout_marginTop="@dimen/intro_screen_title_text_marginTop"
         android:contentDescription="@string/logo_name"
         android:src="@drawable/logo_name_icon_transparent_background" />
 
     <ImageView
-        android:layout_width="299dp"
-        android:layout_height="158dp"
-        android:layout_marginTop="40dp"
+        android:layout_width="240dp"
+        android:layout_height="165dp"
+        android:layout_marginTop="80dp"
         android:contentDescription="@string/student_image_icon"
         android:src="@drawable/student_icon" />
 

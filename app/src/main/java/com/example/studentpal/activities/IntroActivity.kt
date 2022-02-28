@@ -1,11 +1,8 @@
-package com.example.studentpal
+package com.example.studentpal.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
+import androidx.appcompat.app.AppCompatActivity
 import com.example.studentpal.databinding.ActivityIntroBinding
 
 class IntroActivity : AppCompatActivity() {

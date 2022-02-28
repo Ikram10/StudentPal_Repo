@@ -12,9 +12,10 @@
     <color name="secondary_text_color">#7A8089</color>
     <color name="colorAccent">#1c7c8c</color>
     <color name="color_primary_dark">#04233b</color>
-    <color name="salmon">#ec8474</color>
+    <color name="salmon">#ED8B7C</color>
     <color name="salmon_dark">#ec7c74</color>
-    <color name="bg_color">#F9F6F6</color>
+    <color name="bg_color">#FFFEEF</color>
+    <color name="snackbar_error_color">#F72400</color>
 
 
 

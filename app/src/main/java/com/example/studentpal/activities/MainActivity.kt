@@ -1,7 +1,8 @@
-package com.example.studentpal
+package com.example.studentpal.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.studentpal.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
