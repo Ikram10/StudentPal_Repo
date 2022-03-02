@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.studentpal.R
+import com.example.studentpal.firebase.FirestoreClass
 
 
 @SuppressLint("CustomSplashScreen")
@@ -25,10 +26,21 @@ class SplashActivity : AppCompatActivity() {
         logoimage.layoutParams.width = 1000
         logoimage.layoutParams.height = 1000
 
-        //Handler delays the intent to Intro Activity by 1.5 secondsv
+        /**Handler delays the intent to Intro Activity by 2 seconds
+         * Handler also handles auto login feature
+         * If user is logged in they will be directed to the main activity, otherwise the Intro activity
+         where they will be asked to sign in or sign up.
+         */
         Handler().postDelayed({
-            startActivity(Intent(this, IntroActivity::class.java))
-            finish() }, 1500)
+
+            var currentUserID = FirestoreClass().getCurrentUserId()
+
+            if (currentUserID.isNotEmpty()){
+                startActivity(Intent(this, MainActivity::class.java))
+            } else {
+                startActivity(Intent(this, IntroActivity::class.java))
+            }
+            finish() }, 2000)
 
         hideSystemBars()
 

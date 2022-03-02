@@ -14,8 +14,9 @@
     <color name="color_primary_dark">#04233b</color>
     <color name="salmon">#ED8B7C</color>
     <color name="salmon_dark">#ec7c74</color>
-    <color name="bg_color">#FFFEEF</color>
+    <color name="bg_color">#FFFFFA</color>
     <color name="snackbar_error_color">#F72400</color>
+    <color name="test">#0A80F5 </color>
 
 
 

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivitySignInBinding
+import com.example.studentpal.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
@@ -83,6 +84,12 @@ class SignInActivity : BaseActivity() {
         binding?.toolbarSignInActivity?.setNavigationOnClickListener {
             onBackPressed()
         }
+    }
+
+    fun signInSuccess (user : User){
+        hideProgressDialog()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
 }
