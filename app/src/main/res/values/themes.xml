@@ -23,10 +23,28 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
     </style>
-    
+    app:boxCornerRadiusTopStart="10dp"
+    app:boxCornerRadiusBottomEnd="10dp"
+    app:boxCornerRadiusBottomStart="10dp"
+    app:boxCornerRadiusTopEnd="10dp"
+    android:textColorHint="@color/secondary_text_color"
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+    </style>
+    <style name="TextInputLayoutTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="hintTextColor">@color/logo_text_color</item>
+        <item name="boxStrokeColor">@color/logo_text_color</item>
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxBackgroundColor">@color/bg_color</item>
+        <item name="boxCornerRadiusBottomEnd">10dp</item>
+        <item name="boxCornerRadiusBottomStart">10dp</item>
+        <item name="boxCornerRadiusTopEnd">10dp</item>
+        <item name="boxCornerRadiusTopStart">10dp</item>
+        <item name="android:textColorHint">@color/secondary_text_color</item>
+        <item name="boxStrokeWidth">0.5dp</item>
+        <item name="hintTextAppearance">@style/TextAppearance.Material3.BodyMedium</item>
 
     </style>
+
 
 
 

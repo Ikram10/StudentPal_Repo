@@ -4,10 +4,13 @@ import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.renderscript.ScriptGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.studentpal.R
+import com.example.studentpal.databinding.ActivityBaseBinding
+import com.example.studentpal.databinding.MainContentBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 

@@ -3,6 +3,7 @@ package com.example.studentpal.firebase
 import android.app.Activity
 import android.util.Log
 import com.example.studentpal.activities.MainActivity
+import com.example.studentpal.activities.MyProfileActivity
 import com.example.studentpal.activities.SignInActivity
 import com.example.studentpal.activities.SignUpActivity
 import com.example.studentpal.models.User
@@ -16,7 +17,7 @@ class FirestoreClass {
     private val mFireStore = FirebaseFirestore.getInstance()
 
 
-    fun signInUser(activity: Activity) {
+    fun loadUserData(activity: Activity) {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).get().addOnSuccessListener {
             //retrieves information about the user stored in the database
             val loggedInUser = it.toObject(User::class.java)
@@ -30,6 +31,11 @@ class FirestoreClass {
                 is MainActivity -> {
                     if (loggedInUser != null) {
                         activity.updateNavigationUserDetails(loggedInUser)
+                    }
+                }
+                is MyProfileActivity -> {
+                    if (loggedInUser != null) {
+                        activity.setUserDataInUI(loggedInUser)
                     }
                 }
             }

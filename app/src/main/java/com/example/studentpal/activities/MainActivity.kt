@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.view.GravityCompat
-import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
@@ -31,7 +29,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setupActionBar()
         binding?.navView?.setNavigationItemSelectedListener(this)
 
-        FirestoreClass().signInUser(this)
+        FirestoreClass().loadUserData(this)
     }
 
     private fun setupActionBar(){
@@ -65,7 +63,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             R.id.nav_my_profile -> {
-                Toast.makeText(this, "My Profile", Toast.LENGTH_LONG).show()
+                startActivity(Intent(this, MyProfileActivity::class.java))
             }
             R.id.nav_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
@@ -97,9 +95,5 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             .into((binding?.navView?.findViewById<ImageView>(R.id.nav_user_image)!!))
 
         tv_username?.text = user.name
-
-
     }
-
-
 }
