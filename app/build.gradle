@@ -53,7 +53,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore:24.0.1'
 
+    implementation 'com.google.firebase:firebase-storage:20.0.1'
+
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
 
     testImplementation 'junit:junit:'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

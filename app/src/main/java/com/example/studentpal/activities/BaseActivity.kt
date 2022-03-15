@@ -1,6 +1,10 @@
 package com.example.studentpal.activities
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -15,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
 open class BaseActivity : AppCompatActivity() {
+    private var alertDialog : AlertDialog? = null
 
     private var doubleBackToExitPressOnce = false
 
@@ -25,6 +30,7 @@ open class BaseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_base)
 
     }
+
 
     fun showProgressDialog(text : String) {
 

@@ -2,6 +2,7 @@ package com.example.studentpal.firebase
 
 import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import com.example.studentpal.activities.MainActivity
 import com.example.studentpal.activities.MyProfileActivity
 import com.example.studentpal.activities.SignInActivity
@@ -11,11 +12,29 @@ import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import java.lang.StringBuilder
 
 class FirestoreClass {
 
     private val mFireStore = FirebaseFirestore.getInstance()
 
+    fun updateUserProfileData (activity: MyProfileActivity, userHashMap: HashMap<String, Any>){
+        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).update(userHashMap).addOnSuccessListener {
+            Log.i(activity.javaClass.simpleName, "Profile data updated successfully")
+            Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_LONG).show()
+            activity.profileUpdateSuccess()
+
+        }.addOnFailureListener{
+
+            activity.hideProgressDialog()
+
+            Log.e(activity.javaClass.simpleName,
+            "Error while creating a board.", it)
+
+            Toast.makeText(activity, "Error updating profile", Toast.LENGTH_LONG).show()
+        }
+
+    }
 
     fun loadUserData(activity: Activity) {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).get().addOnSuccessListener {

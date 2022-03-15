@@ -1,7 +1,12 @@
 package com.example.studentpal.activities
 
+import android.app.Activity
+import android.app.AlertDialog
+import android.app.Instrumentation
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,6 +23,11 @@ import com.google.firebase.auth.FirebaseAuth
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     private var binding : ActivityMainBinding? = null
     private var drawer : DrawerLayout? = null
+    private lateinit var builder: AlertDialog.Builder
+
+    companion object {
+        const val MY_PROFILE_REQUEST_CODE: Int = 11
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +42,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         FirestoreClass().loadUserData(this)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
+            FirestoreClass().loadUserData(this)
+        } else{
+            Log.e("Cancelled", "Cancelled")
+        }
+    }
     private fun setupActionBar(){
         val toolBar = binding?.appBarMain?.toolbarMainActivity
         setSupportActionBar(toolBar)
@@ -63,17 +81,30 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             R.id.nav_my_profile -> {
-                startActivity(Intent(this, MyProfileActivity::class.java))
+                startActivityForResult(Intent(this, MyProfileActivity::class.java), MY_PROFILE_REQUEST_CODE)
             }
             R.id.nav_sign_out -> {
-                FirebaseAuth.getInstance().signOut()
+                builder = AlertDialog.Builder(this)
 
-                val intent = Intent(this, IntroActivity::class.java )
-                //close
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                builder.setTitle("Alert")
+                    .setMessage("Do you want to sign out?")
+                    .setCancelable(true)
+                    .setPositiveButton("Yes"){ DialogInterface, it ->
 
-                startActivity(intent)
-                finish()
+                        FirebaseAuth.getInstance().signOut()
+
+                        val intent = Intent(this, IntroActivity::class.java )
+                        //close
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                        startActivity(intent)
+                        finish()
+
+                    }
+                    .setNegativeButton("No") { DialogInterface, _ ->
+                        DialogInterface.cancel()
+                    }
+                    .show()
             }
         }
         drawer?.closeDrawer(GravityCompat.START)
