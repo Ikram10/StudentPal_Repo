@@ -18,88 +18,92 @@ class FirestoreClass {
 
     private val mFireStore = FirebaseFirestore.getInstance()
 
-    fun updateUserProfileData (activity: MyProfileActivity, userHashMap: HashMap<String, Any>){
-        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).update(userHashMap).addOnSuccessListener {
-            Log.i(activity.javaClass.simpleName, "Profile data updated successfully")
-            Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_LONG).show()
-            activity.profileUpdateSuccess()
+    fun updateUserProfileData(activity: MyProfileActivity, userHashMap: HashMap<String, Any>) {
+        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).update(userHashMap)
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName, "Profile data updated successfully")
+                Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_LONG).show()
+                activity.profileUpdateSuccess()
 
-        }.addOnFailureListener{
+            }.addOnFailureListener {
 
-            activity.hideProgressDialog()
+                activity.hideProgressDialog()
 
-            Log.e(activity.javaClass.simpleName,
-            "Error while creating a board.", it)
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while creating a board.", it
+                )
 
-            Toast.makeText(activity, "Error updating profile", Toast.LENGTH_LONG).show()
-        }
+                Toast.makeText(activity, "Error updating profile", Toast.LENGTH_LONG).show()
+            }
 
     }
 
     fun loadUserData(activity: Activity) {
-        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).get().addOnSuccessListener {
-            //retrieves information about the user stored in the database
-            val loggedInUser = it.toObject(User::class.java)
+        mFireStore.collection(Constants.USERS)
+            // The document id to get the Fields of user.
+            .document(getCurrentUserId()).get()
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName, it.toString())
+                // Here we have received the document snapshot which is converted into the User Data model object.
+                val loggedInUser = it.toObject(User::class.java)
 
-            when(activity) {
-                is SignInActivity -> {
-                    if (loggedInUser != null) {
-                        activity.signInSuccess(loggedInUser)
+                when (activity) {
+                    is SignInActivity -> {
+                        if (loggedInUser != null) {
+                            activity.signInSuccess(loggedInUser)
+                        }
                     }
-                }
-                is MainActivity -> {
-                    if (loggedInUser != null) {
-                        activity.updateNavigationUserDetails(loggedInUser)
+                    is MainActivity -> {
+                        if (loggedInUser != null) {
+                            activity.updateNavigationUserDetails(loggedInUser)
+                        }
                     }
-                }
-                is MyProfileActivity -> {
-                    if (loggedInUser != null) {
-                        activity.setUserDataInUI(loggedInUser)
+                    is MyProfileActivity -> {
+                        if (loggedInUser != null) {
+                            activity.setUserDataInUI(loggedInUser)
+                        }
                     }
                 }
             }
-
-
-        }.addOnFailureListener{
-                e ->
-            when(activity) {
-                is SignInActivity -> {
-
+            .addOnFailureListener {
+                when (activity) {
+                    is SignInActivity -> {
                         activity.hideProgressDialog()
-
-                }
-                is MainActivity -> {
-                    activity.hideProgressDialog()
+                    }
+                    is MainActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                    is MyProfileActivity -> {
+                        activity.hideProgressDialog()
                     }
                 }
+                Log.e(activity.javaClass.simpleName, "Error while getting logged in users details")
             }
-
-            Log.e(activity.javaClass.simpleName, "Error writing document")
-        }
+    }
 
 
-
-    fun registerUser(activity : SignUpActivity, userInfo : User){
-        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(userInfo,
-            SetOptions.merge()).addOnSuccessListener {
+    fun registerUser(activity: SignUpActivity, userInfo: User) {
+        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(
+            userInfo,
+            SetOptions.merge()
+        ).addOnSuccessListener {
             activity.userRegisteredSuccess()
         }.addOnFailureListener {
-            e ->
             Log.e(activity.javaClass.simpleName, "Error registering user")
         }
     }
 
-    fun getCurrentUserId() : String {
+    fun getCurrentUserId(): String {
         val currentUser = FirebaseAuth.getInstance().currentUser
         var currentUserID = ""
 
-        if(currentUser != null) {
+        if (currentUser != null) {
             currentUserID = currentUser.uid
         }
 
         return currentUserID
     }
-
 
 
 }

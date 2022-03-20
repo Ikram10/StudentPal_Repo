@@ -36,7 +36,7 @@ class MyProfileActivity : BaseActivity() {
 
     private var binding: ActivityMyProfileBinding? = null
 
-    private val toolbar : androidx.appcompat.widget.Toolbar? = binding?.toolbarMyProfile
+    private val toolbar  = binding?.toolbarMyProfile
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +46,6 @@ class MyProfileActivity : BaseActivity() {
         setupActionBar()
 
         FirestoreClass().loadUserData(this)
-
-
 
         binding?.ivProfileUserImage?.setOnClickListener{
 
@@ -125,11 +123,15 @@ class MyProfileActivity : BaseActivity() {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_round_arrow_back_24)
             actionBar.title = resources.getString(R.string.my_profile_title)
         }
-
-        toolbar?.setNavigationOnClickListener {
-            onBackPressed()
+        toolbar?.setNavigationOnClickListener{
+           onBackPressed()
         }
 
+    }
+
+    override fun onBackPressed() {
+        Log.d("MyProfileActivity","onBackPressed");
+        Toast.makeText(this,"onBackPressed",Toast.LENGTH_SHORT).show();
     }
 
     fun setUserDataInUI(user: User) {

@@ -19,10 +19,11 @@ import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.User
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import de.hdodenhof.circleimageview.CircleImageView
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private var binding : ActivityMainBinding? = null
-    private var drawer : DrawerLayout? = null
+    private var binding: ActivityMainBinding? = null
+    private var drawer: DrawerLayout? = null
     private lateinit var builder: AlertDialog.Builder
 
     companion object {
@@ -46,42 +47,46 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
             FirestoreClass().loadUserData(this)
-        } else{
+        } else {
             Log.e("Cancelled", "Cancelled")
         }
     }
-    private fun setupActionBar(){
+
+    private fun setupActionBar() {
         val toolBar = binding?.appBarMain?.toolbarMainActivity
         setSupportActionBar(toolBar)
         toolBar?.setNavigationIcon(R.drawable.ic_round_menu_24)
 
-        toolBar?.setNavigationOnClickListener{
+        toolBar?.setNavigationOnClickListener {
             toggleDrawer()
         }
     }
 
-    private fun toggleDrawer (){
+    private fun toggleDrawer() {
 
-        if (drawer?.isDrawerOpen(GravityCompat.START) == true){
+        if (drawer?.isDrawerOpen(GravityCompat.START) == true) {
             drawer?.closeDrawer(GravityCompat.START)
-        }else {
+        } else {
             drawer?.openDrawer(GravityCompat.START)
         }
     }
 
     override fun onBackPressed() {
-        if (drawer?.isDrawerOpen(GravityCompat.START) == true){
+        if (drawer?.isDrawerOpen(GravityCompat.START) == true) {
             drawer?.closeDrawer(GravityCompat.START)
-        }else {
+        } else {
             doubleBackToExit()
         }
     }
 
     // Function handles the selecting of menu items in the drawer
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId){
+        when (item.itemId) {
             R.id.nav_my_profile -> {
-                startActivityForResult(Intent(this, MyProfileActivity::class.java), MY_PROFILE_REQUEST_CODE)
+                startActivityForResult(
+                    Intent(this, MyProfileActivity::class.java),
+                    MY_PROFILE_REQUEST_CODE
+                )
             }
             R.id.nav_sign_out -> {
                 builder = AlertDialog.Builder(this)
@@ -89,11 +94,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 builder.setTitle("Alert")
                     .setMessage("Do you want to sign out?")
                     .setCancelable(true)
-                    .setPositiveButton("Yes"){ DialogInterface, it ->
+                    .setPositiveButton("Yes") { DialogInterface, it ->
 
                         FirebaseAuth.getInstance().signOut()
 
-                        val intent = Intent(this, IntroActivity::class.java )
+                        val intent = Intent(this, IntroActivity::class.java)
                         //close
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 
@@ -115,16 +120,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
      * Function updates the users Profile image in the navigation view header
      * adds the users name to the navigation view header
      */
-    fun updateNavigationUserDetails(user : User) {
+    fun updateNavigationUserDetails(user: User) {
 
-            val tv_username = binding?.navView?.findViewById<TextView>(R.id.tv_username)
+        //variable binds the Username Textview
+        val tvUsername = binding?.navView?.findViewById<TextView>(R.id.tv_username)
+
+        //Third party resource, helps with TODO
         Glide
             .with(this)
             .load(user.image)
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
-            .into((binding?.navView?.findViewById<ImageView>(R.id.nav_user_image)!!))
+            .into((binding?.navView?.findViewById<CircleImageView>(R.id.nav_user_image)!!))
 
-        tv_username?.text = user.name
+        //Sets the username text found in the navigation header to the current users name
+        tvUsername?.text = user.name
     }
 }
