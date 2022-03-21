@@ -66,6 +66,7 @@
     <string name="new_message">New Message</string>
     <string name="profile_name">Profile Name</string>
     <string name="status">Status</string>
+    <string name="delete_account">Delete Account</string>
 
 
 </resources>

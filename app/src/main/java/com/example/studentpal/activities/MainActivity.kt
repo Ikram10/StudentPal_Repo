@@ -3,9 +3,11 @@ package com.example.studentpal.activities
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Instrumentation
+import android.content.ContentValues.TAG
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.provider.SyncStateContract
 import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
@@ -17,14 +19,19 @@ import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivityMainBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.User
+import com.example.studentpal.utils.Constants
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     private var binding: ActivityMainBinding? = null
     private var drawer: DrawerLayout? = null
     private lateinit var builder: AlertDialog.Builder
+    private var db : FirebaseFirestore? = null
 
     companion object {
         const val MY_PROFILE_REQUEST_CODE: Int = 11
@@ -99,9 +106,50 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.nav_sign_out -> {
                signOutUser()
             }
+            R.id.nav_delete_account-> {
+                deleteAccount()
+            }
         }
         drawer?.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    //my code
+    private fun deleteAccount(){
+        builder = AlertDialog.Builder(this)
+
+        builder.setTitle("Alert")
+            .setMessage("Do you want to delete account?")
+            .setCancelable(true)
+            .setPositiveButton("Yes") { _, _ ->
+                db = FirebaseFirestore.getInstance()
+                db!!.collection(Constants.USERS).document(getCurrentUserID()).delete().addOnSuccessListener {
+                    Log.d("FirestoreDelete", "User account deleted from FireStore.")
+                }
+
+                val user = Firebase.auth.currentUser!!
+
+                user.delete()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("DeleteAccount", "User account deleted.")
+                        }
+                    }.addOnFailureListener{
+                        Log.d("DeleteAccount", "User account delete failed.")
+                    }
+
+                val intent = Intent(this, IntroActivity::class.java)
+                //close
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                startActivity(intent)
+                finish()
+
+            }
+            .setNegativeButton("No") { DialogInterface, _ ->
+                DialogInterface.cancel()
+            }
+            .show()
     }
 
     /**
