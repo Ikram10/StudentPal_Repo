@@ -9,6 +9,7 @@ import com.example.studentpal.R
 import com.example.studentpal.adapter.UserAdapter
 import com.example.studentpal.databinding.ActivityNewMessageBinding
 import com.example.studentpal.models.User
+import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 
@@ -48,7 +49,9 @@ class NewMessageActivity : BaseActivity() {
     private fun eventChangeListener() {
         //my code: Chose to integrate Firestore instead of Realtime database
         db = FirebaseFirestore.getInstance()
-        db!!.collection("Users").addSnapshotListener(object : EventListener<QuerySnapshot> {
+
+        //Retrieves and adds Snapshot listener to all users except currently logged in user
+        db!!.collection(Constants.USERS).whereNotEqualTo("id", getCurrentUserID()).addSnapshotListener(object : EventListener<QuerySnapshot> {
             override fun onEvent(value: QuerySnapshot?, error: FirebaseFirestoreException?) {
                 if (error != null) {
                     Log.w("Firestore Error", "Listen failed.")
