@@ -85,31 +85,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.nav_my_profile -> {
                 startActivityForResult(
                     Intent(this, MyProfileActivity::class.java),
-                    MY_PROFILE_REQUEST_CODE
-                )
+                    MY_PROFILE_REQUEST_CODE)
+            }
+            R.id.nav_active_users -> {
+
+            }
+            R.id.nav_friends -> {
+
+            }
+            R.id.nav_messages -> {
+                startActivity(Intent(this, LatestMessagesActivity::class.java))
             }
             R.id.nav_sign_out -> {
-                builder = AlertDialog.Builder(this)
-
-                builder.setTitle("Alert")
-                    .setMessage("Do you want to sign out?")
-                    .setCancelable(true)
-                    .setPositiveButton("Yes") { DialogInterface, it ->
-
-                        FirebaseAuth.getInstance().signOut()
-
-                        val intent = Intent(this, IntroActivity::class.java)
-                        //close
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-
-                        startActivity(intent)
-                        finish()
-
-                    }
-                    .setNegativeButton("No") { DialogInterface, _ ->
-                        DialogInterface.cancel()
-                    }
-                    .show()
+               signOutUser()
             }
         }
         drawer?.closeDrawer(GravityCompat.START)

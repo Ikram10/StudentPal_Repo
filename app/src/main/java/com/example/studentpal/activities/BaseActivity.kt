@@ -19,6 +19,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
 open class BaseActivity : AppCompatActivity() {
+
+    private lateinit var builder: AlertDialog.Builder
+
     private var alertDialog : AlertDialog? = null
 
     private var doubleBackToExitPressOnce = false
@@ -77,5 +80,28 @@ open class BaseActivity : AppCompatActivity() {
         snackBar.show()
     }
 
+    //My code
+    protected fun signOutUser() {
+        builder = AlertDialog.Builder(this)
 
+        builder.setTitle("Alert")
+            .setMessage("Do you want to sign out?")
+            .setCancelable(true)
+            .setPositiveButton("Yes") { DialogInterface, it ->
+
+                FirebaseAuth.getInstance().signOut()
+
+                val intent = Intent(this, IntroActivity::class.java)
+                //close
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                startActivity(intent)
+                finish()
+
+            }
+            .setNegativeButton("No") { DialogInterface, _ ->
+                DialogInterface.cancel()
+            }
+            .show()
+    }
 }

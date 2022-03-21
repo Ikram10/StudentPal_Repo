@@ -9,7 +9,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".activities.MyProfileActivity"
         android:orientation="vertical">
 
@@ -23,7 +23,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/logo_text_color"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                android:elevation="4dp"/>
         </com.google.android.material.appbar.AppBarLayout>
 
         <LinearLayout
@@ -107,11 +108,11 @@
                         >
 
                         <androidx.appcompat.widget.AppCompatEditText
-                            android:id="@+id/et_mobile"
+                            android:id="@+id/et_status"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/mobile"
-                            android:inputType="phone"
+                            android:hint="@string/status"
+                            android:inputType="textShortMessage"
                             android:textColor="@color/black"
                             android:textSize="@dimen/et_text_size"
 

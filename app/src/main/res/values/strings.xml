@@ -60,6 +60,12 @@
     <string name="logo_icon">Logo icon</string>
     <string name="profile_image">profile image</string>
     <string name="dialog_message">Are you sure?</string>
+    <string name="active_users">Active Users</string>
+    <string name="friends">Friends</string>
+    <string name="messages">Messages</string>
+    <string name="new_message">New Message</string>
+    <string name="profile_name">Profile Name</string>
+    <string name="status">Status</string>
 
 
 </resources>

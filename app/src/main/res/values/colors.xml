@@ -17,6 +17,8 @@
     <color name="bg_color">#FFFFFA</color>
     <color name="snackbar_error_color">#F72400</color>
     <color name="test">#0A80F5 </color>
+    <color name="available">#1BA721</color>
+    <color name="unavailable">#C90A0A</color>
 
 
 

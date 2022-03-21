@@ -147,10 +147,7 @@ class MyProfileActivity : BaseActivity() {
 
             it.etName.setText(user.name)
             it.etEmail.setText(user.email)
-
-            if (user.mobile != 0L) {
-                it.etMobile.setText(user.mobile.toString())
-            }
+            it.etStatus.setText(user.status)
         }
 
 
@@ -204,8 +201,8 @@ class MyProfileActivity : BaseActivity() {
             anyChangesMade = true
         }
 
-        if (binding?.etMobile?.text.toString() != mUserDetails.mobile.toString()) {
-            userHashMap[Constants.MOBILE] = binding?.etMobile?.text.toString().toLong()
+        if (binding?.etStatus?.text.toString() != mUserDetails.status) {
+            userHashMap[Constants.STATUS] = binding?.etStatus?.text.toString()
             anyChangesMade = true
         }
 
@@ -229,5 +226,6 @@ class MyProfileActivity : BaseActivity() {
     }
 
     }
+
 
 

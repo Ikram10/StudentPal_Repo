@@ -3,8 +3,27 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_my_profile"
-            android:icon="@drawable/ic_nav_user"
+            android:icon="@drawable/ic_round_account_box_24"
             android:title="@string/nav_my_profile">
+        </item>
+
+        <item
+            android:id="@+id/nav_active_users"
+            android:icon="@drawable/ic_round_person_search_24"
+            android:title="@string/active_users">
+        </item>
+
+        <item
+            android:id="@+id/nav_friends"
+            android:icon="@drawable/ic_round_group_24"
+            android:title="@string/friends">
+        </item>
+
+        <item
+            android:id="@+id/nav_messages"
+            android:icon="@drawable/ic_round_message_24"
+            android:title="@string/messages">
+
         </item>
 
         <item
