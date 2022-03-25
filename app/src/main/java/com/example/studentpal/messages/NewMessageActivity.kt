@@ -7,10 +7,13 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
+import android.widget.TextView
 import androidx.appcompat.app.ActionBar
+import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.adapter.UserAdapter
@@ -18,6 +21,9 @@ import com.example.studentpal.databinding.ActivityNewMessageBinding
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.firestore.*
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
+import com.xwray.groupie.Item
 
 class NewMessageActivity : BaseActivity() {
     private var binding: ActivityNewMessageBinding? = null
@@ -28,7 +34,7 @@ class NewMessageActivity : BaseActivity() {
     private var db: FirebaseFirestore? = null
     private var recyclerView: RecyclerView? = null
     var users: ArrayList<User>? = null
-    var usersAdapter: UserAdapter? = null
+
     var user: User? = null
 
 
@@ -42,18 +48,16 @@ class NewMessageActivity : BaseActivity() {
         recyclerView?.setHasFixedSize(true)
 
 
-
+        val adapter = GroupAdapter<GroupieViewHolder>()
+        binding!!.recyclerViewNewMessage.adapter = adapter
 
         users = arrayListOf()
-        usersAdapter = UserAdapter(this, users!!)
 
-        recyclerView?.adapter = usersAdapter
-
-        //  setupActionBar()
         eventChangeListener()
 
 
     }
+
 
 
 
@@ -79,6 +83,7 @@ class NewMessageActivity : BaseActivity() {
         db!!.collection(Constants.USERS).whereNotEqualTo("id", getCurrentUserID())
             .addSnapshotListener(object : EventListener<QuerySnapshot> {
                 override fun onEvent(value: QuerySnapshot?, error: FirebaseFirestoreException?) {
+                    val adapter = GroupAdapter<GroupieViewHolder>()
                     if (error != null) {
                         Log.w("Firestore Error", "Listen failed.")
                         return
@@ -86,27 +91,45 @@ class NewMessageActivity : BaseActivity() {
                     for (dc: DocumentChange in value?.documentChanges!!) {
                         if (dc.type == DocumentChange.Type.ADDED) {
                             users?.add(dc.document.toObject(User::class.java))
+                            user = dc.document.toObject(User::class.java)
+                            adapter.add(UserItem(user!!))
                         }
+                        recyclerView?.adapter = adapter
+
                     }
-                    usersAdapter?.notifyDataSetChanged()
                 }
             })
     }
 
+    class UserItem (val user: User): Item<GroupieViewHolder>(){
+        override fun bind(viewHolder: GroupieViewHolder, position: Int) {
+            viewHolder.itemView.findViewById<TextView>(R.id.cv_username).text = user.name
 
-//    private fun setupActionBar() {
-//        toolbar = binding?.toolbarNewMessage
-//        setSupportActionBar(toolbar)
-//
-//        val actionBar = supportActionBar
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true)
-//            actionBar.setHomeAsUpIndicator(R.drawable.ic_round_arrow_back_24)
-//            actionBar.title = "Select User"
-//        }
-//        toolbar?.setNavigationOnClickListener {
-//            onBackPressed()
-//        }
-//    }
+            viewHolder.itemView.findViewById<TextView>(R.id.cv_email).text = user.email
+            viewHolder.itemView.findViewById<TextView>(R.id.civ_status).text = user.status
+
+            Glide
+                .with(viewHolder.root)
+                .load(user.image)
+                .placeholder(R.drawable.ic_user_place_holder)
+                .into(viewHolder.itemView.findViewById(R.id.iv_profile_image))
+
+            //My code
+            when(user.status) {
+                "Available" -> {
+                    viewHolder.itemView.findViewById<TextView>(R.id.civ_status).setTextColor(ContextCompat.getColor(viewHolder.root.context, R.color.available))
+                }
+                "Unavailable" -> {
+                    viewHolder.itemView.findViewById<TextView>(R.id.civ_status).setTextColor(ContextCompat.getColor(viewHolder.root.context, R.color.unavailable))
+                }
+            }
+        }
+
+        override fun getLayout(): Int {
+            return R.layout.item_profile
+        }
+
+    }
+
 
 }
