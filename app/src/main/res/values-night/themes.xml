@@ -22,4 +22,7 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
 
     </style>
+    <style name="SearchBar" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimaryDark" >@color/logo_text_color</item>
+    </style>
 </resources>

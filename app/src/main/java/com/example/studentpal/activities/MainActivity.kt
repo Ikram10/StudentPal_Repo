@@ -2,15 +2,10 @@ package com.example.studentpal.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Instrumentation
-import android.content.ContentValues.TAG
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.provider.SyncStateContract
 import android.util.Log
 import android.view.MenuItem
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -18,10 +13,10 @@ import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivityMainBinding
 import com.example.studentpal.firebase.FirestoreClass
+import com.example.studentpal.messages.LatestMessagesActivity
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase

@@ -14,17 +14,37 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentPal">
         <activity
-            android:name=".activities.LatestMessagesActivity"
+            android:name=".messages.ChatLogActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SearchableActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable">
+
+            </meta-data>
+        </activity>
+        <activity
+            android:name=".messages.LatestMessagesActivity"
             android:exported="false"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
-        <activity
-            android:name=".activities.NewMessageActivity"
-            android:exported="false"
-            android:parentActivityName=".activities.LatestMessagesActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+        <activity
+            android:name=".messages.NewMessageActivity"
+            android:exported="false"
+            android:parentActivityName=".messages.LatestMessagesActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SearchBar">
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchableActivity" />
+        </activity>
         <activity
             android:name=".activities.MyProfileActivity"
             android:exported="false"

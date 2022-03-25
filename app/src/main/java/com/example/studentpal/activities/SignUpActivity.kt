@@ -11,6 +11,8 @@ import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class SignUpActivity : BaseActivity() {
@@ -28,6 +30,8 @@ class SignUpActivity : BaseActivity() {
             registerUser()
         }
 
+
+
         binding?.existingAccount?.setOnClickListener{
             startActivity(Intent(this, SignInActivity::class.java ))
             finish()
@@ -35,6 +39,14 @@ class SignUpActivity : BaseActivity() {
 
 
     }
+    // My Code: This code will retrieve the current date and get the date the user first sign up to StudentPal
+    private fun getCurrentDate(): String {
+        val date = Calendar.getInstance().time
+        val formatter = SimpleDateFormat.getDateInstance()
+
+        return formatter.format(date)
+    }
+
 
     fun userRegisteredSuccess() {
         Toast.makeText(
@@ -47,6 +59,8 @@ class SignUpActivity : BaseActivity() {
         FirebaseAuth.getInstance().signOut()
         finish()
     }
+
+
 
     private fun registerUser(){
         val name: String = binding?.etName?.text.toString().trim{ it <= ' '}
@@ -62,7 +76,8 @@ class SignUpActivity : BaseActivity() {
                 if (task.isSuccessful) {
                     val firebaseUser: FirebaseUser = task.result!!.user!!
                     val registeredEmail = firebaseUser.email!!
-                    val user = User(firebaseUser.uid, name, registeredEmail)
+                    val dateJoined = getCurrentDate()
+                    val user = User(firebaseUser.uid, name, registeredEmail, dateJoined)
                     FirestoreClass().registerUser(this, user)
                 } else {
                     Toast.makeText(this, "Registration failed", Toast.LENGTH_LONG).show()

@@ -5,11 +5,13 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.webkit.MimeTypeMap
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
@@ -18,9 +20,15 @@ import com.example.studentpal.databinding.ActivityMyProfileBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.util.*
+import kotlin.collections.HashMap
 
 class MyProfileActivity : BaseActivity() {
 
@@ -28,6 +36,7 @@ class MyProfileActivity : BaseActivity() {
     private var mSelectedImageFileUri : Uri? = null
     private var mProfileImageURL : String = ""
     private lateinit var mUserDetails : User
+    private val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
 
     companion object {
         private const val READ_STORAGE_PERMISSION_CODE = 1
@@ -37,6 +46,7 @@ class MyProfileActivity : BaseActivity() {
     private var binding: ActivityMyProfileBinding? = null
 
     private val toolbar  = binding?.toolbarMyProfile
+    private var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +56,7 @@ class MyProfileActivity : BaseActivity() {
         setupActionBar()
 
         FirestoreClass().loadUserData(this)
+        mAuth = FirebaseAuth.getInstance()
 
         binding?.ivProfileUserImage?.setOnClickListener{
 
@@ -134,7 +145,10 @@ class MyProfileActivity : BaseActivity() {
         Toast.makeText(this,"onBackPressed",Toast.LENGTH_SHORT).show();
     }
 
+    fun getDateString(time: Long) : String = simpleDateFormat.format(time*1000)
+
     fun setUserDataInUI(user: User) {
+
         mUserDetails = user
 
         binding?.let {
@@ -144,13 +158,25 @@ class MyProfileActivity : BaseActivity() {
                 .centerCrop()
                 .placeholder(R.drawable.ic_nav_user)
                 .into(it.ivProfileUserImage)
-
             it.etName.setText(user.name)
             it.etEmail.setText(user.email)
             it.etStatus.setText(user.status)
+            it.profileName.text = user.name
+            it.civStatus.text = user.status
+
+            //Sets the date joined text in user's profile card
+            it.dateNum.text = user.dateJoined
+
+            //My code: Sets the text colour of users status depending on the Status
+            when(user.status) {
+                "Available" -> {
+                    binding!!.civStatus.setTextColor(ContextCompat.getColor(this, R.color.available))
+                }
+                "Unavailable" -> {
+                    binding!!.civStatus.setTextColor(ContextCompat.getColor(this, R.color.unavailable))
+                }
+            }
         }
-
-
 
         }
 

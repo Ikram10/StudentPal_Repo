@@ -2,11 +2,15 @@ package com.example.studentpal.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 data class User (
     val id: String = "",
     val name: String = "",
     val email: String = "",
+    val dateJoined: String = "",
     val image : String = "",
     val status: String = "Available",
     val fcmToken : String = "" ): Parcelable {
@@ -17,9 +21,9 @@ data class User (
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.readString()!!,
         parcel.readString()!!
-    ) {
-    }
+    )
 
     override fun describeContents() = 0
 
@@ -27,6 +31,7 @@ data class User (
         writeString(id)
         writeString(name)
         writeString(email)
+        writeString(dateJoined)
         writeString(image)
         writeString(status)
         writeString(fcmToken)

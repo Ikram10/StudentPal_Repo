@@ -48,7 +48,12 @@
         <item name="android:textColorHint">@color/secondary_text_color</item>
         <item name="boxStrokeWidth">0.5dp</item>
         <item name="hintTextAppearance">@style/TextAppearance.Material3.BodyMedium</item>
+        <item name="elevation">3dp</item>
 
+    </style>
+
+    <style name="SearchBar" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimaryDark" >@color/logo_text_color</item>
     </style>
 
 

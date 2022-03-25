@@ -1,13 +1,11 @@
-package com.example.studentpal.activities
+package com.example.studentpal.messages
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Messenger
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toolbar
 import com.example.studentpal.R
+import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityLatestMessagesBinding
 
 //kotlinMessenger code

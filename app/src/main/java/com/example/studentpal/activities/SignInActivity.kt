@@ -5,14 +5,15 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivitySignInBinding
 import com.example.studentpal.models.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import java.text.SimpleDateFormat
+import java.util.*
 
 class SignInActivity : BaseActivity() {
+
 
     private lateinit var auth: FirebaseAuth
     private var binding: ActivitySignInBinding? = null
@@ -21,6 +22,7 @@ class SignInActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+
 
         auth = FirebaseAuth.getInstance()
 
@@ -31,6 +33,7 @@ class SignInActivity : BaseActivity() {
         }
 
     }
+
 
     private fun signInRegisteredUser() {
         val email: String = binding?.etEmailSignIn?.text.toString().trim { it <= ' ' }
@@ -43,7 +46,7 @@ class SignInActivity : BaseActivity() {
                     hideProgressDialog()
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d("Sign in", "signInWithEmail:success")
+                        Log.d("Sign in", "signInWithEmail: success ")
                         val user = auth.currentUser
                         startActivity(Intent(this, MainActivity::class.java))
                     } else {

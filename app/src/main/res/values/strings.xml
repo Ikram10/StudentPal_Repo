@@ -67,6 +67,12 @@
     <string name="profile_name">Profile Name</string>
     <string name="status">Status</string>
     <string name="delete_account">Delete Account</string>
+    <string name="message">Message</string>
+    <string name="view_profile">View Profile</string>
+    <string name="friends_num">Friends:</string>
+    <string name="date_joined">Joined:</string>
+    <string name="update_profile_card">You can modify your Profile card by updating your details below</string>
+    <string name="search">Search</string>
 
 
 </resources>
