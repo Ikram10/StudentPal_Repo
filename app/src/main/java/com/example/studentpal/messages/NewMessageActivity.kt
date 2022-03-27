@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
+import com.xwray.groupie.viewbinding.BindableItem
 
 class NewMessageActivity : BaseActivity() {
     private var binding: ActivityNewMessageBinding? = null
@@ -53,12 +55,20 @@ class NewMessageActivity : BaseActivity() {
 
         users = arrayListOf()
 
-        eventChangeListener()
+        fetchUsers()
+        
+        listenForMessage()
+
+
 
 
     }
 
-
+    private fun listenForMessage() {
+        val reference = FirebaseFirestore.getInstance().collection(Constants.MESSAGES)
+        
+        reference.addSnapshotListener { value, error ->  }
+    }
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -74,8 +84,12 @@ class NewMessageActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    //Companion object enables the users name to be passed to another activity. The other activity needs to pass the USER_KEY
+    companion object {
+        const val USER_KEY = "USER_KEY"
+    }
 
-    private fun eventChangeListener() {
+    private fun fetchUsers() {
         //my code: Chose to integrate Firestore instead of Realtime database
         db = FirebaseFirestore.getInstance()
 
@@ -90,14 +104,23 @@ class NewMessageActivity : BaseActivity() {
                     }
                     for (dc: DocumentChange in value?.documentChanges!!) {
                         if (dc.type == DocumentChange.Type.ADDED) {
-                            users?.add(dc.document.toObject(User::class.java))
                             user = dc.document.toObject(User::class.java)
                             adapter.add(UserItem(user!!))
+                        }
+                    }
+
+                        adapter.setOnItemClickListener { item, view ->
+
+                            val userItem = item as UserItem
+
+                            val intent = Intent(this@NewMessageActivity, ChatLogActivity::class.java)
+                            //intent passes the users name to the chat log activity
+                            intent.putExtra(USER_KEY, userItem.user)
+                            startActivity(intent)
                         }
                         recyclerView?.adapter = adapter
 
                     }
-                }
             })
     }
 
@@ -128,6 +151,8 @@ class NewMessageActivity : BaseActivity() {
         override fun getLayout(): Int {
             return R.layout.item_profile
         }
+
+
 
     }
 

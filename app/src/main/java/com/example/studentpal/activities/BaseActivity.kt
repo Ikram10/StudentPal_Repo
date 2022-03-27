@@ -80,6 +80,7 @@ open class BaseActivity : AppCompatActivity() {
         snackBar.show()
     }
 
+
     //My code
     protected fun signOutUser() {
         builder = AlertDialog.Builder(this)
