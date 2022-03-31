@@ -17,6 +17,7 @@
         android:padding="16dp"
         android:text="This is my message helloooooooooooooooooooooooooooooooooooooooooooooo"
         android:textColor="@color/white"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/iv_profile_image_to"
         app:layout_constraintTop_toTopOf="parent" />

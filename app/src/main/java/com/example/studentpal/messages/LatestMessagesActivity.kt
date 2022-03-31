@@ -6,21 +6,33 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityLatestMessagesBinding
+import com.example.studentpal.messages.NewMessageActivity.Companion.USER_KEY
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.*
-import org.w3c.dom.Text
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
+import com.xwray.groupie.Item
 
 //kotlinMessenger code
 class LatestMessagesActivity : BaseActivity() {
-    private var binding : ActivityLatestMessagesBinding? = null
-    private var toolbar : androidx.appcompat.widget.Toolbar? = null
+    private var binding: ActivityLatestMessagesBinding? = null
+    private var toolbar: androidx.appcompat.widget.Toolbar? = null
+    private val adapter = GroupAdapter<GroupieViewHolder>()
+
+    val latestMessageMap = HashMap<String, ChatMessage>()
+
 
     //creating a global variable so this currentUser field can be accessed anywhere
     companion object {
@@ -32,18 +44,74 @@ class LatestMessagesActivity : BaseActivity() {
         binding = ActivityLatestMessagesBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
+        binding!!.recyclerViewLatestMessages.adapter = adapter
+
+        //sends user to the chat log with selected latest message
+        adapter.setOnItemClickListener{ item, view ->
+            Log.d(TAG, "Latest message item clicked")
+            val intent = Intent(this, ChatLogActivity::class.java)
+            val row = item as LatestMessageRow
+            //pass the chat partner as an intent to the chat log activity
+            intent.putExtra(USER_KEY, row.chatPartnerUser)
+            startActivity(intent)
+        }
+
+        listenForLatestMessages()
+
         fetchCurrentUser()
 
         setupActionBar()
+    }
 
+
+    private fun listenForLatestMessages() {
+        val fromId = FirebaseAuth.getInstance().uid
+        val ref =
+            FirebaseDatabase.getInstance("https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app/")
+                .getReference("/latest-messages/$fromId")
+
+        ref.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+                latestMessageMap[snapshot.key!!] = chatMessage
+                refreshRecyclerViewMessage()
+
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+                latestMessageMap[snapshot.key!!] = chatMessage
+                refreshRecyclerViewMessage()
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+    }
+
+    private fun refreshRecyclerViewMessage() {
+        adapter.clear()
+        latestMessageMap.values.forEach {
+            adapter.add(LatestMessageRow(it))
+        }
     }
 
     //This method
     private fun fetchCurrentUser() {
         //retrieves currently signed in users id
-        var uid = FirebaseAuth.getInstance().uid
+        val uid = FirebaseAuth.getInstance().uid
         //A reference to currently signed in user in Firestore
-        val ref = FirebaseFirestore.getInstance().collection(Constants.USERS).document(uid.toString())
+        val ref =
+            FirebaseFirestore.getInstance().collection(Constants.USERS).document(uid.toString())
 
         //listener listens to modifications made to currently signed in users document
         ref.addSnapshotListener(object : EventListener<DocumentSnapshot> {
@@ -74,7 +142,7 @@ class LatestMessagesActivity : BaseActivity() {
             actionBar.title = "Latest Messages"
 
         }
-        toolbar?.setNavigationOnClickListener{
+        toolbar?.setNavigationOnClickListener {
             onBackPressed()
         }
 

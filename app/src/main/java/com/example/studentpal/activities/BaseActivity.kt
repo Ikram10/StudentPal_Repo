@@ -26,7 +26,7 @@ open class BaseActivity : AppCompatActivity() {
 
     private var doubleBackToExitPressOnce = false
 
-    private lateinit var mProgressDialog: Dialog
+    private var mProgressDialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,17 +39,17 @@ open class BaseActivity : AppCompatActivity() {
 
         mProgressDialog = Dialog(this)
         //sets the screen content from a layout resource.
-        mProgressDialog.setContentView(R.layout.dialog_progress)
+        mProgressDialog!!.setContentView(R.layout.dialog_progress)
 
 
-        var tvProgress : TextView = mProgressDialog.findViewById(R.id.tv_progress_text)
+        var tvProgress : TextView = mProgressDialog!!.findViewById(R.id.tv_progress_text)
         tvProgress.text = text
 
-        mProgressDialog.show()
+        mProgressDialog!!.show()
     }
 
     fun hideProgressDialog(){
-        mProgressDialog.dismiss()
+        mProgressDialog?.dismiss()
     }
 
     fun getCurrentUserID(): String {

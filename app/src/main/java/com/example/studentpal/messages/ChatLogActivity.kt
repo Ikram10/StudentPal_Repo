@@ -4,20 +4,21 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
+import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityChatLogBinding
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 
-class ChatLogActivity : AppCompatActivity() {
+class ChatLogActivity : BaseActivity() {
 
     companion object {
         const val TAG = "ChatLog"
@@ -92,12 +93,14 @@ class ChatLogActivity : AppCompatActivity() {
                                 adapter.add(ChatToItem(chatMessage.text, toUser!!))
                             }
 
+                            //scrolls to the bottom of the chat log wh
+                            binding?.recyclerviewChatLog?.scrollToPosition(adapter.itemCount - 1)
+
                         }
                         DocumentChange.Type.MODIFIED -> {
 
                         }
                         DocumentChange.Type.REMOVED -> {
-
                         }
                     }
                 }
@@ -140,9 +143,23 @@ class ChatLogActivity : AppCompatActivity() {
 
             //when user hits the send button recycler view scrolls to the last message sent position
             binding?.recyclerviewChatLog?.scrollToPosition(adapter.itemCount - 1)
+            Log.d("ChatLogTest", "Message sent by: $fromId to $toId")
 
         }
         toReference.document().set(chatMessage)
+
+        //A realtime database is used here because it provides the necessary functionalities to display the latest messages
+        val latestMessageRef =
+            FirebaseDatabase.getInstance("https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app/")
+                .getReference("/latest-messages/$fromId/$toId")
+
+        latestMessageRef.setValue(chatMessage)
+
+        val latestMessageToRef =
+            FirebaseDatabase.getInstance("https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app/")
+                .getReference("/latest-messages/$toId/$fromId")
+
+        latestMessageToRef.setValue(chatMessage)
     }
 
     inner class ChatFromItem(val text: String, val user: User) : Item<GroupieViewHolder>() {

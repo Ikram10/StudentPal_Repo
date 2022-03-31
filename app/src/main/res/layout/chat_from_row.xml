@@ -11,13 +11,14 @@
         android:id="@+id/tv_message_from"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/message_item_to_bg"
         android:maxWidth="240dp"
         android:padding="16dp"
         android:text="This is my message helloooooooooooooooooooooooooooooooooooooooooooooo"
         android:textColor="@color/white"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/iv_profile_image_from"
         app:layout_constraintTop_toTopOf="parent" />
 

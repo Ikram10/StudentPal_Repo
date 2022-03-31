@@ -11,6 +11,7 @@ import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -79,6 +80,7 @@ class SignUpActivity : BaseActivity() {
                     val dateJoined = getCurrentDate()
                     val user = User(firebaseUser.uid, name, registeredEmail, dateJoined)
                     FirestoreClass().registerUser(this, user)
+
                 } else {
                     Toast.makeText(this, "Registration failed", Toast.LENGTH_LONG).show()
                 }
