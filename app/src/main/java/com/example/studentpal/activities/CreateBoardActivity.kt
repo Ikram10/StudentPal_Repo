@@ -78,9 +78,9 @@ class CreateBoardActivity : BaseActivity() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(getCurrentUserID())
 
-        //board information
+        //board information that will be stored in firestore
         val board = Board(
-            binding?.etBoardName.toString(),
+            binding?.etBoardName?.text.toString(),
             mBoardImageUrl,
             mUserName,
             assignedUsersArrayList

@@ -40,8 +40,9 @@ class FirestoreClass {
     /**
      * This public function retrieves the Firestore document of the current user by using getCurrentUserId().get()
      * It loads the document information into the activity
+     * readBoardsList will only read and load the events for the current user stored in Firestore if the boolean is true
      */
-    fun loadUserData(activity: Activity) {
+    fun loadUserData(activity: Activity, readBoardsList: Boolean = false) {
         mFireStore.collection(Constants.USERS)
             // The document id to get the Fields of user.
             .document(getCurrentUserId()).get()
@@ -58,7 +59,7 @@ class FirestoreClass {
                     }
                     is MainActivity -> {
                         if (loggedInUser != null) {
-                            activity.updateNavigationUserDetails(loggedInUser)
+                            activity.updateNavigationUserDetails(loggedInUser, readBoardsList)
                         }
                     }
                     is MyProfileActivity -> {
@@ -112,8 +113,39 @@ class FirestoreClass {
 
         return currentUserID
     }
-
     /**
+     * ******************************************************************** EVENTS FIRESTORE FUNCTIONS ***************************************************************************************
+     */
+
+
+    /* This method responsible for retrieving the events list from Firestore
+     * A user is assigned an event when they create it or if someone else has assigned them to it,
+     * This method gets all the events the user has been assigned to
+     */
+    fun getBoardsList(activity: MainActivity) {
+        //this statement queries the boards collection where the assignedTo array contains the current user id
+        mFireStore.collection(Constants.BOARDS)
+            .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserId())
+            .get()
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName, it.documents.toString())
+                val boardsList: ArrayList<Board> = ArrayList()
+                //Adds every document queried to the boardsList arraylist
+                for (document in it.documents) {
+                    //converts all documents queried into a Board object
+                    val board = document.toObject(Board::class.java)!!
+                    board.documentID = document.id
+                    boardsList.add(board)
+                }
+                //if query is successful, the events are populated into the main activity
+                activity.populateBoardsListToUI(boardsList)
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "error while getting events list")
+            }
+    }
+
+    /*
      * This method creates a new board in cloud Firestore
      * A boards collection is created, which generates a single document for each board
      * The board document data is filled using the board parameter

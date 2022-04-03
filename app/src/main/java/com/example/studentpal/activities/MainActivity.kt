@@ -1,19 +1,24 @@
 package com.example.studentpal.activities
 
 import android.app.Activity
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
+import com.example.studentpal.adapter.BoardItemsAdapter
 import com.example.studentpal.databinding.ActivityMainBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.messages.LatestMessagesActivity
+import com.example.studentpal.models.Board
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.android.material.navigation.NavigationView
@@ -23,10 +28,13 @@ import com.google.firebase.ktx.Firebase
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+
     private var binding: ActivityMainBinding? = null
     private var drawer: DrawerLayout? = null
     private lateinit var builder: AlertDialog.Builder
     private var db : FirebaseFirestore? = null
+    private var mainRecyclerView : RecyclerView? = null
+    private var mainTextView : TextView? = null
 
     companion object {
         const val MY_PROFILE_REQUEST_CODE: Int = 11
@@ -42,10 +50,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         drawer = binding?.drawerLayout
 
         setupActionBar()
+
+        mainRecyclerView = binding?.appBarMain?.root?.findViewById(R.id.rv_boards_list)
+        mainTextView = binding?.appBarMain?.root?.findViewById(R.id.tv_no_boards_available)
+
         binding?.navView?.setNavigationItemSelectedListener(this)
 
-        //loads the currently logged in user's data into this activity, by retrieving their document from firebase
-        FirestoreClass().loadUserData(this)
+        /* loads the currently logged in user's data into this activity, by retrieving their document from firebase
+         * The events list for the current user is also loaded into this activity
+         */
+        FirestoreClass().loadUserData(this, true)
 
         //create board action button can be clicked
         binding?.appBarMain?.fabCreateBoard?.setOnClickListener{
@@ -59,6 +73,32 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             startActivity(intent)
         }
     }
+
+    //method handles the displaying of event items in the main activity UI
+    fun populateBoardsListToUI(boardsList: ArrayList<Board>) {
+        hideProgressDialog()
+
+        /* if the boards list size is greater than 0 we can set the visibility of the recycler view to visible
+         * and set the no events textview to gone
+         */
+        if (boardsList.size > 0){
+            mainTextView?.text = ""
+            mainTextView?.visibility  = View.GONE
+            mainRecyclerView?.visibility = View.VISIBLE
+
+
+
+            mainRecyclerView?.layoutManager = LinearLayoutManager(this)
+            mainRecyclerView?.setHasFixedSize(true)
+
+            val adapter = BoardItemsAdapter(this, boardsList )
+            mainRecyclerView?.adapter = adapter
+        } else
+            mainRecyclerView?.visibility  = View.GONE
+            mainTextView?.visibility  = View.VISIBLE
+    }
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -166,7 +206,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
      * Function updates the users Profile image in the navigation view header
      * adds the users name to the navigation view header
      */
-    fun updateNavigationUserDetails(user: User) {
+    fun updateNavigationUserDetails(user: User, readBoardsList: Boolean) {
         //sets the user's name
         mUserName = user.name
         //variable binds the Username Textview
@@ -182,5 +222,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         //Sets the username text found in the navigation header to the current users name
         tvUsername?.text = mUserName
+
+        //only retrieves the events list from Firestore if the readBoardsList is true
+        if (readBoardsList){
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getBoardsList(this)
+
+        }
     }
 }
