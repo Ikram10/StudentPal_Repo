@@ -32,6 +32,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         const val MY_PROFILE_REQUEST_CODE: Int = 11
     }
 
+    private lateinit var mUserName: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -42,7 +44,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setupActionBar()
         binding?.navView?.setNavigationItemSelectedListener(this)
 
+        //loads the currently logged in user's data into this activity, by retrieving their document from firebase
         FirestoreClass().loadUserData(this)
+
+        //create board action button can be clicked
+        binding?.appBarMain?.fabCreateBoard?.setOnClickListener{
+            //creates an intent that sends user to the Create board activity
+            val intent = Intent(this, CreateBoardActivity::class.java)
+
+            /* sends the users name with an intent via a HashMap format
+               which can be retrieved using the name key
+             */
+            intent.putExtra(Constants.NAME, mUserName)
+            startActivity(intent)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -152,7 +167,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
      * adds the users name to the navigation view header
      */
     fun updateNavigationUserDetails(user: User) {
-
+        //sets the user's name
+        mUserName = user.name
         //variable binds the Username Textview
         val tvUsername = binding?.navView?.findViewById<TextView>(R.id.tv_username)
 
@@ -165,6 +181,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             .into((binding?.navView?.findViewById<CircleImageView>(R.id.nav_user_image)!!))
 
         //Sets the username text found in the navigation header to the current users name
-        tvUsername?.text = user.name
+        tvUsername?.text = mUserName
     }
 }

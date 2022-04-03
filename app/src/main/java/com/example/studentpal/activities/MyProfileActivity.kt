@@ -38,10 +38,7 @@ class MyProfileActivity : BaseActivity() {
     private lateinit var mUserDetails : User
     private val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
 
-    companion object {
-        private const val READ_STORAGE_PERMISSION_CODE = 1
-        private const val PICK_IMAGE_REQUEST_CODE = 2
-    }
+
 
     private var binding: ActivityMyProfileBinding? = null
 
@@ -58,21 +55,23 @@ class MyProfileActivity : BaseActivity() {
         FirestoreClass().loadUserData(this)
         mAuth = FirebaseAuth.getInstance()
 
+        //The user will be able to select the profile image
         binding?.ivProfileUserImage?.setOnClickListener{
-
+            //The user will be prompted to grant permission to read files from devices media storage in order to upload a profile image
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE ) == PackageManager.PERMISSION_GRANTED) {
-                showImageChooser()
+                Constants.showImageChooser(this)
             } else {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                    READ_STORAGE_PERMISSION_CODE)
+                    Constants.READ_STORAGE_PERMISSION_CODE)
             }
         }
 
+        //The user will be able to click on the update button
         binding?.btnUpdate?.setOnClickListener{
+            //the program will check if the this mSelectedImageFileUri variable is not null before uploading user image
             if (mSelectedImageFileUri != null) {
                 uploadUserImage()
             } else {
-
                 showProgressDialog(resources.getString(R.string.please_wait))
 
                 updateUserProfileData()
@@ -80,16 +79,10 @@ class MyProfileActivity : BaseActivity() {
         }
     }
 
-    //allows app to open the users media storage
-    private fun showImageChooser (){
-        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST_CODE)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
+        if (resultCode == Activity.RESULT_OK && requestCode == Constants.PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
             mSelectedImageFileUri = data.data
 
             try {
@@ -115,9 +108,9 @@ class MyProfileActivity : BaseActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == READ_STORAGE_PERMISSION_CODE) {
+        if (requestCode == Constants.READ_STORAGE_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-               showImageChooser()
+              Constants.showImageChooser(this)
             }
         } else {
             Toast.makeText(this,"You just denied access permission to storage. You can allow it in the settings", Toast.LENGTH_LONG).show()
@@ -148,7 +141,6 @@ class MyProfileActivity : BaseActivity() {
     fun getDateString(time: Long) : String = simpleDateFormat.format(time*1000)
 
     fun setUserDataInUI(user: User) {
-
         mUserDetails = user
 
         binding?.let {
@@ -185,7 +177,7 @@ class MyProfileActivity : BaseActivity() {
 
         if(mSelectedImageFileUri != null){
             val sref : StorageReference = FirebaseStorage.getInstance().reference.child("USER_IMAGE" +
-                    System.currentTimeMillis() + "." + getFileExtension(mSelectedImageFileUri))
+                    System.currentTimeMillis() + "." + Constants.getFileExtension(this, mSelectedImageFileUri))
 
             sref.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
                 taskSnapshot ->
@@ -239,9 +231,7 @@ class MyProfileActivity : BaseActivity() {
         }
     }
 
-    private fun getFileExtension(uri : Uri?): String? {
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri!!))
-    }
+
 
     fun profileUpdateSuccess() {
         hideProgressDialog()

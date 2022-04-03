@@ -6,13 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
-import androidx.recyclerview.widget.DividerItemDecoration
-import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityLatestMessagesBinding
 import com.example.studentpal.messages.NewMessageActivity.Companion.USER_KEY
+import com.example.studentpal.models.ChatMessage
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -23,7 +21,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.Item
 
 //kotlinMessenger code
 class LatestMessagesActivity : BaseActivity() {

@@ -73,6 +73,7 @@
     <string name="date_joined">Joined:</string>
     <string name="update_profile_card">You can modify your Profile card by updating your details below</string>
     <string name="search">Search</string>
+    <string name="image_contentDescription">Select an image to be displayed as the board image</string>
 
 
 </resources>

@@ -3,10 +3,8 @@ package com.example.studentpal.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
-import com.example.studentpal.activities.MainActivity
-import com.example.studentpal.activities.MyProfileActivity
-import com.example.studentpal.activities.SignInActivity
-import com.example.studentpal.activities.SignUpActivity
+import com.example.studentpal.activities.*
+import com.example.studentpal.models.Board
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -38,6 +36,11 @@ class FirestoreClass {
 
     }
 
+
+    /**
+     * This public function retrieves the Firestore document of the current user by using getCurrentUserId().get()
+     * It loads the document information into the activity
+     */
     fun loadUserData(activity: Activity) {
         mFireStore.collection(Constants.USERS)
             // The document id to get the Fields of user.
@@ -81,12 +84,18 @@ class FirestoreClass {
             }
     }
 
-
+    /**
+     * This method registers a new user into the cloud Firestore
+     * A Users collection is created, which generates a single document for each registered user
+     * The users document data is filled using the userInfo parameter
+     * Only one user document per registered will be permitted
+     */
     fun registerUser(activity: SignUpActivity, userInfo: User) {
+        // SetOptions.merge() ensures only one user account is created in Firestore for each User id
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(
             userInfo,
-            SetOptions.merge()
-        ).addOnSuccessListener {
+            SetOptions.merge())
+            .addOnSuccessListener {
             activity.userRegisteredSuccess()
         }.addOnFailureListener {
             Log.e(activity.javaClass.simpleName, "Error registering user")
@@ -102,6 +111,25 @@ class FirestoreClass {
         }
 
         return currentUserID
+    }
+
+    /**
+     * This method creates a new board in cloud Firestore
+     * A boards collection is created, which generates a single document for each board
+     * The board document data is filled using the board parameter
+     */
+    fun createBoard(activity: CreateBoardActivity, board: Board){
+        mFireStore.collection(Constants.BOARDS)
+            .document()
+            .set(board, SetOptions.merge())
+            .addOnSuccessListener {
+                Log.d(activity.javaClass.simpleName, "Board created successfully")
+                Toast.makeText(activity, "Board created successfully", Toast.LENGTH_SHORT).show()
+                activity.boardCreatedSuccessfully()
+            }.addOnFailureListener {
+                Log.e(activity.javaClass.simpleName, "Error while creating board")
+            }
+
     }
 
 

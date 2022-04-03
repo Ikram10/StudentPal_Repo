@@ -20,9 +20,33 @@
         </androidx.appcompat.widget.Toolbar>
 
 
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/main_content"/>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom|end"
+        android:layout_margin= "@dimen/fab_margin">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_create_board"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_round_add_24"
+            android:layout_marginBottom="5dp">
+        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create event"
+            android:layout_gravity="center"
+            android:elevation="10dp"
+            android:textColor="@color/black"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

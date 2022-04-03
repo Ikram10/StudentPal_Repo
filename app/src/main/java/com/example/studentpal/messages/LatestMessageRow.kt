@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
+import com.example.studentpal.models.ChatMessage
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth

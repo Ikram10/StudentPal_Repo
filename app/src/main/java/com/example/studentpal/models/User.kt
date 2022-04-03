@@ -2,9 +2,6 @@ package com.example.studentpal.models
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
 
 // User data class implements the Parcelable interface to allow user objects to be sent across activities with intents
 data class User (

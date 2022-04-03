@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityChatLogBinding
+import com.example.studentpal.models.ChatMessage
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -112,7 +113,7 @@ class ChatLogActivity : BaseActivity() {
     private fun performSendMessage() {
 
         //the text box the allows users to enter a message
-        var text = binding?.editTextChatLog?.text
+        val text = binding?.editTextChatLog?.text
 
         val fromId: String? = FirebaseAuth.getInstance().uid
 

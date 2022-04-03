@@ -29,7 +29,7 @@
     <dimen name="authentication_screen_marginStartEnd">25dp</dimen>
     <dimen name="authentication_screen_card_view_marginTop">30dp</dimen>
     <dimen name="card_view_elevation">10dp</dimen>
-    <dimen name="card_view_corner_radius">10dp</dimen>
+    <dimen name="card_view_corner_radius">15dp</dimen>
     <dimen name="card_view_layout_content_padding">10dp</dimen>
     <dimen name="authentication_screen_til_marginStartEnd">16dp</dimen>
     <dimen name="et_text_size">14sp</dimen>

@@ -14,11 +14,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentPal">
         <activity
-            android:name=".messages.ChatLogActivity"
+            android:name=".activities.CreateBoardActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-            android:parentActivityName=".messages.LatestMessagesActivity"/>
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
+        <activity
+            android:name=".messages.ChatLogActivity"
+            android:exported="false"
+            android:parentActivityName=".messages.LatestMessagesActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity
             android:name=".SearchableActivity"
             android:exported="false">
