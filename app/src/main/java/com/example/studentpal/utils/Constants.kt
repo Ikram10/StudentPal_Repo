@@ -11,15 +11,19 @@ import com.example.studentpal.activities.MyProfileActivity
 
 object Constants {
 
+    //user related Constants
     const val USERS : String = "Users"
-    const val BOARDS: String = "boards"
     const val MESSAGES: String = "Messages"
     const val USER_MESSAGES: String = "User-Messages"
     const val IMAGE: String = "image"
     const val NAME: String = "name"
     const val STATUS: String = "status"
     const val EMAIL: String = "email"
+
+    //Event related Constants
+    const val BOARDS: String = "boards"
     const val ASSIGNED_TO: String = "assignedTo"
+    const val DOCUMENT_ID : String = "documentId"
 
     const val READ_STORAGE_PERMISSION_CODE = 1
     const val PICK_IMAGE_REQUEST_CODE = 2

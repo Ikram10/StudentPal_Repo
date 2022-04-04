@@ -83,7 +83,7 @@ class CreateBoardActivity : BaseActivity() {
             binding?.etBoardName?.text.toString(),
             mBoardImageUrl,
             mUserName,
-            assignedUsersArrayList
+            assignedUsersArrayList,
         )
 
         //this function handles the creation of the board in cloud Firestore
@@ -131,6 +131,7 @@ class CreateBoardActivity : BaseActivity() {
     //this function is called if the board is created and stored successfully in Firestore
     fun boardCreatedSuccessfully() {
         hideProgressDialog()
+        setResult(Activity.RESULT_OK)
         finish()
     }
 

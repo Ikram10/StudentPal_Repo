@@ -16,6 +16,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.MaterialComponents.ActionBar">
         <item name="colorControlNormal">@color/black</item>
         <item name="actionBarStyle" >@drawable/ic_round_arrow_back_24</item>

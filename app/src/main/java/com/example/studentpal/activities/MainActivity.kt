@@ -34,10 +34,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var builder: AlertDialog.Builder
     private var db : FirebaseFirestore? = null
     private var mainRecyclerView : RecyclerView? = null
-    private var mainTextView : TextView? = null
+    private var eventTextView : TextView? = null
 
     companion object {
         const val MY_PROFILE_REQUEST_CODE: Int = 11
+        const val CREATE_BOARD_REQUEST_CODE: Int = 12
     }
 
     private lateinit var mUserName: String
@@ -52,7 +53,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setupActionBar()
 
         mainRecyclerView = binding?.appBarMain?.root?.findViewById(R.id.rv_boards_list)
-        mainTextView = binding?.appBarMain?.root?.findViewById(R.id.tv_no_boards_available)
+        eventTextView = binding?.appBarMain?.root?.findViewById(R.id.tv_events)
 
         binding?.navView?.setNavigationItemSelectedListener(this)
 
@@ -70,7 +71,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                which can be retrieved using the name key
              */
             intent.putExtra(Constants.NAME, mUserName)
-            startActivity(intent)
+            //handles updates to the main activity events when a new event is created
+            startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
         }
     }
 
@@ -82,20 +84,28 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
          * and set the no events textview to gone
          */
         if (boardsList.size > 0){
-            mainTextView?.text = ""
-            mainTextView?.visibility  = View.GONE
-            mainRecyclerView?.visibility = View.VISIBLE
-
-
-
+            eventTextView?.text = "All Events"
             mainRecyclerView?.layoutManager = LinearLayoutManager(this)
             mainRecyclerView?.setHasFixedSize(true)
 
             val adapter = BoardItemsAdapter(this, boardsList )
             mainRecyclerView?.adapter = adapter
+
+            //handles the functionality when an event card is selected
+            adapter.setOnClickListener(object: BoardItemsAdapter.OnClickListener {
+                // when an event card is selected this method will be triggered
+                override fun onClick(position: Int, model: Board) {
+                    //sends the user to the Event Information screen
+                    val intent = Intent(this@MainActivity, EventInfoActivity::class.java)
+                    //passes the selected event card's document id to the Event info activity
+                    intent.putExtra(Constants.DOCUMENT_ID, model.documentID)
+                    startActivity(intent)
+                }
+            })
         } else
-            mainRecyclerView?.visibility  = View.GONE
-            mainTextView?.visibility  = View.VISIBLE
+            //if no events are listed "No Event" will be displayed
+            eventTextView?.text = "No Events"
+
     }
 
 
@@ -104,7 +114,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
             FirestoreClass().loadUserData(this)
-        } else {
+        }
+        //Updates the main activity when a new event is created
+        else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_BOARD_REQUEST_CODE) {
+            FirestoreClass().getBoardsList(this)
+
+        }
+        else {
             Log.e("Cancelled", "Cancelled")
         }
     }

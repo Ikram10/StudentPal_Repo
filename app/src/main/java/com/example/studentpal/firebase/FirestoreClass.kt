@@ -10,7 +10,6 @@ import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import java.lang.StringBuilder
 
 class FirestoreClass {
 
@@ -29,7 +28,8 @@ class FirestoreClass {
 
                 Log.e(
                     activity.javaClass.simpleName,
-                    "Error while creating a board.", it)
+                    "Error while creating a board.", it
+                )
 
                 Toast.makeText(activity, "Error updating profile", Toast.LENGTH_LONG).show()
             }
@@ -95,12 +95,13 @@ class FirestoreClass {
         // SetOptions.merge() ensures only one user account is created in Firestore for each User id
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(
             userInfo,
-            SetOptions.merge())
+            SetOptions.merge()
+        )
             .addOnSuccessListener {
-            activity.userRegisteredSuccess()
-        }.addOnFailureListener {
-            Log.e(activity.javaClass.simpleName, "Error registering user")
-        }
+                activity.userRegisteredSuccess()
+            }.addOnFailureListener {
+                Log.e(activity.javaClass.simpleName, "Error registering user")
+            }
     }
 
     fun getCurrentUserId(): String {
@@ -113,6 +114,7 @@ class FirestoreClass {
 
         return currentUserID
     }
+
     /**
      * ******************************************************************** EVENTS FIRESTORE FUNCTIONS ***************************************************************************************
      */
@@ -150,7 +152,7 @@ class FirestoreClass {
      * A boards collection is created, which generates a single document for each board
      * The board document data is filled using the board parameter
      */
-    fun createBoard(activity: CreateBoardActivity, board: Board){
+    fun createBoard(activity: CreateBoardActivity, board: Board) {
         mFireStore.collection(Constants.BOARDS)
             .document()
             .set(board, SetOptions.merge())
@@ -163,6 +165,22 @@ class FirestoreClass {
             }
 
     }
+
+    //retrieves the board in Firestore by querying its Document id
+    fun getBoardDetails(activity: EventInfoActivity, boardDocumentId: String) {
+        mFireStore.collection(Constants.BOARDS)
+            .document(boardDocumentId)
+            .get()
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName, it.toString())
+                //converts the queried board document to a Board object and passes it to the boardDetails()
+                activity.boardDetails(it.toObject(Board::class.java)!!)
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "error while getting events list")
+            }
+    }
+
 
 
 }

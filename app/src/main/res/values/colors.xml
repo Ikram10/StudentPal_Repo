@@ -21,6 +21,12 @@
     <color name="unavailable">#C90A0A</color>
     <color name="divider_color">#EAEAEA</color>
 
+    <!--Event card colors -->
+    <color name="light_orange">#F2A48B</color>
+    <color name="light_blue">#A2D4EB</color>
+    <color name="light_green">#B4F2B6</color>
+    <color name="light_purple">#C8AFF4</color>
+    <color name="light_yellow">#F4EEBA</color>
 
 
 </resources>

@@ -12,32 +12,64 @@
     android:background="@color/bg_color"
     android:id="@+id/ll_board_list">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cv_boards_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:cardBackgroundColor="@color/white"
-        android:elevation="@dimen/card_view_elevation"
-        android:visibility="visible"
-        app:cardCornerRadius="@dimen/card_view_corner_radius">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/linearLayoutCompat2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/hello"
+                            android:textColor="#0980D0"
+                            android:textSize="20sp" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_events"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="@string/all_events"
+                            android:textColor="#0980D0"
+                            android:textSize="30sp"
+                            android:textStyle="bold" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="bottom|end"
+                    android:src="@drawable/student_icon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.917"
+                    app:layout_constraintStart_toEndOf="@+id/linearLayoutCompat2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.491">
+
+                </ImageView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_boards_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_no_boards_available"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_events_are_available"
-            android:layout_gravity="center"
-            android:textColor="@color/secondary_text_color"
-            android:textSize="@dimen/no_boards_available_text_size"/>
-
-
-    </androidx.cardview.widget.CardView>
+            android:visibility="visible"
+           />
 
 
 

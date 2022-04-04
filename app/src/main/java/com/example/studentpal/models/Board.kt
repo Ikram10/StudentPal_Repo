@@ -1,8 +1,11 @@
 package com.example.studentpal.models
 
+import android.graphics.Color
 import android.os.Parcel
 import android.os.Parcelable
+import com.example.studentpal.R
 import com.google.android.gms.common.internal.safeparcel.SafeParcelWriter.writeStringList
+import com.google.android.gms.tasks.Task
 
 /**
  * The board data class will hold all the information about the board
@@ -18,7 +21,9 @@ data class Board (
     //list of users the board is assigned to
     val assignedTo: ArrayList<String> = ArrayList(),
     var documentID: String = "",
-    val dateCreated: String = ""
+    var dateCreated: Long = 0,
+    var eventDescription: String = "",
+    var eventTaskList: ArrayList<EventTask> = ArrayList()
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -27,7 +32,9 @@ data class Board (
         parcel.readString()!!,
         parcel.createStringArrayList()!!,
         parcel.readString()!!,
-        parcel.readString()!!
+        parcel.readLong(),
+        parcel.readString()!!,
+        parcel.createTypedArrayList(EventTask.CREATOR)!!
     )
     {
     }
@@ -38,7 +45,10 @@ data class Board (
         parcel.writeString(createBy)
         parcel.writeStringList(assignedTo)
         parcel.writeString(documentID)
-        parcel.writeString(dateCreated)
+        parcel.writeLong(dateCreated)
+        parcel.writeString(eventDescription)
+        parcel.writeTypedList(eventTaskList)
+
     }
 
     override fun describeContents(): Int {
@@ -46,6 +56,7 @@ data class Board (
     }
 
     companion object CREATOR : Parcelable.Creator<Board> {
+
         override fun createFromParcel(parcel: Parcel): Board {
             return Board(parcel)
         }

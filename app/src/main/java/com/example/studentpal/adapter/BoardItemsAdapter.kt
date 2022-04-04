@@ -10,7 +10,8 @@ import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.models.Board
 
-open class BoardItemsAdapter (private val context: Context, private var list: ArrayList<Board>): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+open class BoardItemsAdapter (private val context: Context, private var list: ArrayList<Board>):
+    RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     private var onClickListener: OnClickListener? = null
 
@@ -52,6 +53,11 @@ open class BoardItemsAdapter (private val context: Context, private var list: Ar
         fun onClick(position: Int, model: Board)
     }
 
+    //on click listener when event cards are clicked
+    fun setOnClickListener(onClickListener: OnClickListener){
+        this.onClickListener = onClickListener
+
+    }
 
 
     override fun getItemCount(): Int {
@@ -59,4 +65,5 @@ open class BoardItemsAdapter (private val context: Context, private var list: Ar
     }
 
     private class MyViewHolder(view: View): RecyclerView.ViewHolder(view)
+
 }
