@@ -147,6 +147,7 @@ class FirestoreClass {
             }
     }
 
+
     /*
      * This method creates a new board in cloud Firestore
      * A boards collection is created, which generates a single document for each board

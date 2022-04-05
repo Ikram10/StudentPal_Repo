@@ -30,6 +30,7 @@ class EventInfoActivity : BaseActivity() {
         hideProgressDialog()
         //called here so we can access the board information and set the Event name as the title
         setupActionBar(board.name)
+
     }
 
     private fun setupActionBar(title: String) {

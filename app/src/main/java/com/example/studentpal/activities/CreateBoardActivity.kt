@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivityCreateBoardBinding
@@ -29,10 +30,13 @@ class CreateBoardActivity : BaseActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityCreateBoardBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
         setupActionBar()
+
+
 
         //retrieves the intent extra by using the name key
         if (intent.hasExtra(Constants.NAME)) {
@@ -78,12 +82,13 @@ class CreateBoardActivity : BaseActivity() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(getCurrentUserID())
 
-        //board information that will be stored in firestore
+        //board information that will be stored in Firestore
         val board = Board(
             binding?.etBoardName?.text.toString(),
             mBoardImageUrl,
             mUserName,
             assignedUsersArrayList,
+            creatorID = getCurrentUserID()
         )
 
         //this function handles the creation of the board in cloud Firestore

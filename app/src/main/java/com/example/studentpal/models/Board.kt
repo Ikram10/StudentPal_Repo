@@ -16,14 +16,12 @@ import com.google.android.gms.tasks.Task
 data class Board (
     val name: String = "",
     val image: String = "",
-    // name of the user who created the board
-    val createBy: String = "",
-    //list of users the board is assigned to
-    val assignedTo: ArrayList<String> = ArrayList(),
+    val createBy: String = "", // name of the user who created the board
+    val assignedTo: ArrayList<String> = ArrayList(), //list of users the board is assigned to
     var documentID: String = "",
     var dateCreated: Long = 0,
     var eventDescription: String = "",
-    var eventTaskList: ArrayList<EventTask> = ArrayList()
+    var creatorID: String = ""
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -34,7 +32,7 @@ data class Board (
         parcel.readString()!!,
         parcel.readLong(),
         parcel.readString()!!,
-        parcel.createTypedArrayList(EventTask.CREATOR)!!
+        parcel.readString()!!
     )
     {
     }
@@ -47,7 +45,7 @@ data class Board (
         parcel.writeString(documentID)
         parcel.writeLong(dateCreated)
         parcel.writeString(eventDescription)
-        parcel.writeTypedList(eventTaskList)
+        parcel.writeString(creatorID)
 
     }
 

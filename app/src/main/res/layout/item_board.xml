@@ -13,7 +13,7 @@
         app:cardCornerRadius="15dp"
         app:cardElevation="@dimen/card_view_corner_radius"
         app:cardUseCompatPadding="true">
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -24,55 +24,87 @@
                 android:id="@+id/iv_board_image"
                 android:layout_width="@dimen/item_board_image_size"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/image_contentDescription"
                 android:src="@drawable/ic_board_place_holder"
                 app:civ_border_color="@color/primary_text_color"
-                app:civ_border_width="@dimen/item_board_image_circular_border_width" />
+                app:civ_border_width="@dimen/item_board_image_circular_border_width"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
+                android:id="@+id/linearLayoutCompat3"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/item_board_name_layout_marginStart"
-                android:orientation="vertical"
                 android:layout_gravity="center"
-                android:layout_margin="8dp">
+                android:layout_margin="8dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/iv_board_image"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/tv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:textColor="@color/primary_text_color"
                     android:textSize="@dimen/item_board_name_text_size"
-                    android:layout_marginStart="2dp"
                     tools:text="Event Title" />
 
                 <TextView
                     android:id="@+id/tv_created_by"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:textColor="@color/secondary_text_color"
                     android:textSize="@dimen/item_board_created_by_text_size"
-                    android:layout_marginStart="2dp"
-                    tools:text="Created By"
-                    />
+                    tools:text="Created By" />
+
                 <TextView
                     android:id="@+id/tv_event_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:textColor="@color/secondary_text_color"
                     android:textSize="@dimen/item_board_created_by_text_size"
-                    android:layout_marginStart="2dp"
-                    tools:text="Event Date"
-                    />
-
-
-
+                    tools:text="Event Date" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.902"
+                app:layout_constraintStart_toEndOf="@+id/linearLayoutCompat3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.516">
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/ib_edit_event"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_round_edit_24"
+                    android:layout_marginBottom="10dp"
+                    android:padding="10dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/ib_delete_event"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_round_delete_24"
+                    android:padding="10dp"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.cardview.widget.CardView>

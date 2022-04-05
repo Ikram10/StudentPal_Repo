@@ -7,11 +7,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.adapter.BoardItemsAdapter
@@ -27,7 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import de.hdodenhof.circleimageview.CircleImageView
 
-class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener{
 
     private var binding: ActivityMainBinding? = null
     private var drawer: DrawerLayout? = null
@@ -35,6 +38,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private var db : FirebaseFirestore? = null
     private var mainRecyclerView : RecyclerView? = null
     private var eventTextView : TextView? = null
+    private lateinit var refreshLayout : SwipeRefreshLayout
 
     companion object {
         const val MY_PROFILE_REQUEST_CODE: Int = 11
@@ -63,7 +67,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         FirestoreClass().loadUserData(this, true)
 
         //create board action button can be clicked
-        binding?.appBarMain?.fabCreateBoard?.setOnClickListener{
+        binding?.appBarMain?.fabCreateBoard?.setOnClickListener {
             //creates an intent that sends user to the Create board activity
             val intent = Intent(this, CreateBoardActivity::class.java)
 
@@ -74,6 +78,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             //handles updates to the main activity events when a new event is created
             startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
         }
+        
+
+        refreshLayout = binding?.appBarMain?.root?.findViewById(R.id.refresh_view_main)!!
+        refreshLayout.setOnRefreshListener { updateMainUI() }
+
+
     }
 
     //method handles the displaying of event items in the main activity UI
@@ -90,6 +100,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             val adapter = BoardItemsAdapter(this, boardsList )
             mainRecyclerView?.adapter = adapter
+
 
             //handles the functionality when an event card is selected
             adapter.setOnClickListener(object: BoardItemsAdapter.OnClickListener {
@@ -246,4 +257,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         }
     }
+    
+    //Method responsible for refreshing the Main activity when an event item has been deleted/edited
+    private fun updateMainUI () {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
+        refreshLayout.isRefreshing = false
+    }
+
 }

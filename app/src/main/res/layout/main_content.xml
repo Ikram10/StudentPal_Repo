@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/refresh_view_main"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="@dimen/general_padding"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:background="@color/bg_color"
-    android:id="@+id/ll_board_list">
+    >
+    <androidx.appcompat.widget.LinearLayoutCompat
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/ll_board_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_color"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/general_padding"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".activities.MainActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -18,59 +27,56 @@
             android:orientation="horizontal"
             android:padding="2dp">
 
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/linearLayoutCompat2"
-                    android:layout_width="wrap_content"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearLayoutCompat2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="10dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/hello"
+                    android:textColor="#0980D0"
+                    android:textSize="20sp" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/hello"
-                            android:textColor="#0980D0"
-                            android:textSize="20sp" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_events"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0980D0"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:text="@string/all_events" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_events"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            tools:text="@string/all_events"
-                            android:textColor="#0980D0"
-                            android:textSize="30sp"
-                            android:textStyle="bold" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/student_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.917"
+                app:layout_constraintStart_toEndOf="@+id/linearLayoutCompat2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.491">
 
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="bottom|end"
-                    android:src="@drawable/student_icon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.917"
-                    app:layout_constraintStart_toEndOf="@+id/linearLayoutCompat2"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.491">
-
-                </ImageView>
+            </ImageView>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_boards_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible"
-           />
+            android:layout_height="match_parent" />
 
 
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

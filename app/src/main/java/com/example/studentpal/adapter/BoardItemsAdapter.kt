@@ -1,14 +1,22 @@
 package com.example.studentpal.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.models.Board
+import com.example.studentpal.utils.Constants
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 open class BoardItemsAdapter (private val context: Context, private var list: ArrayList<Board>):
     RecyclerView.Adapter<RecyclerView.ViewHolder>(){
@@ -38,13 +46,43 @@ open class BoardItemsAdapter (private val context: Context, private var list: Ar
         holder.itemView.findViewById<TextView>(R.id.tv_created_by).text = "Created by: ${model.createBy}"
 
         //handles the functionality when an event item is selected
-        holder.itemView.setOnClickListener{
-
+        holder.itemView.setOnClickListener {
             if (onClickListener != null) {
                 onClickListener!!.onClick(position, model)
             }
         }
-    }
+
+        //handles functionality for deleting an event
+        holder.itemView.findViewById<AppCompatImageButton>(R.id.ib_delete_event).setOnClickListener {
+
+            val builder = AlertDialog.Builder(context)
+            //The event can only be deleted by the event creator
+            if (model.creatorID == FirebaseAuth.getInstance().currentUser!!.uid) {
+                builder.setTitle("Alert")
+                    .setMessage("Do you want to delete Event?")
+                    .setCancelable(true)
+                    .setPositiveButton("Yes") { _, _ ->
+                        val db = FirebaseFirestore.getInstance()
+                        db.collection(Constants.BOARDS).document(model.documentID).delete().addOnSuccessListener {
+                            Log.d("FirestoreDelete", "Event deleted from FireStore.")
+                            Toast.makeText(context, "Event deleted successfully", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    .setNegativeButton("No") { DialogInterface, _ ->
+                        DialogInterface.cancel()
+                    }
+                    .show()
+            } else {
+                builder.setTitle("Alert")
+                    .setMessage("Only the event creator has permission to delete the event")
+                    .setCancelable(true)
+            }
+
+            }
+
+        }
+
+
 
     interface OnClickListener {
         /* onClick function takes a position where a click was recieved

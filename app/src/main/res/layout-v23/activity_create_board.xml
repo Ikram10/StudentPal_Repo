@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".activities.CreateBoardActivity"
-    android:background="@color/bg_color">
-
-    <com.google.android.material.appbar.AppBarLayout
+    android:fillViewport="true">
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@color/bg_color"
+        android:orientation="vertical"
+        tools:context=".activities.CreateBoardActivity">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_create_board_activity"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/logo_text_color"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_create_board_activity"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/logo_text_color"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -35,35 +40,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:elevation="@dimen/card_view_elevation"
-                app:cardCornerRadius="@dimen/card_view_corner_radius"
                 app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/card_view_corner_radius"
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:orientation="vertical"
-                android:padding="@dimen/card_view_layout_content_padding">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_view_layout_content_padding">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/iv_board_image"
-                    android:layout_width="@dimen/board_image_size"
-                    android:layout_height="@dimen/board_image_size"
-                    android:layout_marginTop="6dp"
-                    android:contentDescription="@string/image_contentDescription"
-                    android:src="@drawable/ic_board_place_holder"
-                    android:layout_gravity="center"/>
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/iv_board_image"
+                        android:layout_width="@dimen/board_image_size"
+                        android:layout_height="@dimen/board_image_size"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="6dp"
+                        android:contentDescription="@string/image_contentDescription"
+                        android:src="@drawable/ic_board_place_holder" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_board_name"
                         style="@style/TextInputLayoutTheme"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/create_board_til_marginTop"
-                        android:gravity="center_vertical"
                         android:layout_marginStart="@dimen/btn_marginStartEnd"
-                        android:layout_marginEnd="@dimen/btn_marginStartEnd">
+                        android:layout_marginTop="@dimen/create_board_til_marginTop"
+                        android:layout_marginEnd="@dimen/btn_marginStartEnd"
+                        android:gravity="center_vertical">
 
                         <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/et_board_name"
@@ -79,17 +84,17 @@
                             android:textSize="@dimen/et_text_size" />
 
 
-
                     </com.google.android.material.textfield.TextInputLayout>
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_event_description"
                         style="@style/TextInputLayoutTheme"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:gravity="center_vertical"
                         android:layout_marginStart="@dimen/btn_marginStartEnd"
-                        android:layout_marginEnd="@dimen/btn_marginStartEnd">
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="@dimen/btn_marginStartEnd"
+                        android:gravity="center_vertical">
 
                         <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/et_event_description"
@@ -104,15 +109,16 @@
                             android:textColor="@color/black"
                             android:textSize="@dimen/et_text_size" />
                     </com.google.android.material.textfield.TextInputLayout>
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_event_date"
                         style="@style/TextInputLayoutTheme"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:gravity="center_vertical"
                         android:layout_marginStart="@dimen/btn_marginStartEnd"
-                        android:layout_marginEnd="@dimen/btn_marginStartEnd">
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="@dimen/btn_marginStartEnd"
+                        android:gravity="center_vertical">
 
                         <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/et_event_date"
@@ -127,6 +133,56 @@
                             android:textColor="@color/black"
                             android:textSize="@dimen/et_text_size" />
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_event_time"
+                        style="@style/TextInputLayoutTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/btn_marginStartEnd"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="@dimen/btn_marginStartEnd"
+                        android:gravity="center_vertical">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/et_event_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/bg_color"
+                            android:drawableLeft="@drawable/ic_round_calendar_month_24"
+                            android:drawablePadding="10dp"
+                            android:gravity="center_vertical"
+                            android:hint="@string/event_time"
+                            android:inputType="text"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/et_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_event_location"
+                        style="@style/TextInputLayoutTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/btn_marginStartEnd"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="@dimen/btn_marginStartEnd"
+                        android:gravity="center_vertical">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/et_event_location"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/bg_color"
+                            android:drawableLeft="@drawable/ic_round_calendar_month_24"
+                            android:drawablePadding="10dp"
+                            android:gravity="center_vertical"
+                            android:hint="@string/event_location"
+                            android:inputType="text"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/et_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
 
 
                     <androidx.appcompat.widget.AppCompatButton
@@ -147,11 +203,11 @@
                         android:textSize="@dimen/btn_text_size" />
 
 
-
-            </LinearLayout>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</ScrollView>

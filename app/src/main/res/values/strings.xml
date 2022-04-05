@@ -78,6 +78,10 @@
     <string name="event_description">Event Description</string>
     <string name="all_events">All Events</string>
     <string name="hello">Hello</string>
+    <string name="add_task">Add Task</string>
+    <string name="list_name">List Name</string>
+    <string name="event_time">Event Time</string>
+    <string name="event_location">Event Location</string>
 
 
 </resources>
