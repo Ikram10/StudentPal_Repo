@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.studentpal.R
 import com.example.studentpal.firebase.FirestoreClass
+import com.google.firebase.auth.FirebaseAuth
 
 
 @SuppressLint("CustomSplashScreen")
@@ -33,12 +34,16 @@ class SplashActivity : AppCompatActivity() {
          */
         Handler().postDelayed({
 
-            var currentUserID = FirestoreClass().getCurrentUserId()
+            val currentUserID = FirestoreClass().getCurrentUserId()
+            val fUser = FirebaseAuth.getInstance().currentUser
 
-            if (currentUserID.isNotEmpty()){
-                startActivity(Intent(this, MainActivity::class.java))
-            } else {
-                startActivity(Intent(this, IntroActivity::class.java))
+            if (fUser != null) {
+                //checks is email is verified before sending user to the main activity
+                if (currentUserID.isNotEmpty() && fUser.isEmailVerified){
+                    startActivity(Intent(this, MainActivity::class.java))
+                } else {
+                    startActivity(Intent(this, IntroActivity::class.java))
+                }
             }
             finish() }, 2000)
 

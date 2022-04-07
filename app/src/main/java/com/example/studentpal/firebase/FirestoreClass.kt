@@ -38,7 +38,7 @@ class FirestoreClass {
 
 
     /**
-     * This public function retrieves the Firestore document of the current user by using getCurrentUserId().get()
+     * This function retrieves the Firestore document of the current user by using getCurrentUserId().get()
      * It loads the document information into the activity
      * readBoardsList will only read and load the events for the current user stored in Firestore if the boolean is true
      */

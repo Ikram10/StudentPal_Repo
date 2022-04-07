@@ -50,8 +50,10 @@ class SignInActivity : BaseActivity() {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("Sign in", "signInWithEmail: success ")
                             startActivity(Intent(this, MainActivity::class.java))
+                            finish()
                         } else {
                             Toast.makeText(this, "Email is not verified, check email", Toast.LENGTH_LONG ).show()
+                            user.sendEmailVerification()
                         }
 
                     } else {
@@ -96,8 +98,14 @@ class SignInActivity : BaseActivity() {
 
     fun signInSuccess (user : User){
         hideProgressDialog()
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+        if (auth.currentUser?.isEmailVerified == true){
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+        else {
+            Toast.makeText(this, "${user.email} is not verified, please check email", Toast.LENGTH_LONG).show()
+        }
+
     }
 
 }
