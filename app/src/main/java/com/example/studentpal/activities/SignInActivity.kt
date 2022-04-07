@@ -42,16 +42,21 @@ class SignInActivity : BaseActivity() {
         if (validateForm(email, password)){
             showProgressDialog(resources.getString(R.string.please_wait))
             auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) { task ->
+                .addOnCompleteListener(this) {
                     hideProgressDialog()
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d("Sign in", "signInWithEmail: success ")
+                    if (it.isSuccessful) {
                         val user = auth.currentUser
-                        startActivity(Intent(this, MainActivity::class.java))
+                        if (user!!.isEmailVerified){
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("Sign in", "signInWithEmail: success ")
+                            startActivity(Intent(this, MainActivity::class.java))
+                        } else {
+                            Toast.makeText(this, "Email is not verified, check email", Toast.LENGTH_LONG ).show()
+                        }
+
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w("Sign in", "signInWithEmail:failure", task.exception)
+                        Log.w("Sign in", "signInWithEmail:failure", it.exception)
                         Toast.makeText(baseContext, "Authentication failed.",
                             Toast.LENGTH_LONG).show()
 

@@ -14,11 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentPal">
         <activity
+            android:name=".activities.VerifyEmailActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.EventInfoActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-            />
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity
             android:name=".activities.CreateBoardActivity"
             android:exported="false"
@@ -39,9 +41,7 @@
 
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable">
-
-            </meta-data>
+                android:resource="@xml/searchable"></meta-data>
         </activity>
         <activity
             android:name=".messages.LatestMessagesActivity"

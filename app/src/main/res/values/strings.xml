@@ -82,6 +82,8 @@
     <string name="list_name">List Name</string>
     <string name="event_time">Event Time</string>
     <string name="event_location">Event Location</string>
+    <string name="please_verify_email">Please Verify Email</string>
+    <string name="verify_email">Verify Email</string>
 
 
 </resources>
