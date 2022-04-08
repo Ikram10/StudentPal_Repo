@@ -1,9 +1,7 @@
 package com.example.studentpal.activities
 
 
-import android.content.ContentValues
 import android.content.Intent
-import android.nfc.Tag
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -12,12 +10,9 @@ import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivitySignUpBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.User
-import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.actionCodeSettings
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 
 
@@ -89,14 +84,8 @@ class SignUpActivity : BaseActivity() {
                         val dateJoined = getCurrentDate()
                         //User object constructed to be stored in Firestore
                         val user = User(firebaseUser.uid, name, registeredEmail, dateJoined)
-
-                        firebaseUser.sendEmailVerification().addOnSuccessListener {
-                            Toast.makeText(this, "Email verification link sent to ${firebaseUser.email}", Toast.LENGTH_LONG).show()
-                            FirestoreClass().registerUser(this, user)
-                        }.addOnFailureListener{
-                            Log.e(javaClass.simpleName,"error sending verification link")
-                            Toast.makeText(this, "Could not send email verification link", Toast.LENGTH_LONG).show()
-                        }
+                        //Verification email will be sent to the sign up email
+                        sendVerificationEmail(firebaseUser, user)
                     } else {
                         //if a user with the same credentials already exists, registration will fail
                         Toast.makeText(this, "Registration failed", Toast.LENGTH_LONG).show()
@@ -104,6 +93,20 @@ class SignUpActivity : BaseActivity() {
                 }
         }
     }
+
+    //method responsible for sending verification email to the FirebaseUser trying to log in
+    private fun sendVerificationEmail(fUser: FirebaseUser, user : User) {
+        fUser.sendEmailVerification().addOnSuccessListener {
+            Toast.makeText(this, "Email verification link sent to ${fUser.email}", Toast.LENGTH_LONG).show()
+            //creates a document in Firestore populating the fields with user details
+            FirestoreClass().registerUser(this, user)
+        }.addOnFailureListener{
+            Log.e(javaClass.simpleName,"error sending verification link")
+            Toast.makeText(this, "Could not send email verification link", Toast.LENGTH_LONG).show()
+        }
+
+    }
+
 
     //activates the back button and implements its functionality
     private fun setupActionBar() {

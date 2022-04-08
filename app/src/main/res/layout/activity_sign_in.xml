@@ -106,6 +106,16 @@
                     </androidx.appcompat.widget.AppCompatEditText>
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/btn_forgot_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="14dp"
+                    android:padding="6dp"
+                    android:text="@string/forgot_your_password"
+                    android:textColor="@color/logo_text_color" />
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_sign_in"
                     android:layout_width="match_parent"

@@ -22,7 +22,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <!-- Sign Up Activity -->
-    <dimen name="sign_up_screen_btn_marginTop">30dp</dimen>
+    <dimen name="sign_up_screen_btn_marginTop">20dp</dimen>
     <dimen name="toolbar_title_text_size">18sp</dimen>
     <dimen name="authentication_screen_content_marginTop">40dp</dimen>
     <dimen name="authentication_description_text_size">18sp</dimen>

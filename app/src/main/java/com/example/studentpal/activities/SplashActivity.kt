@@ -29,7 +29,7 @@ class SplashActivity : AppCompatActivity() {
 
         /**Handler delays the intent to Intro Activity by 2 seconds
          * Handler also handles auto login feature
-         * If user is logged in they will be directed to the main activity, otherwise the Intro activity
+         * If user is logged and has verified email they will be directed to the main activity, otherwise the Intro activity
          where they will be asked to sign in or sign up.
          */
         Handler().postDelayed({
@@ -44,6 +44,8 @@ class SplashActivity : AppCompatActivity() {
                 } else {
                     startActivity(Intent(this, IntroActivity::class.java))
                 }
+            } else {
+                startActivity(Intent(this, IntroActivity::class.java))
             }
             finish() }, 2000)
 

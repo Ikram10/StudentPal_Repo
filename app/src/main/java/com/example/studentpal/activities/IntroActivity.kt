@@ -20,5 +20,9 @@ class IntroActivity : BaseActivity() {
         binding?.btnSignIn?.setOnClickListener{
             startActivity(Intent(this, SignInActivity::class.java))
         }
+
+        binding?.btnForgotPassword?.setOnClickListener {
+            startActivity(Intent(this, PasswordResetActivity::class.java))
+        }
     }
 }

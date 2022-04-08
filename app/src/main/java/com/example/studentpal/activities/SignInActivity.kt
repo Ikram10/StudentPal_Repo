@@ -32,6 +32,10 @@ class SignInActivity : BaseActivity() {
             signInRegisteredUser()
         }
 
+        binding?.btnForgotPassword?.setOnClickListener{
+            startActivity(Intent(this, PasswordResetActivity::class.java))
+        }
+
     }
 
 
