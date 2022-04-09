@@ -209,6 +209,41 @@ class FirestoreClass {
             }
     }
 
+    //retrieves friend details by querying for their email in firestore
+    fun getFriendDetails(activity: FriendsActivity, email: String) {
+        mFireStore.collection(Constants.USERS)
+            .whereEqualTo(Constants.EMAIL, email)
+            .get()
+            .addOnSuccessListener {
+                if (it.documents.size > 0) {
+                    /* Emails are unique
+                     * If an email exists in Firestore there can only be one (one email per user)
+                     */
+                    val user = it.documents[0].toObject(User::class.java)
+                    activity.friendDetails(user!!)
+                } else {
+                    activity.hideProgressDialog()
+                    activity.showErrorSnackBar("No friend found with the entered email")
+                }
+            }
+    }
+
+    fun assignMemberToEvent(activity: FriendsActivity, board: Board, user: User){
+        //hash map of assigned to field in Firestore (Event documents)
+        val assignedToHashMap = HashMap<String, Any>()
+        assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo
+
+        mFireStore.collection(Constants.BOARDS)
+            .document(board.documentID)
+            .update(assignedToHashMap)
+            .addOnSuccessListener {
+                activity.friendAssignedSuccess(user)
+            }.addOnFailureListener{
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while assigning friend")
+            }
+    }
+
 
 
 }

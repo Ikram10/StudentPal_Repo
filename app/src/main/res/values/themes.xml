@@ -19,24 +19,30 @@
 
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.MaterialComponents.ActionBar">
         <item name="colorControlNormal">@color/black</item>
-        <item name="actionBarStyle" >@drawable/ic_round_arrow_back_24</item>
+        <item name="actionBarStyle">@drawable/ic_round_arrow_back_24</item>
     </style>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     app:boxCornerRadiusTopStart="10dp"
     app:boxCornerRadiusBottomEnd="10dp"
     app:boxCornerRadiusBottomStart="10dp"
     app:boxCornerRadiusTopEnd="10dp"
     android:textColorHint="@color/secondary_text_color"
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:windowActionBar">false</item>
 
 
     </style>
+
+    <style name="PopupMenuStyle" parent="Theme.AppCompat.Light">
+        <item name="android:background">@android:color/white</item>
+    </style>
+
     <style name="TextInputLayoutTheme" parent="ThemeOverlay.AppCompat.Light">
         <item name="hintTextColor">@color/logo_text_color</item>
         <item name="boxStrokeColor">@color/logo_text_color</item>
@@ -54,10 +60,8 @@
     </style>
 
     <style name="SearchBar" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="colorPrimaryDark" >@color/logo_text_color</item>
+        <item name="colorPrimaryDark">@color/logo_text_color</item>
     </style>
-
-
 
 
 </resources>

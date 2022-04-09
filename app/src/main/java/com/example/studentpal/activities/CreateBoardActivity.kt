@@ -29,7 +29,6 @@ class CreateBoardActivity : BaseActivity() {
     private var mSelectedImageFileUri: Uri? = null
     private lateinit var mUserName: String
     private var mBoardImageUrl: String = ""
-    private lateinit var mBoardDetails: Board
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -198,20 +197,4 @@ class CreateBoardActivity : BaseActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_friends, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.action_friends -> {
-                //passing the event details to the friends activity
-                val intent = Intent(this, FriendsActivity::class.java)
-                intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
-                startActivity(intent)
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
 }

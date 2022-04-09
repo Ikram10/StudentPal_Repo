@@ -46,6 +46,7 @@ open class BoardItemsAdapter (private val context: Context, private var list: Ar
 
         holder.itemView.findViewById<TextView>(R.id.tv_name).text = model.name
         holder.itemView.findViewById<TextView>(R.id.tv_created_by).text = "Created by: ${model.createBy}"
+        holder.itemView.findViewById<TextView>(R.id.tv_assigned).text = "Assigned: ${model.assignedTo.size} users"
 
         //handles the functionality when an event item is selected
         holder.itemView.setOnClickListener {

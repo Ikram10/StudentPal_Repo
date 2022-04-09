@@ -70,6 +70,14 @@
                     android:textColor="@color/secondary_text_color"
                     android:textSize="@dimen/item_board_created_by_text_size"
                     tools:text="Event Date" />
+                <TextView
+                    android:id="@+id/tv_assigned"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:textColor="@color/secondary_text_color"
+                    android:textSize="@dimen/item_board_created_by_text_size"
+                    tools:text="Assigned: " />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
