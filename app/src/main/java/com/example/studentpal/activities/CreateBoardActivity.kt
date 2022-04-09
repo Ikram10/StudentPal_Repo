@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -27,6 +29,7 @@ class CreateBoardActivity : BaseActivity() {
     private var mSelectedImageFileUri: Uri? = null
     private lateinit var mUserName: String
     private var mBoardImageUrl: String = ""
+    private lateinit var mBoardDetails: Board
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,8 +38,6 @@ class CreateBoardActivity : BaseActivity() {
         binding = ActivityCreateBoardBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
         setupActionBar()
-
-
 
         //retrieves the intent extra by using the name key
         if (intent.hasExtra(Constants.NAME)) {
@@ -195,5 +196,22 @@ class CreateBoardActivity : BaseActivity() {
             ).show()
 
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_friends, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_friends -> {
+                //passing the event details to the friends activity
+                val intent = Intent(this, FriendsActivity::class.java)
+                intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

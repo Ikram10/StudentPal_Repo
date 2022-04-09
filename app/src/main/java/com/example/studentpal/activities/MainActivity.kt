@@ -1,8 +1,10 @@
 package com.example.studentpal.activities
 
+import android.Manifest
 import android.app.Activity
 import androidx.appcompat.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -10,6 +12,8 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +29,9 @@ import com.example.studentpal.models.Board
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.FirebaseAuthKtxRegistrar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -77,6 +84,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             intent.putExtra(Constants.NAME, mUserName)
             //handles updates to the main activity events when a new event is created
             startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
+
         }
         
 

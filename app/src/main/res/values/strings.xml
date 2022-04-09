@@ -40,7 +40,7 @@
     <string name="add_list">Add List</string>
     <string name="members">Members</string>
     <string name="add_member">Add Member</string>
-    <string name="cancel">CANCEL</string>
+    <string name="cancel">Cancel</string>
     <string name="add">ADD</string>
     <string name="search_member">Search Member</string>
     <string name="label_color">Label Color</string>
@@ -55,13 +55,11 @@
     <string name="no">No</string>
     <string name="str_select_label_color">Select Label Color</string>
     <string name="str_select_member">Select Member</string>
-    <string name="default_notification_channel_id">projemanag_notification_channel_id</string>
     <string name="existing_account_text">Already have an account with us? Click here</string>
     <string name="logo_icon">Logo icon</string>
     <string name="profile_image">profile image</string>
     <string name="dialog_message">Are you sure?</string>
     <string name="active_users">Active Users</string>
-    <string name="friends">Friends</string>
     <string name="messages">Messages</string>
     <string name="new_message">New Message</string>
     <string name="profile_name">Profile Name</string>
@@ -86,6 +84,11 @@
     <string name="verify_email">Verify Email</string>
     <string name="send">send</string>
     <string name="forgot_your_password">Forgot your password?</string>
+    <string name="personal">Personal</string>
+    <string name="social">Social</string>
+    <string name="study">Study</string>
+    <string name="friends">Friends</string>
+    <string name="add_friend">Add Friend</string>
 
 
 </resources>

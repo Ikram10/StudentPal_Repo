@@ -31,6 +31,8 @@ class FirestoreClass {
                     "Error while creating a board.", it
                 )
 
+
+
                 Toast.makeText(activity, "Error updating profile", Toast.LENGTH_LONG).show()
             }
 
@@ -43,9 +45,13 @@ class FirestoreClass {
      * readBoardsList will only read and load the events for the current user stored in Firestore if the boolean is true
      */
     fun loadUserData(activity: Activity, readBoardsList: Boolean = false) {
+
+
+        val mFireStore : FirebaseFirestore = FirebaseFirestore.getInstance()
         mFireStore.collection(Constants.USERS)
-            // The document id to get the Fields of user.
+            // The document id is the current user's id
             .document(getCurrentUserId()).get()
+
             .addOnSuccessListener {
                 Log.i(activity.javaClass.simpleName, it.toString())
                 // Here we have received the document snapshot which is converted into the User Data model object.
@@ -119,7 +125,6 @@ class FirestoreClass {
      * ******************************************************************** EVENTS FIRESTORE FUNCTIONS ***************************************************************************************
      */
 
-
     /* This method responsible for retrieving the events list from Firestore
      * A user is assigned an event when they create it or if someone else has assigned them to it,
      * This method gets all the events the user has been assigned to
@@ -179,6 +184,28 @@ class FirestoreClass {
             }.addOnFailureListener {
                 activity.hideProgressDialog()
                 Log.e(activity.javaClass.simpleName, "error while getting events list")
+            }
+    }
+
+    fun getAssignedFriendsListDetails(activity: FriendsActivity, assignedTo: ArrayList<String>){
+        mFireStore.collection(Constants.USERS)
+            .whereIn(Constants.ID, assignedTo)
+            .get()
+            .addOnSuccessListener {
+                Log.e(activity.javaClass.simpleName, it.documents.toString())
+
+                val usersList: ArrayList<User> = ArrayList()
+
+                for (doc in it.documents) {
+
+                    val user = doc.toObject(User::class.java)
+                    usersList.add(user!!)
+                }
+
+                activity.setUpFriendsList(usersList)
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
             }
     }
 

@@ -77,7 +77,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.902"
@@ -87,7 +86,7 @@
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/ib_edit_event"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
                     android:src="@drawable/ic_round_edit_24"
@@ -101,6 +100,15 @@
                     android:background="?attr/selectableItemBackground"
                     android:src="@drawable/ic_round_delete_24"
                     android:padding="10dp"/>
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/assign_friends"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_round_group_add_24"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="10dp"
+                    android:layout_marginStart="3dp"/>
+
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

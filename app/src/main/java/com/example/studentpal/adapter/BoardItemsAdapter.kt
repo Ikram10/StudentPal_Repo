@@ -1,6 +1,7 @@
 package com.example.studentpal.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
+import com.example.studentpal.activities.FriendsActivity
 import com.example.studentpal.models.Board
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -80,7 +82,13 @@ open class BoardItemsAdapter (private val context: Context, private var list: Ar
 
             }
 
+        holder.itemView.findViewById<AppCompatImageButton>(R.id.assign_friends).setOnClickListener {
+            //intent passes this event details to the friends activity
+            val intent = Intent(it.context, FriendsActivity::class.java)
+            intent.putExtra(Constants.BOARD_DETAIL, model)
+            it.context.startActivity(intent)
         }
+    }
 
 
 
