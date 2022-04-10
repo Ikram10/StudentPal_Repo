@@ -14,6 +14,7 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
+import com.example.studentpal.activities.EditEventActivity
 import com.example.studentpal.activities.FriendsActivity
 import com.example.studentpal.models.Board
 import com.example.studentpal.utils.Constants
@@ -48,7 +49,7 @@ open class BoardItemsAdapter (private val context: Context, private var list: Ar
         holder.itemView.findViewById<TextView>(R.id.tv_created_by).text = "Created by: ${model.createBy}"
         holder.itemView.findViewById<TextView>(R.id.tv_assigned).text = "Assigned: ${model.assignedTo.size} users"
 
-        //handles the functionality when an event item is selected
+        //handles the functionality when an event card is selected
         holder.itemView.setOnClickListener {
             if (onClickListener != null) {
                 onClickListener!!.onClick(position, model)
@@ -82,6 +83,14 @@ open class BoardItemsAdapter (private val context: Context, private var list: Ar
             }
 
             }
+
+        //handles navigation to the edit event activity
+        holder.itemView.findViewById<AppCompatImageButton>(R.id.ib_edit_event).setOnClickListener {
+            val intent = Intent(it.context, EditEventActivity::class.java)
+            intent.putExtra(Constants.BOARD_DETAIL, model)
+            it.context.startActivity(intent)
+
+        }
 
         holder.itemView.findViewById<AppCompatImageButton>(R.id.assign_friends).setOnClickListener {
             //intent passes this event details to the friends activity

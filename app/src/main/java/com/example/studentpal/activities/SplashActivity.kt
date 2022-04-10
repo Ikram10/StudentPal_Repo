@@ -2,12 +2,11 @@ package com.example.studentpal.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-
+import android.os.Looper
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -23,23 +22,28 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         //sets size of logo on splashscreen
-        val logoimage: ImageView = findViewById(R.id.logo)
-        logoimage.layoutParams.width = 1000
-        logoimage.layoutParams.height = 1000
+        val logoImage: ImageView = findViewById(R.id.logo)
+        logoImage.layoutParams.width = 1000
+        logoImage.layoutParams.height = 1000
 
         /**Handler delays the intent to Intro Activity by 2 seconds
          * Handler also handles auto login feature
-         * If user is logged and has verified email they will be directed to the main activity, otherwise the Intro activity
-         where they will be asked to sign in or sign up.
+         * If user is logged and has verified email they will be directed to the main activity,
+        otherwise the Intro activity where they will be asked to sign in or sign up.
          */
-        Handler().postDelayed({
+        Handler(Looper.myLooper()!!).postDelayed({
 
             val currentUserID = FirestoreClass().getCurrentUserId()
             val fUser = FirebaseAuth.getInstance().currentUser
 
+            /* Checks if there is a currently signed in User
+             * If not send user to the Intro activity to sign in or sign up
+             */
             if (fUser != null) {
-                //checks is email is verified before sending user to the main activity
-                if (currentUserID.isNotEmpty() && fUser.isEmailVerified){
+                /* checks if there is a current user first
+                 * Then checks if email is verified before sending user to the main activity
+                 */
+                if (currentUserID.isNotEmpty() && fUser.isEmailVerified) {
                     startActivity(Intent(this, MainActivity::class.java))
                 } else {
                     startActivity(Intent(this, IntroActivity::class.java))
@@ -47,11 +51,13 @@ class SplashActivity : AppCompatActivity() {
             } else {
                 startActivity(Intent(this, IntroActivity::class.java))
             }
-            finish() }, 2000)
+            finish()
+        }, 2000)
 
         hideSystemBars()
 
     }
+
     private fun hideSystemBars() {
         val windowInsetsController =
             ViewCompat.getWindowInsetsController(window.decorView) ?: return

@@ -48,6 +48,7 @@ class FriendsActivity : BaseActivity() {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_round_arrow_back_24)
             actionBar.title = "Assign Friends: ${mBoardDetails.name}"
+
         }
         toolbar?.setNavigationOnClickListener {
             onBackPressed()

@@ -46,7 +46,6 @@ class FirestoreClass {
      */
     fun loadUserData(activity: Activity, readBoardsList: Boolean = false) {
 
-
         val mFireStore : FirebaseFirestore = FirebaseFirestore.getInstance()
         mFireStore.collection(Constants.USERS)
             // The document id is the current user's id
@@ -99,15 +98,16 @@ class FirestoreClass {
      */
     fun registerUser(activity: SignUpActivity, userInfo: User) {
         // SetOptions.merge() ensures only one user account is created in Firestore for each User id
-        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(
-            userInfo,
-            SetOptions.merge()
-        )
-            .addOnSuccessListener {
-                activity.userRegisteredSuccess()
-            }.addOnFailureListener {
-                Log.e(activity.javaClass.simpleName, "Error registering user")
-            }
+            mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(
+                userInfo,
+                SetOptions.merge()
+            )
+                .addOnSuccessListener {
+                    activity.userRegisteredSuccess()
+                }.addOnFailureListener {
+                    Log.e(activity.javaClass.simpleName, "Error registering user")
+                }
+
     }
 
     fun getCurrentUserId(): String {

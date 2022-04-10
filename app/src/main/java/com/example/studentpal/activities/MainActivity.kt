@@ -46,13 +46,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private var mainRecyclerView : RecyclerView? = null
     private var eventTextView : TextView? = null
     private lateinit var refreshLayout : SwipeRefreshLayout
+    private lateinit var mUserName: String
+
 
     companion object {
         const val MY_PROFILE_REQUEST_CODE: Int = 11
         const val CREATE_BOARD_REQUEST_CODE: Int = 12
     }
-
-    private lateinit var mUserName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +77,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding?.appBarMain?.fabCreateBoard?.setOnClickListener {
             //creates an intent that sends user to the Create board activity
             val intent = Intent(this, CreateBoardActivity::class.java)
-
             /* sends the users name with an intent via a HashMap format
                which can be retrieved using the name key
              */
@@ -86,7 +85,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
 
         }
-        
 
         refreshLayout = binding?.appBarMain?.root?.findViewById(R.id.refresh_view_main)!!
         refreshLayout.setOnRefreshListener { updateMainUI() }
@@ -109,14 +107,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             val adapter = BoardItemsAdapter(this, boardsList )
             mainRecyclerView?.adapter = adapter
 
-
             //handles the functionality when an event card is selected
             adapter.setOnClickListener(object: BoardItemsAdapter.OnClickListener {
                 // when an event card is selected this method will be triggered
                 override fun onClick(position: Int, model: Board) {
                     //sends the user to the Event Information screen
                     val intent = Intent(this@MainActivity, EventInfoActivity::class.java)
-                    //passes the selected event card's document id to the Event info activity
+                    //passes the selected event card's document id to the Edit Event activity
                     intent.putExtra(Constants.DOCUMENT_ID, model.documentID)
                     startActivity(intent)
                 }
@@ -129,6 +126,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
 
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {

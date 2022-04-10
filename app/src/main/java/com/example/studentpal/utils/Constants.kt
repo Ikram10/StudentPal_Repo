@@ -39,7 +39,7 @@ object Constants {
     //allows app to open the users media storage to select an image
     //requires an activity as a parameter to know which activity to the startActivityForResult
     fun showImageChooser (activity: Activity){
-        var galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         activity.startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST_CODE)
     }
 

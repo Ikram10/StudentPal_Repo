@@ -89,6 +89,9 @@
     <string name="study">Study</string>
     <string name="friends">Friends</string>
     <string name="add_friend">Add Friend</string>
+    <string name="event_name">Event Name</string>
+    <string name="card_color">Card Color</string>
+    <string name="event_date">Event Date</string>
 
 
 </resources>

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.util.Patterns
 import android.widget.Toast
 import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivitySignUpBinding
@@ -68,7 +69,8 @@ class SignUpActivity : BaseActivity() {
 
     //method responsible for authenticating users and sending verification email
     private fun registerUser() {
-        var mAuth = FirebaseAuth.getInstance()
+        val mAuth = FirebaseAuth.getInstance()
+        //removes spaces
         val name: String = binding?.etName?.text.toString().trim { it <= ' ' }
         val email: String = binding?.etEmail?.text.toString().trim { it <= ' ' }
         val password: String = binding?.etPassword?.text.toString().trim { it <= ' ' }
@@ -89,19 +91,25 @@ class SignUpActivity : BaseActivity() {
                     } else {
                         //if a user with the same credentials already exists, registration will fail
                         Toast.makeText(this, "Registration failed", Toast.LENGTH_LONG).show()
+                        hideProgressDialog()
                     }
                 }
         }
     }
 
-    //method responsible for sending verification email to the FirebaseUser trying to log in
-    private fun sendVerificationEmail(fUser: FirebaseUser, user : User) {
+    //method responsible for sending verification email to the FirebaseUser trying to sign up
+    private fun sendVerificationEmail(fUser: FirebaseUser, user: User) {
         fUser.sendEmailVerification().addOnSuccessListener {
-            Toast.makeText(this, "Email verification link sent to ${fUser.email}", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "Email verification link sent to ${fUser.email}",
+                Toast.LENGTH_LONG
+            )
+                .show()
             //creates a document in Firestore populating the fields with user details
             FirestoreClass().registerUser(this, user)
-        }.addOnFailureListener{
-            Log.e(javaClass.simpleName,"error sending verification link")
+        }.addOnFailureListener {
+            Log.e(javaClass.simpleName, "error sending verification link")
             Toast.makeText(this, "Could not send email verification link", Toast.LENGTH_LONG).show()
         }
 
@@ -128,19 +136,50 @@ class SignUpActivity : BaseActivity() {
                 showErrorSnackBar("Please enter a name")
                 false
             }
-            TextUtils.isEmpty(email) -> {
-                showErrorSnackBar("Please enter an email")
+            invalidEmail(email) -> {
                 false
             }
-            TextUtils.isEmpty(password) -> {
-                showErrorSnackBar("Please enter a password")
+            invalidPassword(password) -> {
                 false
             }
             else -> {
                 return true
             }
         }
-
     }
+
+    fun invalidPassword(password: String): Boolean {
+        if (password.isEmpty()) {
+            showErrorSnackBar(
+                "Please enter a password"
+            )
+            return true
+        } else
+            if (password.length < 6) {
+                showErrorSnackBar(
+                    "Weak password: Use at least 6 characters"
+                )
+                return true
+            }
+        return false
+    }
+
+    private fun invalidEmail(email: String): Boolean {
+        if (email.isEmpty()) {
+            showErrorSnackBar("Please enter an email")
+            return true
+        } else
+            if (!isEmailFormatValid(email)) {
+                showErrorSnackBar("Email is in the wrong format")
+                return true
+            }
+        return false
+    }
+
+    //checks if email is in the correct format
+    private fun isEmailFormatValid(email: CharSequence?): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(email!!).matches()
+    }
+
 
 }
