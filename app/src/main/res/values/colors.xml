@@ -22,14 +22,15 @@
     <color name="divider_color">#EAEAEA</color>
 
     <!--Event Type colors -->
-    <color name="light_orange">#F2A48B</color>
+    <color name="light_orange">#FFD0C1</color>
     <color name="dark_orange">@android:color/holo_orange_dark</color>
-    <color name="light_blue">#32AFE7</color>
+    <color name="light_blue">#D7F2FF</color>
     <color name="dark_blue">@android:color/holo_blue_dark</color>
-    <color name="light_green">#B4F2B6</color>
+    <color name="light_green">#DFFFE0</color>
     <color name="dark_green">@android:color/holo_green_dark</color>
-    <color name="light_purple">#C8AFF4</color>
-    <color name="light_yellow">#F4EEBA</color>
+    <color name="light_purple">#EDE4FF</color>
+    <color name="light_yellow">#FFF9CF</color>
+    <color name="light_red">#FFC7C7</color>
 
 
 </resources>

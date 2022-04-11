@@ -21,7 +21,8 @@ data class Board (
     var documentID: String = "",
     var dateCreated: Long = 0,
     var eventDescription: String = "",
-    var creatorID: String = ""
+    var creatorID: String = "",
+    val cardColor : String = ""
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -31,6 +32,7 @@ data class Board (
         parcel.createStringArrayList()!!,
         parcel.readString()!!,
         parcel.readLong(),
+        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!
     )
@@ -46,6 +48,7 @@ data class Board (
         parcel.writeLong(dateCreated)
         parcel.writeString(eventDescription)
         parcel.writeString(creatorID)
+        parcel.writeString(cardColor)
 
     }
 

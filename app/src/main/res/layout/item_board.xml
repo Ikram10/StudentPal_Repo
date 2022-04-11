@@ -6,10 +6,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv_event"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        android:background="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="15dp"
         app:cardElevation="@dimen/card_view_corner_radius"
         app:cardUseCompatPadding="true">
@@ -25,6 +25,7 @@
                 android:layout_width="@dimen/item_board_image_size"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginStart="4dp"
                 android:contentDescription="@string/image_contentDescription"
                 android:src="@drawable/ic_board_place_holder"
                 app:civ_border_color="@color/primary_text_color"
@@ -38,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_margin="8dp"
+                android:layout_marginStart="10dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_board_image"
@@ -51,7 +52,12 @@
                     android:layout_marginStart="2dp"
                     android:textColor="@color/primary_text_color"
                     android:textSize="@dimen/item_board_name_text_size"
-                    tools:text="Event Title" />
+                    android:textStyle="bold"
+                    tools:text="Event Title"
+                    android:maxWidth="100dp"
+                    android:maxHeight="40dp"
+
+                    />
 
                 <TextView
                     android:id="@+id/tv_created_by"
@@ -87,7 +93,7 @@
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.902"
+                app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toEndOf="@+id/linearLayoutCompat3"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.516">

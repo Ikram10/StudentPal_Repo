@@ -31,8 +31,6 @@ class FirestoreClass {
                     "Error while creating a board.", it
                 )
 
-
-
                 Toast.makeText(activity, "Error updating profile", Toast.LENGTH_LONG).show()
             }
 
@@ -120,10 +118,26 @@ class FirestoreClass {
 
         return currentUserID
     }
-
     /**
      * ******************************************************************** EVENTS FIRESTORE FUNCTIONS ***************************************************************************************
      */
+
+    fun updateBoardDetails(activity: EditEventActivity, boardHashMap: HashMap<String, Any>, boardDocumentId: String ) {
+
+      mFireStore.collection(Constants.BOARDS)
+          .document(boardDocumentId)
+          .update(boardHashMap)
+          .addOnSuccessListener {
+              activity.hideProgressDialog()
+              Log.d("UpdateEvent: ", "Event Updated successfully")
+              Toast.makeText(activity, "You have successfully updated your event", Toast.LENGTH_LONG).show()
+
+          }.addOnFailureListener{
+              activity.hideProgressDialog()
+              Log.d("UpdateEvent:", "Event Update Failed")
+          }
+
+    }
 
     /* This method responsible for retrieving the events list from Firestore
      * A user is assigned an event when they create it or if someone else has assigned them to it,
@@ -241,6 +255,19 @@ class FirestoreClass {
             }.addOnFailureListener{
                 activity.hideProgressDialog()
                 Log.e(activity.javaClass.simpleName, "Error while assigning friend")
+            }
+    }
+
+    fun deleteEvent(activity: EditEventActivity, board : Board){
+        mFireStore.collection(Constants.BOARDS)
+            .document(board.documentID)
+            .delete()
+            .addOnSuccessListener {
+                activity.hideProgressDialog()
+                Toast.makeText(activity, "Event deleted successfully", Toast.LENGTH_LONG).show()
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Toast.makeText(activity, "Error deleting event", Toast.LENGTH_LONG).show()
             }
     }
 

@@ -17,8 +17,10 @@
             android:id="@+id/toolbar_edit_event_activity"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/logo_text_color"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
@@ -33,7 +35,8 @@
             android:layout_marginBottom="@dimen/card_details_cv_card_name_marginBottom"
             android:elevation="@dimen/card_view_elevation"
             app:cardCornerRadius="@dimen/card_view_corner_radius"
-            app:cardUseCompatPadding="true">
+            app:cardUseCompatPadding="true"
+            android:backgroundTint="@color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -44,7 +47,8 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    style="@style/TextInputLayoutTheme">
 
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/et_name_event_details"
@@ -53,6 +57,7 @@
                         android:hint="@string/event_name"
                         android:inputType="text"
                         android:textSize="@dimen/et_text_size"
+                        android:textColor="@color/black"
                         tools:text="Test" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
@@ -63,7 +68,8 @@
             android:layout_height="match_parent"
             android:elevation="@dimen/card_view_elevation"
             app:cardCornerRadius="@dimen/card_view_corner_radius"
-            app:cardUseCompatPadding="true">
+            app:cardUseCompatPadding="true"
+            android:backgroundTint="@color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"

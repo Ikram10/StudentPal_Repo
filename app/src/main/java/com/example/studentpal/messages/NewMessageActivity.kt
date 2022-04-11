@@ -71,9 +71,9 @@ class NewMessageActivity : BaseActivity() {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.search_menu, menu)
-        val menuItem: MenuItem? = menu?.findItem(R.id.action_search)
+        val menuItem: MenuItem? = menu.findItem(R.id.action_search)
 
         val searchView = menuItem?.actionView as androidx.appcompat.widget.SearchView
         searchView.queryHint = "Search Username or Email"

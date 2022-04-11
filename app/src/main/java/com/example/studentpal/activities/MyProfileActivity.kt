@@ -84,7 +84,6 @@ class MyProfileActivity : BaseActivity() {
 
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
             mSelectedImageFileUri = data.data
-
             try {
 
 
@@ -102,6 +101,7 @@ class MyProfileActivity : BaseActivity() {
         }
     }
 
+    //Checks for the specified request code permissions
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

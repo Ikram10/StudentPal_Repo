@@ -2,15 +2,16 @@ package com.example.studentpal.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
@@ -20,9 +21,12 @@ import com.example.studentpal.models.Board
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.collections.ArrayList
 
 open class BoardItemsAdapter (private val context: Context, private var list: ArrayList<Board>):
-    RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+
+
 
     private var onClickListener: OnClickListener? = null
 
@@ -45,6 +49,10 @@ open class BoardItemsAdapter (private val context: Context, private var list: Ar
                 .into(holder.itemView.findViewById(R.id.iv_board_image))
         }
 
+        val card : CardView = holder.itemView.findViewById(R.id.cv_event)
+        if (model.cardColor.isNotEmpty()){
+            card.setCardBackgroundColor(Color.parseColor(model.cardColor))
+        }
         holder.itemView.findViewById<TextView>(R.id.tv_name).text = model.name
         holder.itemView.findViewById<TextView>(R.id.tv_created_by).text = "Created by: ${model.createBy}"
         holder.itemView.findViewById<TextView>(R.id.tv_assigned).text = "Assigned: ${model.assignedTo.size} users"
@@ -59,11 +67,12 @@ open class BoardItemsAdapter (private val context: Context, private var list: Ar
         //handles functionality for deleting an event
         holder.itemView.findViewById<AppCompatImageButton>(R.id.ib_delete_event).setOnClickListener {
 
-            val builder = AlertDialog.Builder(context)
+            val builder = AlertDialog.Builder(context,R.style.MyDialogTheme )
             //The event can only be deleted by the event creator
             if (model.creatorID == FirebaseAuth.getInstance().currentUser!!.uid) {
                 builder.setTitle("Alert")
-                    .setMessage("Do you want to delete Event?")
+                    .setIcon(R.drawable.ic_round_warning_24)
+                    .setMessage("Do you want to delete Event:  ${model.name}?")
                     .setCancelable(true)
                     .setPositiveButton("Yes") { _, _ ->
                         val db = FirebaseFirestore.getInstance()
@@ -96,11 +105,10 @@ open class BoardItemsAdapter (private val context: Context, private var list: Ar
             //intent passes this event details to the friends activity
             val intent = Intent(it.context, FriendsActivity::class.java)
             intent.putExtra(Constants.BOARD_DETAIL, model)
+            //TODO start activity for result
             it.context.startActivity(intent)
         }
     }
-
-
 
     interface OnClickListener {
         /* onClick function takes a position where a click was recieved

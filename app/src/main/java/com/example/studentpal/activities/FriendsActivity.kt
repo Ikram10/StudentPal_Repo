@@ -72,8 +72,7 @@ class FriendsActivity : BaseActivity() {
         FirestoreClass().assignMemberToEvent(this,mBoardDetails,user)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_add_friend, menu)
         return super.onCreateOptionsMenu(menu)
     }
