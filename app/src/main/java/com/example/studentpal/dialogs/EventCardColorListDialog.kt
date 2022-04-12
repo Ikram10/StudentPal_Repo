@@ -2,7 +2,6 @@ package com.example.studentpal.dialogs
 
 import android.app.Dialog
 import android.content.Context
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +25,7 @@ abstract class EventCardColorListDialog(
         super.onCreate(savedInstanceState)
 
         val view = LayoutInflater.from(context)
-            .inflate(R.layout.dialog_color_list, null)
+            .inflate(R.layout.dialog_list, null)
 
         setContentView(view)
         //context.setTheme(R.style.MyDialogTheme)

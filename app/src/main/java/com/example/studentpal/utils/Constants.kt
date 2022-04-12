@@ -27,6 +27,10 @@ object Constants {
     const val DOCUMENT_ID : String = "documentId"
     const val BOARD_DETAIL: String = "board_detail"
     const val CARD_COLOR: String = "cardColor"
+    const val SELECT : String = "Select"
+    const val UN_SELECT : String = "UnSelect"
+
+
 
     const val READ_STORAGE_PERMISSION_CODE = 1
     const val PICK_IMAGE_REQUEST_CODE = 2

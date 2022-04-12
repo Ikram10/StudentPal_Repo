@@ -1,25 +1,40 @@
 package com.example.studentpal.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.studentpal.R
+import com.example.studentpal.adapter.CardAttendeeItemAdapter
 import com.example.studentpal.databinding.ActivityEditEventBinding
 import com.example.studentpal.dialogs.EventCardColorListDialog
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.Board
+import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 
 class EditEventActivity : BaseActivity() {
-    var binding: ActivityEditEventBinding? = null
+    private var binding: ActivityEditEventBinding? = null
     private lateinit var mBoardDetails: Board
+    private lateinit var mBoardDocumentId: String
     private lateinit var etEventName: AppCompatEditText
     private var mSelectedColor = ""
+    private lateinit var mAssignedMemberDetailList: ArrayList<User>
+
+    companion object {
+        const val MEMBERS_REQUEST_CODE: Int = 13
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +43,12 @@ class EditEventActivity : BaseActivity() {
 
         if (intent.hasExtra(Constants.BOARD_DETAIL)) {
             mBoardDetails = intent.getParcelableExtra<Board>(Constants.BOARD_DETAIL)!!
+            mBoardDocumentId = mBoardDetails.documentID
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getAssignedFriendsListDetails(this, mBoardDetails.assignedTo)
+
         }
+
 
         etEventName = binding?.etNameEventDetails!!
         //sets the editable text to the event name
@@ -45,6 +65,7 @@ class EditEventActivity : BaseActivity() {
         }
 
 
+
         binding?.btnUpdateEventDetails?.setOnClickListener {
             if (etEventName.text.toString().isNotEmpty()) {
                 updateEventDetails()
@@ -53,9 +74,31 @@ class EditEventActivity : BaseActivity() {
             }
 
         }
-
         binding?.tvSelectLabelColor?.setOnClickListener {
             eventCardColorListDialog()
+        }
+
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK && requestCode == MEMBERS_REQUEST_CODE) {
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getAssignedFriendsListDetails(this, mBoardDetails.assignedTo)
+        } else {
+            Log.e("Cancelled", "Cancelled")
+        }
+    }
+
+    private fun friendsListDialog() {
+        var eventAssignedMembersList = mBoardDetails.assignedTo
+
+        if(eventAssignedMembersList.size > 0){
+            for (i in eventAssignedMembersList){
+
+            }
         }
     }
 
@@ -66,7 +109,7 @@ class EditEventActivity : BaseActivity() {
         val listDialog = object: EventCardColorListDialog(
             this,
             colorList,
-            resources.getString(R.string.str_select_label_color),
+            resources.getString(R.string.str_select_card_color),
             mSelectedColor){
             override fun onItemSelected(color: String) {
                mSelectedColor = color
@@ -93,12 +136,11 @@ class EditEventActivity : BaseActivity() {
         colorsList.add("#EDE4FF") //Light purple
         colorsList.add("#FFF9CF") //Light yellow
         colorsList.add("#FFC7C7") //Light red
+        colorsList.add("#FFFFFF") //White
 
 
         return colorsList
     }
-
-
 
 
     private fun setupActionBar() {
@@ -169,4 +211,36 @@ class EditEventActivity : BaseActivity() {
             }
             .show()
     }
+
+    fun setUpAssignedMembersList(list: ArrayList<User>){
+        mAssignedMemberDetailList = list
+        hideProgressDialog()
+
+        if(mAssignedMemberDetailList.size > 0){
+            binding?.tvSelectMembers?.visibility = View.GONE
+            binding?.rvSelectedMembersList?.visibility = View.VISIBLE
+
+            binding?.rvSelectedMembersList?.layoutManager = GridLayoutManager(this, 6)
+
+            val adapter = CardAttendeeItemAdapter(this, mAssignedMemberDetailList)
+
+            binding?.rvSelectedMembersList?.adapter = adapter
+
+            //
+            adapter.setOnClickListener(
+                object : CardAttendeeItemAdapter.OnClickListener{
+                    override fun onClick() {
+                       val intent = Intent(this@EditEventActivity, FriendsActivity::class.java)
+                        intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails )
+                        startActivityForResult(intent, MEMBERS_REQUEST_CODE)
+                    }
+                }
+            )
+        } else {
+            binding?.tvSelectMembers?.visibility = View.VISIBLE
+            binding?.rvSelectedMembersList?.visibility = View.GONE
+        }
+    }
+
+
 }

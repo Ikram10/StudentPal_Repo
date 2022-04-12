@@ -1,5 +1,6 @@
 package com.example.studentpal.activities
 
+import android.app.Activity
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,6 +23,12 @@ class FriendsActivity : BaseActivity() {
     private var binding: ActivityFriendsBinding? = null
     private lateinit var mBoardDetails : Board
     private lateinit var mAssignedFriendsList : ArrayList<User>
+
+    /* Notifies the app if any changes were made
+     * Purpose is to avoid reloading the callback activity if no changes were made in this activity
+     */
+    private var anyChangesMade : Boolean = true
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,7 +126,17 @@ class FriendsActivity : BaseActivity() {
         hideProgressDialog()
         mAssignedFriendsList
         mAssignedFriendsList.add(user)
+        //reloads the activity
+        anyChangesMade = true
         setUpFriendsList(mAssignedFriendsList)
+    }
+
+    //reloads the activity when user clicks the back button if any changes made in this activity
+    override fun onBackPressed() {
+        if (anyChangesMade) {
+            setResult(Activity.RESULT_OK)
+        }
+        super.onBackPressed()
     }
 
 }

@@ -201,25 +201,36 @@ class FirestoreClass {
             }
     }
 
-    fun getAssignedFriendsListDetails(activity: FriendsActivity, assignedTo: ArrayList<String>){
+    fun getAssignedFriendsListDetails(activity: Activity, assignedTo: ArrayList<String>){
         mFireStore.collection(Constants.USERS)
             .whereIn(Constants.ID, assignedTo)
             .get()
             .addOnSuccessListener {
                 Log.e(activity.javaClass.simpleName, it.documents.toString())
-
                 val usersList: ArrayList<User> = ArrayList()
-
+                // Convert all the document snapshots to the object using the user data model class.
                 for (doc in it.documents) {
 
                     val user = doc.toObject(User::class.java)
                     usersList.add(user!!)
                 }
 
-                activity.setUpFriendsList(usersList)
+                if (activity is FriendsActivity) {
+                    activity.setUpFriendsList(usersList)
+
+                } else
+                    if (activity is EditEventActivity)
+                    activity.setUpAssignedMembersList(usersList)
+
             }.addOnFailureListener {
-                activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
+                if (activity is FriendsActivity) {
+                    activity.hideProgressDialog()
+                    Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
+                }else
+                    if (activity is EditEventActivity) {
+                    activity.hideProgressDialog()
+                    Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
+                }
             }
     }
 
@@ -270,6 +281,10 @@ class FirestoreClass {
                 Toast.makeText(activity, "Error deleting event", Toast.LENGTH_LONG).show()
             }
     }
+
+
+
+
 
 
 
