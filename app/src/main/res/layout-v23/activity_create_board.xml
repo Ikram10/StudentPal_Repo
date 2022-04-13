@@ -182,7 +182,9 @@
                             android:hint="Event Date"
                             android:inputType="text"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/et_text_size" />
+                            android:textSize="@dimen/et_text_size"
+                            android:focusableInTouchMode="false"
+                            android:focusable="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout

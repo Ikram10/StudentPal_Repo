@@ -3,6 +3,7 @@ package com.example.studentpal.activities
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -40,6 +41,8 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CreateBoardActivity : BaseActivity() {
     // GLOBAL VARIABLES
@@ -50,6 +53,7 @@ class CreateBoardActivity : BaseActivity() {
     private var eventLatitude: Double? = null
     private var eventLongitude: Double? = null
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
+    private var mSelectedDueDateMilliSeconds: Long = 0
 
 
     // Constants for permission code
@@ -141,10 +145,9 @@ class CreateBoardActivity : BaseActivity() {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         if (report != null) {
                             if (report.areAllPermissionsGranted()) {
+                                showProgressDialog(resources.getString(R.string.please_wait))
                                 requestNewLocationData()
-
                             }
-
                         }
                     }
 
@@ -159,6 +162,12 @@ class CreateBoardActivity : BaseActivity() {
                 }).onSameThread()
                     .check()
             }
+
+
+        }
+
+        binding?.etEventDate?.setOnClickListener {
+            showDatePicker()
         }
 
         //handles the functionality when user selects the create button
@@ -186,7 +195,8 @@ class CreateBoardActivity : BaseActivity() {
             creatorID = getCurrentUserID(),
             eventLocation = binding?.etEventLocation?.text.toString(),
             latitude = eventLatitude!!,
-            longitude = eventLongitude!!
+            longitude = eventLongitude!!,
+            eventDate = mSelectedDueDateMilliSeconds
         )
 
         //this function handles the creation of the board in cloud Firestore
@@ -213,9 +223,11 @@ class CreateBoardActivity : BaseActivity() {
         mFusedLocationClient.requestLocationUpdates(
             mLocationRequest,
             mLocationCallBack,
-            Looper.myLooper()!!)
+            Looper.myLooper()!!
+        )
+        hideProgressDialog()
     }
-    
+
     private val mLocationCallBack = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val mLastLocation: Location = locationResult.lastLocation
@@ -225,20 +237,23 @@ class CreateBoardActivity : BaseActivity() {
             eventLongitude = mLastLocation.longitude
             Log.i("Current Longitude", "$eventLongitude")
 
-            val addressTask = GetAddressFromLatLng(this@CreateBoardActivity,
-                eventLatitude!!, eventLongitude!!)
-            addressTask.setAddressListener(object: GetAddressFromLatLng.AddressListener{
+            val addressTask = GetAddressFromLatLng(
+                this@CreateBoardActivity,
+                eventLatitude!!, eventLongitude!!
+            )
+            addressTask.setAddressListener(object : GetAddressFromLatLng.AddressListener {
                 override fun onAddressFound(address: String?) {
                     binding?.etEventLocation?.setText(address)
                 }
 
-                override fun onError(){
+                override fun onError() {
                     Log.e("Get Address:", "Error getting address")
                 }
             })
             addressTask.getAddress()
         }
     }
+
     //method handles the uploading of board images to cloud storage securely
     private fun uploadBoardImage() {
         showProgressDialog(resources.getString(R.string.please_wait))
@@ -364,4 +379,28 @@ class CreateBoardActivity : BaseActivity() {
         }
     }
 
+    private fun showDatePicker() {
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR) // Returns the value of the given calendar year
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+
+        val dpd = DatePickerDialog(
+            this,
+            DatePickerDialog.OnDateSetListener { datePicker, year, month, day ->
+                val sDayOfMonth = if (day < 10) "0$day" else "$day"
+                val sMonthOfYear = if ((month + 1) < 10) "0${month + 1}" else "${month+1}"
+
+                val selectedDate = "$sDayOfMonth/$sMonthOfYear/$year"
+                binding?.etEventDate?.setText(selectedDate)
+
+                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val theDate = sdf.parse(selectedDate)
+                mSelectedDueDateMilliSeconds = theDate!!.time
+            },
+            year,
+            month,
+            day
+        ).show()
+    }
 }

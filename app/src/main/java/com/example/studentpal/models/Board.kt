@@ -20,7 +20,7 @@ data class Board (
     val createBy: String = "", // name of the user who created the board
     val assignedTo: ArrayList<String> = ArrayList(), //list of users the board is assigned to
     var documentID: String = "",
-    var dateCreated: Long = 0,
+    var eventDate: Long = 0,
     var eventDescription: String = "",
     var creatorID: String = "",
     val cardColor : String = "",
@@ -54,7 +54,7 @@ data class Board (
         parcel.writeString(createBy)
         parcel.writeStringList(assignedTo)
         parcel.writeString(documentID)
-        parcel.writeLong(dateCreated)
+        parcel.writeLong(eventDate)
         parcel.writeString(eventDescription)
         parcel.writeString(creatorID)
         parcel.writeString(cardColor)
