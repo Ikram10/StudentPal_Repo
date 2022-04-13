@@ -45,7 +45,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_round_arrow_back_24)
-            actionBar.title = "Event Location: ${eventDetail?.eventLocation}"
+            actionBar.title = "Event: ${eventDetail?.name}"
         }
         binding?.toolbarMap?.setNavigationOnClickListener{
             onBackPressed()

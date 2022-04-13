@@ -1,17 +1,22 @@
 package com.example.studentpal.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
@@ -20,6 +25,8 @@ import com.example.studentpal.databinding.ActivityCreateBoardBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.Board
 import com.example.studentpal.utils.Constants
+import com.example.studentpal.utils.GetAddressFromLatLng
+import com.google.android.gms.location.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -27,6 +34,11 @@ import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.io.IOException
 
 class CreateBoardActivity : BaseActivity() {
@@ -37,7 +49,10 @@ class CreateBoardActivity : BaseActivity() {
     private var mBoardImageUrl: String = ""
     private var eventLatitude: Double? = null
     private var eventLongitude: Double? = null
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
+
+    // Constants for permission code
     companion object {
         private const val PLACE_AUTOCOMPLETE_REQUEST_CODE = 3
     }
@@ -56,6 +71,8 @@ class CreateBoardActivity : BaseActivity() {
             //initialises this variable with the user's name that was passed with the intent
             mUserName = intent.getStringExtra(Constants.NAME).toString()
         }
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         //ensure the Places API is initialised
         if (!Places.isInitialized()) {
@@ -111,13 +128,36 @@ class CreateBoardActivity : BaseActivity() {
 
         binding?.tvUseCurrentLocation?.setOnClickListener {
             if (!isLocationEnabled()) {
+
                 Toast.makeText(this, "Your location provider is turned off", Toast.LENGTH_SHORT)
                     .show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
+            } else {
+                Dexter.withActivity(this).withPermissions(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ).withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        if (report != null) {
+                            if (report.areAllPermissionsGranted()) {
+                                requestNewLocationData()
 
-                //TODO -> add permission handling for current location
+                            }
 
+                        }
+                    }
+
+                    @RequiresApi(Build.VERSION_CODES.M)
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        shouldShowRequestPermissionRationale("Current Location")
+                    }
+
+                }).onSameThread()
+                    .check()
             }
         }
 
@@ -162,7 +202,43 @@ class CreateBoardActivity : BaseActivity() {
         )
     }
 
+    @SuppressLint("MissingPermission")
+    private fun requestNewLocationData() {
+        var mLocationRequest = LocationRequest()
 
+        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        mLocationRequest.interval = 1000
+        mLocationRequest.numUpdates = 1
+
+        mFusedLocationClient.requestLocationUpdates(
+            mLocationRequest,
+            mLocationCallBack,
+            Looper.myLooper()!!)
+    }
+    
+    private val mLocationCallBack = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            val mLastLocation: Location = locationResult.lastLocation
+
+            eventLatitude = mLastLocation.latitude
+            Log.i("Current Latitude", "$eventLatitude")
+            eventLongitude = mLastLocation.longitude
+            Log.i("Current Longitude", "$eventLongitude")
+
+            val addressTask = GetAddressFromLatLng(this@CreateBoardActivity,
+                eventLatitude!!, eventLongitude!!)
+            addressTask.setAddressListener(object: GetAddressFromLatLng.AddressListener{
+                override fun onAddressFound(address: String?) {
+                    binding?.etEventLocation?.setText(address)
+                }
+
+                override fun onError(){
+                    Log.e("Get Address:", "Error getting address")
+                }
+            })
+            addressTask.getAddress()
+        }
+    }
     //method handles the uploading of board images to cloud storage securely
     private fun uploadBoardImage() {
         showProgressDialog(resources.getString(R.string.please_wait))
