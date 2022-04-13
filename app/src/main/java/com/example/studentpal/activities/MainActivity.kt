@@ -115,7 +115,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     //sends the user to the Event Information screen
                     val intent = Intent(this@MainActivity, EventInfoActivity::class.java)
                     //passes the selected event card's document id to the Edit Event activity
-                    intent.putExtra(Constants.DOCUMENT_ID, model.documentID)
+                    intent.putExtra(Constants.BOARD_DETAIL, model)
                     startActivity(intent)
                 }
             })
@@ -199,19 +199,21 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     //my code
     private fun deleteAccount(){
-        builder = AlertDialog.Builder(this)
+        builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
 
         builder.setTitle("Alert")
             .setMessage("Do you want to delete account?")
             .setCancelable(true)
             .setPositiveButton("Yes") { _, _ ->
                 db = FirebaseFirestore.getInstance()
-                db!!.collection(Constants.USERS).document(getCurrentUserID()).delete().addOnSuccessListener {
-                    Log.d("FirestoreDelete", "User account deleted from FireStore.")
+                db!!.collection(Constants.USERS)
+                    .document(getCurrentUserID())
+                    .delete()
+                    .addOnSuccessListener {
+                    Log.d("FirestoreDelete",
+                        "User account deleted from FireStore.")
                 }
-
                 val user = Firebase.auth.currentUser!!
-
                 user.delete()
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
@@ -260,15 +262,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if (readBoardsList){
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getBoardsList(this)
-
         }
     }
-    
     //Method responsible for refreshing the Main activity when an event item has been deleted/edited
     private fun updateMainUI () {
         val intent = Intent(this, MainActivity::class.java)
         startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
         refreshLayout.isRefreshing = false
     }
-
 }

@@ -27,15 +27,26 @@
         android:layout_height="match_parent"
         android:background="@color/bg_color"
         android:padding="@dimen/general_padding"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-        </androidx.recyclerview.widget.RecyclerView>
-
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_eventLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Address"
+            android:textSize="18sp"
+            android:textColor="@color/black" />
+        
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View on Map"
+            android:foreground="?attr/selectableItemBackground"
+            android:background="@drawable/shape_button_rounded"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 

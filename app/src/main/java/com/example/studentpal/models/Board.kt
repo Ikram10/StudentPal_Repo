@@ -5,6 +5,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.example.studentpal.R
 import com.google.android.gms.common.internal.safeparcel.SafeParcelWriter.writeStringList
+import com.google.android.gms.tasks.DuplicateTaskCompletionException
 import com.google.android.gms.tasks.Task
 
 /**
@@ -22,7 +23,12 @@ data class Board (
     var dateCreated: Long = 0,
     var eventDescription: String = "",
     var creatorID: String = "",
-    val cardColor : String = ""
+    val cardColor : String = "",
+    val eventLocation : String = "",
+    var latitude: Double = 0.0,
+    var longitude: Double = 0.0
+
+
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -34,7 +40,10 @@ data class Board (
         parcel.readLong(),
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readString()!!
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readDouble(),
+        parcel.readDouble()
     )
     {
     }
@@ -49,6 +58,9 @@ data class Board (
         parcel.writeString(eventDescription)
         parcel.writeString(creatorID)
         parcel.writeString(cardColor)
+        parcel.writeString(eventLocation)
+        parcel.writeDouble(latitude)
+        parcel.writeDouble(longitude)
 
     }
 

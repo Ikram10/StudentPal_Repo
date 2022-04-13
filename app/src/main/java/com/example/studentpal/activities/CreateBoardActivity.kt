@@ -2,33 +2,45 @@ package com.example.studentpal.activities
 
 import android.Manifest
 import android.app.Activity
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivityCreateBoardBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.Board
 import com.example.studentpal.utils.Constants
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.IOException
 
 class CreateBoardActivity : BaseActivity() {
-
+    // GLOBAL VARIABLES
     var binding: ActivityCreateBoardBinding? = null
     private var mSelectedImageFileUri: Uri? = null
     private lateinit var mUserName: String
     private var mBoardImageUrl: String = ""
+    private var eventLatitude: Double? = null
+    private var eventLongitude: Double? = null
+
+    companion object {
+        private const val PLACE_AUTOCOMPLETE_REQUEST_CODE = 3
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,10 +50,19 @@ class CreateBoardActivity : BaseActivity() {
         setContentView(binding!!.root)
         setupActionBar()
 
+
         //retrieves the intent extra by using the name key
         if (intent.hasExtra(Constants.NAME)) {
             //initialises this variable with the user's name that was passed with the intent
             mUserName = intent.getStringExtra(Constants.NAME).toString()
+        }
+
+        //ensure the Places API is initialised
+        if (!Places.isInitialized()) {
+            Places.initialize(
+                this,
+                resources.getString(R.string.google_maps_api_key)
+            )
         }
 
         //handles the functionality when the user selects the board image
@@ -55,14 +76,48 @@ class CreateBoardActivity : BaseActivity() {
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 Constants.showImageChooser(this)
-                /*If permission is denied, the user will be prompted to grant permission to read
-                  files from devices media storage in order to upload a board image.
+                /* If permission is denied, the user will be prompted to grant permission to read
+                   files from devices media storage in order to upload a board image.
                  */
             } else {
                 ActivityCompat.requestPermissions(
                     this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                     Constants.READ_STORAGE_PERMISSION_CODE
                 )
+
+
+            }
+        }
+
+        binding?.etEventLocation?.setOnClickListener {
+            try {
+                // This is the list of fields which has to be passed
+                val fields = listOf(
+                    Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS
+                )
+                // Start the autocomplete intent with a unique request code
+                val intent =
+                    Autocomplete
+                        .IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                        .setHint("Event location")
+                        .build(this)
+                startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE)
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        binding?.tvUseCurrentLocation?.setOnClickListener {
+            if (!isLocationEnabled()) {
+                Toast.makeText(this, "Your location provider is turned off", Toast.LENGTH_SHORT)
+                    .show()
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(intent)
+
+                //TODO -> add permission handling for current location
+
             }
         }
 
@@ -77,7 +132,7 @@ class CreateBoardActivity : BaseActivity() {
         }
     }
 
-    //method is responsible for creating and storing a board in cloud Firestore
+    //method is responsible setting up the event details to be stored in cloud Firestore
     private fun createBoard() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(getCurrentUserID())
@@ -88,13 +143,25 @@ class CreateBoardActivity : BaseActivity() {
             mBoardImageUrl,
             mUserName,
             assignedUsersArrayList,
-            creatorID = getCurrentUserID()
+            creatorID = getCurrentUserID(),
+            eventLocation = binding?.etEventLocation?.text.toString(),
+            latitude = eventLatitude!!,
+            longitude = eventLongitude!!
         )
 
         //this function handles the creation of the board in cloud Firestore
         FirestoreClass().createBoard(this, board)
-
     }
+
+    // Checks if the current location of the user is retrievable or not
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
+    }
+
 
     //method handles the uploading of board images to cloud storage securely
     private fun uploadBoardImage() {
@@ -110,9 +177,9 @@ class CreateBoardActivity : BaseActivity() {
         //places the image file into Firebase storage
         sref.putFile(mSelectedImageFileUri!!).addOnSuccessListener { taskSnapshot ->
             /* logs the task snapshot to display where the image file is stored.
-             * download URL is a publicly accessible URL that is used to access a file from Cloud Storage.
-             * The download URL contains a download token which acts as a security measure to restrict access only to those who possess the token.
-             */
+         * download URL is a publicly accessible URL that is used to access a file from Cloud Storage.
+         * The download URL contains a download token which acts as a security measure to restrict access only to those who possess the token.
+         */
             Log.i(
                 "Board Image URL",
                 taskSnapshot.metadata!!.reference!!.downloadUrl.toString()
@@ -173,6 +240,30 @@ class CreateBoardActivity : BaseActivity() {
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
+            }
+        } else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    data.let {
+                        // The information that is retrieved from the place intent will be stored in this variable
+                        val place: Place = Autocomplete.getPlaceFromIntent(data!!)
+                        eventLatitude = place.latLng?.latitude
+                        eventLongitude = place.latLng?.longitude
+                        // Set the Location input text field to the location searched in the Google map
+                        binding?.etEventLocation?.setText(place.address)
+                    }
+                }
+                AutocompleteActivity.RESULT_ERROR -> {
+                    // Handle the error.
+                    data?.let {
+                        val status = Autocomplete.getStatusFromIntent(data)
+                        Log.i(TAG, status.statusMessage.toString())
+                    }
+                }
+                Activity.RESULT_CANCELED -> {
+                    //cancels the widget
+                    finishActivity(PLACE_AUTOCOMPLETE_REQUEST_CODE)
+                }
             }
         }
     }

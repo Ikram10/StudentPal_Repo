@@ -209,6 +209,7 @@
                             android:textSize="@dimen/et_text_size" />
                     </com.google.android.material.textfield.TextInputLayout>
 
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_event_location"
                         style="@style/TextInputLayoutTheme"
@@ -230,12 +231,24 @@
                             android:hint="@string/event_location"
                             android:inputType="text"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/et_text_size" />
+                            android:textSize="@dimen/et_text_size"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_use_current_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:padding="4dp"
+                        android:text="@string/use_current_location"
+                        android:gravity="end"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="20dp"
+                        android:textColor="@color/colorAccent">
 
-
-
-
+                    </androidx.appcompat.widget.AppCompatTextView>
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_create"
                         android:layout_width="match_parent"
