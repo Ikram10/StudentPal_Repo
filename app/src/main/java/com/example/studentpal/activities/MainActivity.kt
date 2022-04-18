@@ -1,20 +1,14 @@
 package com.example.studentpal.activities
 
-import android.Manifest
 import android.app.Activity
-import androidx.appcompat.app.AlertDialog
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
-import android.widget.ImageButton
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,29 +24,29 @@ import com.example.studentpal.models.Board
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.FirebaseAuthKtxRegistrar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.ktx.Firebase
 import de.hdodenhof.circleimageview.CircleImageView
 
-class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener{
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var binding: ActivityMainBinding? = null
     private var drawer: DrawerLayout? = null
     private lateinit var builder: AlertDialog.Builder
-    private var db : FirebaseFirestore? = null
-    private var mainRecyclerView : RecyclerView? = null
-    private var eventTextView : TextView? = null
-    private lateinit var refreshLayout : SwipeRefreshLayout
+    private var db: FirebaseFirestore? = null
+    private var mainRecyclerView: RecyclerView? = null
+    private var eventTextView: TextView? = null
+    private lateinit var refreshLayout: SwipeRefreshLayout
     private lateinit var mUserName: String
+    private lateinit var mSharedPreferences: SharedPreferences
 
     //Constant values
     companion object {
         const val MY_PROFILE_REQUEST_CODE: Int = 11
         const val CREATE_BOARD_REQUEST_CODE: Int = 12
+        const val ASSIGN_FRIENDS_REQUEST_CODE: Int = 13
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,11 +61,27 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         mainRecyclerView = binding?.appBarMain?.root?.findViewById(R.id.rv_boards_list)
         eventTextView = binding?.appBarMain?.root?.findViewById(R.id.tv_events)
 
+
         binding?.navView?.setNavigationItemSelectedListener(this)
 
-        /* loads the currently logged in user's data into this activity, by retrieving their document from firebase
-         * The events list for the current user is also loaded into this activity
-         */
+        // Shared preferences only available inside within application
+        mSharedPreferences =
+            this.getSharedPreferences(Constants.STUDENTPAL_PREFERENCES, Context.MODE_PRIVATE)
+
+        val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
+
+        if (tokenUpdated) {
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().loadUserData(this, true)
+        } else {
+            FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener {
+                if (it.isSuccessful)
+                    updateFCMToken(it.result!!.token)
+            }
+        }
+            /* loads the currently logged in user's data into this activity, by retrieving their document from firebase
+             * The events list for the current user is also loaded into this activity
+             */
         FirestoreClass().loadUserData(this, true)
 
         //create board action button can be clicked
@@ -100,16 +110,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         /* if the boards list size is greater than 0 we can set the visibility of the recycler view to visible
          * and set the no events textview to gone
          */
-        if (boardsList.size > 0){
+        if (boardsList.size > 0) {
             eventTextView?.text = "All Events"
             mainRecyclerView?.layoutManager = LinearLayoutManager(this)
             mainRecyclerView?.setHasFixedSize(true)
 
-            val adapter = BoardItemsAdapter(this, boardsList )
+            val adapter = BoardItemsAdapter(this, boardsList)
             mainRecyclerView?.adapter = adapter
 
             //handles the functionality when an event card is selected
-            adapter.setOnClickListener(object: BoardItemsAdapter.OnClickListener {
+            adapter.setOnClickListener(object : BoardItemsAdapter.OnClickListener {
                 // when an event card is selected this method will be triggered
                 override fun onClick(position: Int, model: Board) {
                     //sends the user to the Event Information screen
@@ -120,11 +130,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }
             })
         } else
-            //if no events are listed "No Event" will be displayed
+        //if no events are listed "No Event" will be displayed
             eventTextView?.text = "No Events"
 
     }
-
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -136,8 +145,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_BOARD_REQUEST_CODE) {
             FirestoreClass().getBoardsList(this)
 
-        }
-        else {
+        } else {
             Log.e("Cancelled", "Cancelled")
         }
     }
@@ -175,7 +183,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.nav_my_profile -> {
                 startActivityForResult(
                     Intent(this, MyProfileActivity::class.java),
-                    MY_PROFILE_REQUEST_CODE)
+                    MY_PROFILE_REQUEST_CODE
+                )
             }
             R.id.nav_active_users -> {
 
@@ -187,9 +196,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 startActivity(Intent(this, LatestMessagesActivity::class.java))
             }
             R.id.nav_sign_out -> {
-               signOutUser()
+                signOutUser()
+
+                mSharedPreferences.edit().clear().apply()
             }
-            R.id.nav_delete_account-> {
+            R.id.nav_delete_account -> {
                 deleteAccount()
             }
         }
@@ -198,7 +209,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     //my code
-    private fun deleteAccount(){
+    private fun deleteAccount() {
         builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
 
         builder.setTitle("Alert")
@@ -210,16 +221,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     .document(getCurrentUserID())
                     .delete()
                     .addOnSuccessListener {
-                    Log.d("FirestoreDelete",
-                        "User account deleted from FireStore.")
-                }
+                        Log.d(
+                            "FirestoreDelete",
+                            "User account deleted from FireStore."
+                        )
+                    }
                 val user = Firebase.auth.currentUser!!
                 user.delete()
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Log.d("DeleteAccount", "User account deleted.")
                         }
-                    }.addOnFailureListener{
+                    }.addOnFailureListener {
                         Log.d("DeleteAccount", "User account delete failed.")
                     }
 
@@ -242,6 +255,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
      * adds the users name to the navigation view header
      */
     fun updateNavigationUserDetails(user: User, readBoardsList: Boolean) {
+        hideProgressDialog()
         //sets the user's name
         mUserName = user.name
         //variable binds the Username Textview
@@ -259,15 +273,34 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         tvUsername?.text = mUserName
 
         //only retrieves the events list from Firestore if the readBoardsList is true
-        if (readBoardsList){
+        if (readBoardsList) {
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getBoardsList(this)
         }
     }
+
     //Method responsible for refreshing the Main activity when an event item has been deleted/edited
-    private fun updateMainUI () {
+    private fun updateMainUI() {
         val intent = Intent(this, MainActivity::class.java)
         startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
         refreshLayout.isRefreshing = false
+    }
+
+    fun tokenUpdateSuccess() {
+        hideProgressDialog()
+        val editor: SharedPreferences.Editor = mSharedPreferences.edit()
+        editor.putBoolean(Constants.FCM_TOKEN_UPDATED, true)
+        editor.apply()
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().loadUserData(this, true)
+    }
+
+    private fun updateFCMToken(token: String) {
+        val userHashMap = HashMap<String, Any>()
+        userHashMap[Constants.FCM_TOKEN] = token
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().updateUserProfileData(this, userHashMap)
+
+
     }
 }

@@ -15,6 +15,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
+import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -185,22 +186,53 @@ class CreateBoardActivity : BaseActivity() {
     private fun createBoard() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(getCurrentUserID())
+        val etEventName = binding?.etBoardName?.text.toString()
+        val etEventLocation = binding?.etEventLocation?.text.toString()
+        val etEventDate = binding?.etEventDate?.text.toString()
 
-        //board information that will be stored in Firestore
-        val board = Board(
-            binding?.etBoardName?.text.toString(),
-            mBoardImageUrl,
-            mUserName,
-            assignedUsersArrayList,
-            creatorID = getCurrentUserID(),
-            eventLocation = binding?.etEventLocation?.text.toString(),
-            latitude = eventLatitude!!,
-            longitude = eventLongitude!!,
-            eventDate = mSelectedDueDateMilliSeconds
-        )
+        if (validateEditForm(etEventName, etEventLocation,etEventDate)) {
+            //board information that will be stored in Firestore
+            val board = Board(
+                binding?.etBoardName?.text.toString(),
+                mBoardImageUrl,
+                mUserName,
+                assignedUsersArrayList,
+                creatorID = getCurrentUserID(),
+                eventLocation = etEventLocation,
+                latitude = eventLatitude!!,
+                longitude = eventLongitude!!,
+                eventDate = mSelectedDueDateMilliSeconds,
+                eventDescription = binding?.etEventDescription?.text.toString()
+            )
 
-        //this function handles the creation of the board in cloud Firestore
-        FirestoreClass().createBoard(this, board)
+            //this function handles the creation of the board in cloud Firestore
+            FirestoreClass().createBoard(this, board)
+        } else {
+            hideProgressDialog()
+        }
+
+
+
+    }
+
+    private fun validateEditForm(eventName: String, eventLocation: String, eventDate: String): Boolean {
+        return when {
+            TextUtils.isEmpty(eventName) -> {
+                showErrorSnackBar("Please enter an event name")
+                false
+            }
+            TextUtils.isEmpty(eventLocation)-> {
+                showErrorSnackBar("Please enter an event Location")
+                false
+            }
+            TextUtils.isEmpty(eventDate) -> {
+                showErrorSnackBar("Please enter an event date")
+                false
+            }
+            else -> {
+                return true
+            }
+        }
     }
 
     // Checks if the current location of the user is retrievable or not
@@ -212,7 +244,7 @@ class CreateBoardActivity : BaseActivity() {
         )
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission") // Suppressed because location permission has already been checked
     private fun requestNewLocationData() {
         var mLocationRequest = LocationRequest()
 
@@ -326,7 +358,7 @@ class CreateBoardActivity : BaseActivity() {
                         .with(this)
                         .load(mSelectedImageFileUri)
                         .centerCrop()
-                        .placeholder(R.drawable.ic_board_place_holder)
+                        .placeholder(R.drawable.add_screen_image_placeholder)
                         .into(it)
                 }
             } catch (e: IOException) {
@@ -336,11 +368,11 @@ class CreateBoardActivity : BaseActivity() {
             when (resultCode) {
                 Activity.RESULT_OK -> {
                     data.let {
-                        // The information that is retrieved from the place intent will be stored in this variable
+                        // Stores the information retrieved from the places intent
                         val place: Place = Autocomplete.getPlaceFromIntent(data!!)
                         eventLatitude = place.latLng?.latitude
                         eventLongitude = place.latLng?.longitude
-                        // Set the Location input text field to the location searched in the Google map
+                        // Sets the Location input text field to the location searched Places search bar
                         binding?.etEventLocation?.setText(place.address)
                     }
                 }
@@ -387,6 +419,7 @@ class CreateBoardActivity : BaseActivity() {
 
         val dpd = DatePickerDialog(
             this,
+            android.R.style.Theme_DeviceDefault_Light_Dialog,
             DatePickerDialog.OnDateSetListener { datePicker, year, month, day ->
                 val sDayOfMonth = if (day < 10) "0$day" else "$day"
                 val sMonthOfYear = if ((month + 1) < 10) "0${month + 1}" else "${month+1}"

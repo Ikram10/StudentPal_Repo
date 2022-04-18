@@ -20,42 +20,47 @@
             android:orientation="horizontal"
             android:padding="@dimen/item_board_content_padding">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_board_image"
                 android:layout_width="@dimen/item_board_image_size"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/item_board_image_size"
                 android:layout_gravity="center"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="2dp"
+                android:background="@drawable/shape_image_view_border"
                 android:contentDescription="@string/image_contentDescription"
-                android:src="@drawable/ic_board_place_holder"
-                app:civ_border_color="@color/primary_text_color"
-                app:civ_border_width="@dimen/item_board_image_circular_border_width"
+                android:src="@drawable/add_screen_image_placeholder"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.409"
+                android:padding="1dp"
+
+                />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayoutCompat3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="191dp"
+                android:layout_height="125dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_board_image"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.355">
 
                 <TextView
                     android:id="@+id/tv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
+
+                    android:layout_marginBottom="10dp"
+                    android:maxWidth="100dp"
+                    android:maxHeight="40dp"
                     android:textColor="@color/primary_text_color"
                     android:textSize="@dimen/item_board_name_text_size"
                     android:textStyle="bold"
                     tools:text="Event Title"
-                    android:maxWidth="100dp"
-                    android:maxHeight="40dp"
 
                     />
 
@@ -63,7 +68,7 @@
                     android:id="@+id/tv_created_by"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
+                    android:layout_marginBottom="1dp"
                     android:textColor="@color/secondary_text_color"
                     android:textSize="@dimen/item_board_created_by_text_size"
                     tools:text="Created By" />
@@ -72,15 +77,16 @@
                     android:id="@+id/tv_event_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
+                    android:layout_marginBottom="1dp"
                     android:textColor="@color/secondary_text_color"
                     android:textSize="@dimen/item_board_created_by_text_size"
                     tools:text="Event Date" />
+
                 <TextView
                     android:id="@+id/tv_assigned"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
+                    android:layout_marginBottom="1dp"
                     android:textColor="@color/secondary_text_color"
                     android:textSize="@dimen/item_board_created_by_text_size"
                     tools:text="Assigned: " />

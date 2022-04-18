@@ -15,17 +15,31 @@ class FirestoreClass {
 
     private val mFireStore = FirebaseFirestore.getInstance()
 
-    fun updateUserProfileData(activity: MyProfileActivity, userHashMap: HashMap<String, Any>) {
+    fun updateUserProfileData(activity: Activity, userHashMap: HashMap<String, Any>) {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).update(userHashMap)
             .addOnSuccessListener {
                 Log.i(activity.javaClass.simpleName, "Profile data updated successfully")
                 Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_LONG).show()
-                activity.profileUpdateSuccess()
+                when (activity) {
+
+                    is MainActivity -> {
+                        activity.tokenUpdateSuccess()
+                    }
+                    is MyProfileActivity -> {
+                        activity.profileUpdateSuccess()
+                    }
+                }
 
             }.addOnFailureListener {
 
-                activity.hideProgressDialog()
-
+                when (activity) {
+                    is MainActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                    is MyProfileActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                }
                 Log.e(
                     activity.javaClass.simpleName,
                     "Error while creating a board.", it
@@ -44,7 +58,7 @@ class FirestoreClass {
      */
     fun loadUserData(activity: Activity, readBoardsList: Boolean = false) {
 
-        val mFireStore : FirebaseFirestore = FirebaseFirestore.getInstance()
+        val mFireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
         mFireStore.collection(Constants.USERS)
             // The document id is the current user's id
             .document(getCurrentUserId()).get()
@@ -96,15 +110,15 @@ class FirestoreClass {
      */
     fun registerUser(activity: SignUpActivity, userInfo: User) {
         // SetOptions.merge() ensures only one user account is created in Firestore for each User id
-            mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(
-                userInfo,
-                SetOptions.merge()
-            )
-                .addOnSuccessListener {
-                    activity.userRegisteredSuccess()
-                }.addOnFailureListener {
-                    Log.e(activity.javaClass.simpleName, "Error registering user")
-                }
+        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(
+            userInfo,
+            SetOptions.merge()
+        )
+            .addOnSuccessListener {
+                activity.userRegisteredSuccess()
+            }.addOnFailureListener {
+                Log.e(activity.javaClass.simpleName, "Error registering user")
+            }
 
     }
 
@@ -118,24 +132,33 @@ class FirestoreClass {
 
         return currentUserID
     }
+
     /**
      * ******************************************************************** EVENTS FIRESTORE FUNCTIONS ***************************************************************************************
      */
 
-    fun updateBoardDetails(activity: EditEventActivity, boardHashMap: HashMap<String, Any>, boardDocumentId: String ) {
+    fun updateBoardDetails(
+        activity: EditEventActivity,
+        boardHashMap: HashMap<String, Any>,
+        boardDocumentId: String
+    ) {
 
-      mFireStore.collection(Constants.BOARDS)
-          .document(boardDocumentId)
-          .update(boardHashMap)
-          .addOnSuccessListener {
-              activity.hideProgressDialog()
-              Log.d("UpdateEvent: ", "Event Updated successfully")
-              Toast.makeText(activity, "You have successfully updated your event", Toast.LENGTH_LONG).show()
+        mFireStore.collection(Constants.BOARDS)
+            .document(boardDocumentId)
+            .update(boardHashMap)
+            .addOnSuccessListener {
+                activity.hideProgressDialog()
+                Log.d("UpdateEvent: ", "Event Updated successfully")
+                Toast.makeText(
+                    activity,
+                    "You have successfully updated your event",
+                    Toast.LENGTH_LONG
+                ).show()
 
-          }.addOnFailureListener{
-              activity.hideProgressDialog()
-              Log.d("UpdateEvent:", "Event Update Failed")
-          }
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.d("UpdateEvent:", "Event Update Failed")
+            }
 
     }
 
@@ -201,7 +224,7 @@ class FirestoreClass {
             }
     }
 
-    fun getAssignedFriendsListDetails(activity: Activity, assignedTo: ArrayList<String>){
+    fun getAssignedFriendsListDetails(activity: Activity, assignedTo: ArrayList<String>) {
         mFireStore.collection(Constants.USERS)
             .whereIn(Constants.ID, assignedTo)
             .get()
@@ -220,17 +243,17 @@ class FirestoreClass {
 
                 } else
                     if (activity is EditEventActivity)
-                    activity.setUpAssignedMembersList(usersList)
+                        activity.setUpAssignedMembersList(usersList)
 
             }.addOnFailureListener {
                 if (activity is FriendsActivity) {
                     activity.hideProgressDialog()
                     Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
-                }else
+                } else
                     if (activity is EditEventActivity) {
-                    activity.hideProgressDialog()
-                    Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
-                }
+                        activity.hideProgressDialog()
+                        Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
+                    }
             }
     }
 
@@ -253,7 +276,7 @@ class FirestoreClass {
             }
     }
 
-    fun assignMemberToEvent(activity: FriendsActivity, board: Board, user: User){
+    fun assignMemberToEvent(activity: FriendsActivity, board: Board, user: User) {
         //hash map of assigned to field in Firestore (Event documents)
         val assignedToHashMap = HashMap<String, Any>()
         assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo
@@ -263,13 +286,13 @@ class FirestoreClass {
             .update(assignedToHashMap)
             .addOnSuccessListener {
                 activity.friendAssignedSuccess(user)
-            }.addOnFailureListener{
+            }.addOnFailureListener {
                 activity.hideProgressDialog()
                 Log.e(activity.javaClass.simpleName, "Error while assigning friend")
             }
     }
 
-    fun deleteEvent(activity: EditEventActivity, board : Board){
+    fun deleteEvent(activity: EditEventActivity, board: Board) {
         mFireStore.collection(Constants.BOARDS)
             .document(board.documentID)
             .delete()
@@ -281,11 +304,6 @@ class FirestoreClass {
                 Toast.makeText(activity, "Error deleting event", Toast.LENGTH_LONG).show()
             }
     }
-
-
-
-
-
 
 
 }

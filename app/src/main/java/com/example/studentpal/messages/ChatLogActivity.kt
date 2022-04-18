@@ -44,8 +44,9 @@ class ChatLogActivity : BaseActivity() {
 
         binding?.recyclerviewChatLog?.adapter = adapter
 
+
         // need to provide the USER_KEY to extract the User
-        toUser = intent.getParcelableExtra(NewMessageActivity.USER_KEY)
+        toUser = intent.getParcelableExtra(Constants.USER_KEY)
 
         setupActionBar()
 

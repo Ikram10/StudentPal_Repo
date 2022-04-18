@@ -6,18 +6,18 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
+import android.widget.Button
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
-import androidx.core.view.get
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
-import com.example.studentpal.adapter.UserAdapter
+import com.example.studentpal.activities.ViewFriendProfile
 import com.example.studentpal.databinding.ActivityNewMessageBinding
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
@@ -25,7 +25,6 @@ import com.google.firebase.firestore.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
-import com.xwray.groupie.viewbinding.BindableItem
 
 class NewMessageActivity : BaseActivity() {
     private var binding: ActivityNewMessageBinding? = null
@@ -56,19 +55,13 @@ class NewMessageActivity : BaseActivity() {
         users = arrayListOf()
 
         fetchUsers()
-        
-        listenForMessage()
 
 
 
 
     }
 
-    private fun listenForMessage() {
-        val reference = FirebaseFirestore.getInstance().collection(Constants.MESSAGES)
-        
-        reference.addSnapshotListener { value, error ->  }
-    }
+
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -84,10 +77,6 @@ class NewMessageActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    //Companion object enables the users name to be passed to another activity. The other activity needs to pass the USER_KEY
-    companion object {
-        const val USER_KEY = "USER_KEY"
-    }
 
     private fun fetchUsers() {
         //my code: Chose to integrate Firestore instead of Realtime database
@@ -109,22 +98,25 @@ class NewMessageActivity : BaseActivity() {
                         }
                     }
 
-                        adapter.setOnItemClickListener { item, view ->
+                    adapter.setOnItemClickListener { item, view ->
 
-                            val userItem = item as UserItem
+                        val userItem = item as UserItem
+                        val intent = Intent(this@NewMessageActivity, ChatLogActivity::class.java)
+                        //intent passes the users name to the chat log activity
+                        intent.putExtra(Constants.USER_KEY, userItem.user)
+                        startActivity(intent)
 
-                            val intent = Intent(this@NewMessageActivity, ChatLogActivity::class.java)
-                            //intent passes the users name to the chat log activity
-                            intent.putExtra(USER_KEY, userItem.user)
-                            startActivity(intent)
-                        }
-                        recyclerView?.adapter = adapter
 
                     }
+
+                    recyclerView?.adapter = adapter
+
+
+                }
             })
     }
 
-    class UserItem (val user: User): Item<GroupieViewHolder>(){
+    class UserItem(val user: User) : Item<GroupieViewHolder>() {
         override fun bind(viewHolder: GroupieViewHolder, position: Int) {
             viewHolder.itemView.findViewById<TextView>(R.id.cv_username).text = user.name
 
@@ -138,20 +130,34 @@ class NewMessageActivity : BaseActivity() {
                 .into(viewHolder.itemView.findViewById(R.id.iv_profile_image))
 
             //My code
-            when(user.status) {
+            when (user.status) {
                 "Available" -> {
-                    viewHolder.itemView.findViewById<TextView>(R.id.civ_status).setTextColor(ContextCompat.getColor(viewHolder.root.context, R.color.available))
+                    viewHolder.itemView.findViewById<TextView>(R.id.civ_status).setTextColor(
+                        ContextCompat.getColor(
+                            viewHolder.root.context,
+                            R.color.available
+                        )
+                    )
                 }
                 "Unavailable" -> {
-                    viewHolder.itemView.findViewById<TextView>(R.id.civ_status).setTextColor(ContextCompat.getColor(viewHolder.root.context, R.color.unavailable))
+                    viewHolder.itemView.findViewById<TextView>(R.id.civ_status).setTextColor(
+                        ContextCompat.getColor(
+                            viewHolder.root.context,
+                            R.color.unavailable
+                        )
+                    )
                 }
+            }
+            viewHolder.itemView.findViewById<AppCompatButton>(R.id.btn_view_profile).setOnClickListener {
+                val intent = Intent(it.context, ViewFriendProfile::class.java)
+                intent.putExtra(Constants.USER_KEY, user)
+                it.context.startActivity(intent)
             }
         }
 
         override fun getLayout(): Int {
             return R.layout.item_profile
         }
-
 
 
     }

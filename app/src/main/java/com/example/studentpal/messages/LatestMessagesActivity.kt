@@ -9,7 +9,6 @@ import android.view.MenuItem
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityLatestMessagesBinding
-import com.example.studentpal.messages.NewMessageActivity.Companion.USER_KEY
 import com.example.studentpal.models.ChatMessage
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
@@ -49,7 +48,7 @@ class LatestMessagesActivity : BaseActivity() {
             val intent = Intent(this, ChatLogActivity::class.java)
             val row = item as LatestMessageRow
             //pass the chat partner as an intent to the chat log activity
-            intent.putExtra(USER_KEY, row.chatPartnerUser)
+            intent.putExtra(Constants.USER_KEY, row.chatPartnerUser)
             startActivity(intent)
         }
 

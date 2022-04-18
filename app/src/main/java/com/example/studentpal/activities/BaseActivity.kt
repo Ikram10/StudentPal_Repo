@@ -104,5 +104,6 @@ open class BaseActivity : AppCompatActivity() {
                 DialogInterface.cancel()
             }
             .show()
+
     }
 }

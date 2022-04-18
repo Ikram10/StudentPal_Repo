@@ -104,8 +104,7 @@ class SignUpActivity : BaseActivity() {
                 this,
                 "Email verification link sent to ${fUser.email}",
                 Toast.LENGTH_LONG
-            )
-                .show()
+            ).show()
             //creates a document in Firestore populating the fields with user details
             FirestoreClass().registerUser(this, user)
         }.addOnFailureListener {
@@ -148,7 +147,7 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    fun invalidPassword(password: String): Boolean {
+    private fun invalidPassword(password: String): Boolean {
         if (password.isEmpty()) {
             showErrorSnackBar(
                 "Please enter a password"

@@ -12,6 +12,7 @@ import com.example.studentpal.activities.MyProfileActivity
 object Constants {
 
     //user related Constants
+    const val USER_KEY = "USER_KEY"
     const val USERS : String = "Users"
     const val MESSAGES: String = "Messages"
     const val USER_MESSAGES: String = "User-Messages"
@@ -21,6 +22,10 @@ object Constants {
     const val EMAIL: String = "email"
     const val ID : String = "id"
 
+    // Friend Requests
+    const val FRIENDSHIPS = "Friendships" // friendships collection
+    const val FRIEND_REQUEST = "Friend-Requests"
+
     //Event related Constants
     const val BOARDS: String = "boards"
     const val ASSIGNED_TO: String = "assignedTo"
@@ -29,6 +34,22 @@ object Constants {
     const val CARD_COLOR: String = "cardColor"
     const val SELECT : String = "Select"
     const val UN_SELECT : String = "UnSelect"
+
+    const val STUDENTPAL_PREFERENCES = "StudentPalPrefs"
+    const val FCM_TOKEN_UPDATED = "fcmTokenUpdated"
+    const val FCM_TOKEN = "fcmToken"
+
+
+    // START
+    const val FCM_BASE_URL:String = "https://fcm.googleapis.com/fcm/send"
+    const val FCM_AUTHORIZATION:String = "authorization"
+    const val FCM_KEY:String = "key"
+    const val FCM_SERVER_KEY:String = "AAAA5KLpOgc:APA91bEriQauq41gnZxAUt42ZxVU7c_cGzegCqd74Krc0038V2bLd9OJnmpSF0FhIc7DXTYEyZ1db_FKimnpspwNr3gA1Mj3ENbiQqP00X_UrCFUHppCoS8Eskh_gASSx9zjEWR2h0cX"
+    const val FCM_KEY_TITLE:String = "title"
+    const val FCM_KEY_MESSAGE:String = "message"
+    const val FCM_KEY_DATA:String = "data"
+    const val FCM_KEY_TO:String = "to"
+    // END
 
 
 

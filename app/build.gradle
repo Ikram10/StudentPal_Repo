@@ -51,18 +51,21 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation("androidx.activity:activity-ktx:1.4.0")
     
-    //FIREBASE DEPENDENCIES
+    // FIREBASE DEPENDENCIES
     implementation platform('com.google.firebase:firebase-bom:29.2.1')
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
-    //Firebase Authentication
+    // Firebase Authentication
     implementation 'com.google.firebase:firebase-auth-ktx'
-    //Firebase Firestore
+    // Firebase Firestore
     implementation 'com.google.firebase:firebase-firestore:24.1.0'
-    //Cloud Storage
+    // Cloud Storage
     implementation 'com.google.firebase:firebase-storage:20.0.1'
-    //Realtime database
+    // Realtime database
     implementation 'com.google.firebase:firebase-database-ktx:20.0.4'
-
+    // Cloud Messaging
+    implementation 'com.google.firebase:firebase-messaging:23.0.2'
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:29.3.0')
 
     // GOOGLE MAPS DEPENDENCIES
     //Places SDK
@@ -87,17 +90,8 @@ dependencies {
     implementation "com.xwray:groupie:2.9.0"
     implementation "com.xwray:groupie-viewbinding:2.9.0"
     
-    // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:29.3.0')
-    implementation 'com.google.firebase:firebase-database-ktx'
-
     // Dexter Permissions
     implementation 'com.karumi:dexter:6.2.3'
-
-    //
-
-
-
 
 
 }
