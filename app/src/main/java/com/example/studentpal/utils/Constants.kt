@@ -21,6 +21,7 @@ object Constants {
     const val STATUS: String = "status"
     const val EMAIL: String = "email"
     const val ID : String = "id"
+    const val COVER_IMAGE = "coverImage"
 
     // Friend Requests
     const val FRIENDSHIPS = "Friendships" // friendships collection

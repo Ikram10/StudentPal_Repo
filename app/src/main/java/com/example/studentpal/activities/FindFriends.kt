@@ -2,6 +2,9 @@ package com.example.studentpal.activities
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studentpal.R
 import com.example.studentpal.adapter.FriendsListItemsAdapter
@@ -19,6 +22,7 @@ class FindFriends : BaseActivity() {
     var binding : ActivityFindFriendsBinding? = null
     private var db : FirebaseFirestore? = null
     private var userList : ArrayList<User>? = null
+    private var usersAdapter: UsersAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFindFriendsBinding.inflate(layoutInflater)
@@ -41,8 +45,8 @@ class FindFriends : BaseActivity() {
         binding?.rvFindFriends?.layoutManager = LinearLayoutManager(this)
         binding?.rvFindFriends?.setHasFixedSize(true)
 
-        val adapter = UsersAdapter(this, list)
-        binding?.rvFindFriends?.adapter = adapter
+        val usersAdapter = UsersAdapter(this, list)
+        binding?.rvFindFriends?.adapter = usersAdapter
     }
 
 
@@ -51,6 +55,24 @@ class FindFriends : BaseActivity() {
         binding = null
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.search_menu, menu)
+        val item : MenuItem = menu.findItem(R.id.action_search)
+        val searchView: SearchView = item.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                usersAdapter?.filter?.filter(newText)
+                return false
+            }
+
+        })
+
+        return super.onCreateOptionsMenu(menu)
+    }
 
 
     private fun setupActionBar() {

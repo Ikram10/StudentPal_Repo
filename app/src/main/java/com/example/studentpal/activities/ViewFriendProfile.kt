@@ -1,12 +1,16 @@
 package com.example.studentpal.activities
 
 import android.content.Intent
+import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivityViewFriendProfileBinding
 import com.example.studentpal.messages.ChatLogActivity
@@ -44,6 +48,7 @@ class ViewFriendProfile : AppCompatActivity() {
         const val PENDING = "pending"
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityViewFriendProfileBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -62,7 +67,9 @@ class ViewFriendProfile : AppCompatActivity() {
         btnSendFriendRequest = binding?.btnSendRequest?.findViewById(R.id.btn_send_request)
         btnDeclineFriendRequest = binding?.btnDeclineRequest?.findViewById(R.id.btn_decline_request)
 
-        binding?.tvFriendName?.text = friendDetails?.name.toString()
+        //Loads the selected users information into the UI
+        loadFriendData()
+
 
         btnSendFriendRequest?.setOnClickListener {
             performAction(friendDetails?.id)
@@ -76,6 +83,24 @@ class ViewFriendProfile : AppCompatActivity() {
 
 
     }
+    //MY code
+    private fun loadFriendData() {
+
+        binding?.civFriendImage?.let {
+            Glide
+                .with(this)
+                .load(friendDetails?.image)
+                .centerCrop()
+                .placeholder(R.drawable.ic_nav_user)
+                .into(it)
+        }
+        binding?.tvFriendName?.text = friendDetails?.name.toString()
+        binding?.cvFriendStatus?.text  = friendDetails?.status
+        binding?.dateNum?.text  = friendDetails?.dateJoined
+        binding?.friendsNum?.text  = "0"
+
+    }
+
 
     private fun unFriend(friendUid: String?) {
         if (currentState == FRIEND) {
@@ -214,6 +239,8 @@ class ViewFriendProfile : AppCompatActivity() {
     }
 
     //My code: This is responsible for handling all the account states between users when sending friend requests
+
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun performAction(userID: String?) {
 
         when (currentState) {
@@ -236,6 +263,7 @@ class ViewFriendProfile : AppCompatActivity() {
                             btnDeclineFriendRequest?.visibility = View.GONE
                             currentState = SENT_REQUEST
                             btnSendFriendRequest?.text = "Cancel Friend Request"
+                            btnSendFriendRequest?.background = resources.getDrawable(R.drawable.btn_decline_request, theme)
 
                         } else {
                             Log.e(javaClass.simpleName, it.exception.toString())
@@ -264,6 +292,8 @@ class ViewFriendProfile : AppCompatActivity() {
                             //change state back to default
                             currentState = DEFAULT
                             btnSendFriendRequest?.text = "Send Friend Request"
+                            btnSendFriendRequest?.background = resources.getDrawable(R.drawable.btn_send_request, theme)
+
                             btnDeclineFriendRequest?.visibility = View.GONE
                         } else {
                             Log.e(javaClass.simpleName, it.exception.toString())
@@ -312,7 +342,6 @@ class ViewFriendProfile : AppCompatActivity() {
                         if (it.isSuccessful) {
                             val hashMap = HashMap<String, Any>()
                             hashMap[STATUS] = FRIEND
-                            //hashMap.put("username", )
 
                             friendRef!!.child(mUser!!.uid).child(userID).updateChildren(hashMap)
                                 .addOnCompleteListener {

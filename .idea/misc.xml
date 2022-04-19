@@ -7,9 +7,12 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.5125" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/avatar.xml" value="0.3165" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/bg_nav_header.xml" value="0.357" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_decline_request.xml" value="0.3385" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_personal_bg.xml" value="0.312" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_personal_default.xml" value="0.324" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_personal_pressed.xml" value="0.312" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_send_request.xml" value="0.3385" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/cover_image_bg.xml" value="0.3385" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/dialog_bg.xml" value="0.492" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/ic_action_navigation_menu.xml" value="0.357" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/ic_baseline_email_24.xml" value="0.385" />
@@ -18,6 +21,7 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/ic_nav_sign_out.xml" value="0.357" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/ic_nav_user.xml" value="0.357" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/ic_round_add_24.xml" value="0.2725" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/ic_round_add_photo_alternate_24.xml" value="0.3385" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/ic_round_arrow_back_24.xml" value="0.5125" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/ic_round_calendar_month_24.xml" value="0.385" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/ic_round_cancel_24.xml" value="0.3645" />
@@ -59,7 +63,7 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_login.xml" value="0.46467391304347827" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_main.xml" value="0.3666666666666667" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_map.xml" value="0.3666666666666667" />
-        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_my_profile.xml" value="0.25" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_my_profile.xml" value="0.5" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_new_message.xml" value="0.22" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_password_reset.xml" value="0.40017101325352716" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_searchable.xml" value="0.5416666666666666" />
@@ -67,7 +71,7 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_sign_up.xml" value="0.5" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_splash.xml" value="0.3" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_verify_email.xml" value="0.5" />
-        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_view_friend_profile.xml" value="0.40017101325352716" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_view_friend_profile.xml" value="0.5" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/app_bar_main.xml" value="0.29438405797101447" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/app_bar_name.xml" value="0.4875" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/chat_from_row.xml" value="0.5" />
