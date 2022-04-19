@@ -63,13 +63,15 @@ object Constants {
      */
 
     //allows app to open the users media storage to select an image
-    //requires an activity as a parameter to know which activity to the startActivityForResult
+    //requires an activity as a parameter to know which activity to startActivityForResult
     fun showImageChooser (activity: Activity){
         val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         activity.startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST_CODE)
     }
 
-    //requires an activity as a parameter to know which activity to return the file extension to
+    /* Converts the uri retrieved from image choose into a string
+     * requires an activity as a parameter to know which activity to return the file extension to
+     */
      fun getFileExtension(activity: Activity, uri : Uri?): String? {
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(activity.contentResolver.getType(uri!!))
     }

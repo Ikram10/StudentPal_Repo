@@ -69,16 +69,20 @@ class MyProfileActivity : BaseActivity() {
             }
         }
 
+        //My Code: Enables users to add a cover image
         binding?.btnAddCoverImage?.setOnClickListener {
-            profileCoverImgSelected
-            //The user will be prompted to grant permission to read files from devices media storage in order to upload a profile image
+            // when button clicked set this to true
+            profileCoverImgSelected = true
+            //The user will be prompted to grant permission to read files from devices media storage in order to upload a cover image image
             if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
+                // if granted permission, show image chooser
                 Constants.showImageChooser(this)
             } else {
+                // prompt user to grant permission to media storage
                 ActivityCompat.requestPermissions(
                     this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                     Constants.READ_STORAGE_PERMISSION_CODE
@@ -88,14 +92,18 @@ class MyProfileActivity : BaseActivity() {
 
         //The user will be able to click on the update button
         binding?.btnUpdate?.setOnClickListener {
-            //the program will check if the this mSelectedImageFileUri variable is not null before uploading user image
+            // CheckS if an Image uri exists before uploading the user image
             if (mSelectedImageFileUri != null) {
-                uploadUserImage()
-            } else if (mSelectedCoverImageFileUri != null) {
                 uploadUserImage()
             } else {
                 showProgressDialog(resources.getString(R.string.please_wait))
-
+                updateUserProfileData()
+            }
+            // Checks if a Cover image uri exists before uploading cover image
+            if (mSelectedCoverImageFileUri != null) {
+                uploadUserImage()
+            } else {
+                showProgressDialog(resources.getString(R.string.please_wait))
                 updateUserProfileData()
             }
         }
@@ -124,29 +132,25 @@ class MyProfileActivity : BaseActivity() {
                 }
                 !profileImgSelected
             }
-        } else if (profileCoverImgSelected) {
-            if (data != null) {
+            if (profileCoverImgSelected) {
                 mSelectedCoverImageFileUri = data.data
-            }
-            try {
+                try {
+                    binding?.ciMyProfile?.let {
+                        Glide
+                            .with(this)
+                            .load(mSelectedCoverImageFileUri)
+                            .centerCrop()
+                            .placeholder(R.drawable.add_screen_image_placeholder)
+                            .into(it)
 
-                binding?.ciMyProfile?.let {
-                    Glide
-                        .with(this)
-                        .load(mSelectedCoverImageFileUri)
-                        .centerCrop()
-                        .placeholder(R.drawable.ic_nav_user)
-                        .into(it)
-
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
+                !profileCoverImgSelected
             }
-            !profileCoverImgSelected
         }
-
-        }
-
+    }
 
 
 
@@ -202,7 +206,7 @@ class MyProfileActivity : BaseActivity() {
             Glide
                 .with(this)
                 .load(user.image)
-                .centerCrop()
+                .circleCrop()
                 .placeholder(R.drawable.ic_nav_user)
                 .into(it.ivProfileUserImage)
             it.etName.setText(user.name)
@@ -217,6 +221,7 @@ class MyProfileActivity : BaseActivity() {
                 .with(this)
                 .load(user.coverImage)
                 .centerCrop()
+                .placeholder(R.drawable.ic_user_place_holder)
                 .into(it.ciMyProfile)
 
 
@@ -276,7 +281,7 @@ class MyProfileActivity : BaseActivity() {
                 hideProgressDialog()
             }
         }
-        else if (mSelectedCoverImageFileUri != null) {
+         if (mSelectedCoverImageFileUri != null) {
             val sref: StorageReference = FirebaseStorage.getInstance().reference.child(
                 "COVER_IMAGE" +
                         System.currentTimeMillis() + "." + Constants.getFileExtension(
@@ -286,7 +291,7 @@ class MyProfileActivity : BaseActivity() {
             )
             sref.putFile(mSelectedCoverImageFileUri!!).addOnSuccessListener {
                 Log.i(
-                    "Firebase Image URL",
+                    "Firebase Cover Img URL",
                     it.metadata!!.reference!!.downloadUrl.toString()
                 )
                 it.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
