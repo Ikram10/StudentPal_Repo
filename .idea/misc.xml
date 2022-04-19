@@ -52,6 +52,7 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_create_board.xml" value="0.5" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_edit_event.xml" value="0.40017101325352716" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_event_info.xml" value="0.4241128687473279" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_find_friends.xml" value="0.40017101325352716" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_friends.xml" value="0.4166666666666667" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_intro.xml" value="0.3" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_latest_messages.xml" value="0.25" />
@@ -78,7 +79,7 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/dialog_progress.xml" value="0.4302536231884058" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/dialog_search_friend.xml" value="0.40017101325352716" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/fragment_maps.xml" value="0.32535271483539974" />
-        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/item_assign_friend.xml" value="0.40017101325352716" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/item_assign_friend.xml" value="0.5" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/item_attendee.xml" value="0.40017101325352716" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/item_board.xml" value="0.67" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/item_card_color.xml" value="0.40017101325352716" />

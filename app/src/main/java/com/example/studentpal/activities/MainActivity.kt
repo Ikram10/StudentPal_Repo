@@ -187,6 +187,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 )
             }
             R.id.nav_active_users -> {
+                startActivity(Intent(this, FindFriends::class.java))
 
             }
             R.id.nav_friends -> {

@@ -8,8 +8,7 @@ import com.example.studentpal.models.Board
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.*
 
 class FirestoreClass {
 
@@ -131,6 +130,36 @@ class FirestoreClass {
         }
 
         return currentUserID
+    }
+
+
+    //My code: retrieves all users apart from current user from the database
+    fun getAllUsers(activity: FindFriends) {
+        mFireStore
+            .collection(Constants.USERS)
+            .whereNotEqualTo("id", getCurrentUserId())
+            .addSnapshotListener(object : EventListener<QuerySnapshot> {
+                override fun onEvent(value: QuerySnapshot?, error: FirebaseFirestoreException?) {
+                    val userList = arrayListOf<User>()
+                    if (error != null) {
+                        Log.w("Firestore Error", "Listen failed.")
+                        return
+                    }
+                    for (dc: DocumentChange in value?.documentChanges!!) {
+                        if (dc.type == DocumentChange.Type.ADDED) {
+                            val user = dc.document.toObject(User::class.java)
+                            userList.add(user)
+
+                        }
+                    }
+                    activity.setUpFriendsList(userList)
+                }
+            })
+
+
+
+
+
     }
 
     /**

@@ -6,52 +6,61 @@
     android:layout_marginBottom="@dimen/item_member_marginBottom"
     android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_find_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/item_member_content_padding">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_friend_image"
-            android:layout_width="@dimen/item_member_member_image_size"
-            android:layout_height="@dimen/item_member_member_image_size"
-            android:contentDescription="@string/image_contentDescription"
-            android:src="@drawable/ic_user_place_holder"
-            app:civ_border_color="@color/primary_text_color"
-            app:civ_border_width="@dimen/item_member_image_circular_width_size" />
+        app:cardCornerRadius="@dimen/card_view_corner_radius"
+        android:elevation="@dimen/card_view_elevation"
+        android:layout_margin="4dp"
+        app:cardBackgroundColor="@color/white">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/item_member_detail_layout_marginStart"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/item_member_content_padding">
 
-            <TextView
-                android:id="@+id/tv_member_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/primary_text_color"
-                android:textSize="@dimen/item_member_name_text_size"
-                tools:text="Member Name" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_friend_image"
+                android:layout_width="@dimen/item_member_member_image_size"
+                android:layout_height="@dimen/item_member_member_image_size"
+                android:contentDescription="@string/image_contentDescription"
+                android:src="@drawable/ic_user_place_holder"
+                app:civ_border_color="@color/primary_text_color"
+                app:civ_border_width="@dimen/item_member_image_circular_width_size" />
 
-            <TextView
-                android:id="@+id/tv_member_email"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/secondary_text_color"
-                android:textSize="@dimen/item_member_email_text_size"
-                tools:text="Email" />
+                android:layout_marginStart="@dimen/item_member_detail_layout_marginStart"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_member_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/item_member_name_text_size"
+                    tools:text="Member Name"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_member_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondary_text_color"
+                    android:textSize="@dimen/item_member_email_text_size"
+                    tools:text="Email" />
+            </LinearLayout>
+
+
         </LinearLayout>
 
+    </androidx.cardview.widget.CardView>
 
-    </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_member_divider_height"
-        android:layout_marginTop="@dimen/item_member_divider_marginTop"
-        android:background="@color/divider_color" />
+
 </LinearLayout>
