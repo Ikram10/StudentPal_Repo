@@ -13,6 +13,7 @@ import androidx.appcompat.widget.AppCompatButton
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivityViewFriendProfileBinding
+import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.messages.ChatLogActivity
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
@@ -30,7 +31,6 @@ class ViewFriendProfile : AppCompatActivity() {
     var binding: ActivityViewFriendProfileBinding? = null
     var btnSendFriendRequest: AppCompatButton? = null
     var btnDeclineFriendRequest: AppCompatButton? = null
-
     // Starting state
     var currentState = DEFAULT
 
@@ -46,6 +46,8 @@ class ViewFriendProfile : AppCompatActivity() {
         const val STATUS = "status"
         const val DECLINE = "decline"
         const val PENDING = "pending"
+
+        var currentUser: User? = null
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -85,13 +87,22 @@ class ViewFriendProfile : AppCompatActivity() {
     }
     //MY code
     private fun loadFriendData() {
-
+        //Users profile image
         binding?.civFriendImage?.let {
             Glide
                 .with(this)
                 .load(friendDetails?.image)
                 .centerCrop()
                 .placeholder(R.drawable.ic_nav_user)
+                .into(it)
+        }
+
+        // users cover images
+        binding?.coverImageFriend?.let {
+            Glide
+                .with(this)
+                .load(friendDetails?.coverImage)
+                .centerCrop()
                 .into(it)
         }
         binding?.tvFriendName?.text = friendDetails?.name.toString()
@@ -358,6 +369,14 @@ class ViewFriendProfile : AppCompatActivity() {
                                                 btnSendFriendRequest?.text = "Message"
                                                 btnDeclineFriendRequest?.text = "Unfriend"
                                                 btnDeclineFriendRequest?.visibility = View.VISIBLE
+
+                                                btnSendFriendRequest?.setOnClickListener {
+                                                    FirestoreClass().fetchCurrentUser(this)
+                                                    // Sends the friend details to the Chat log activity
+                                                    val intent = Intent(this, ChatLogActivity::class.java)
+                                                    intent.putExtra(Constants.USER_KEY, friendDetails)
+                                                    startActivity(intent)
+                                                }
                                             }
                                     }
                                 }

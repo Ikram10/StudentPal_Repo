@@ -221,7 +221,6 @@ class MyProfileActivity : BaseActivity() {
                 .with(this)
                 .load(user.coverImage)
                 .centerCrop()
-                .placeholder(R.drawable.ic_user_place_holder)
                 .into(it.ciMyProfile)
 
 

@@ -7,7 +7,9 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
+import com.example.studentpal.activities.ViewFriendProfile
 import com.example.studentpal.databinding.ActivityChatLogBinding
+import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.ChatMessage
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
@@ -18,11 +20,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ChatLogActivity : BaseActivity() {
 
     companion object {
         const val TAG = "ChatLog"
+        var currentUser: User? = null
     }
 
     private var binding: ActivityChatLogBinding? = null
@@ -31,9 +36,8 @@ class ChatLogActivity : BaseActivity() {
     //toUser = the user the currently signed in User wants to interact with
     private var toUser: User? = null
 
-    //currently signed in user
-    private var user: User? = null
     private val adapter = GroupAdapter<GroupieViewHolder>()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +49,7 @@ class ChatLogActivity : BaseActivity() {
         binding?.recyclerviewChatLog?.adapter = adapter
 
 
-        // need to provide the USER_KEY to extract the User
+        // need to provide the USER_KEY to extract the User from intent
         toUser = intent.getParcelableExtra(Constants.USER_KEY)
 
         setupActionBar()
@@ -57,20 +61,22 @@ class ChatLogActivity : BaseActivity() {
             performSendMessage()
 
         }
-
+        FirestoreClass().fetchCurrentUser(this)
         listenForMessages()
 
     }
 
     //My code:
     private fun listenForMessages() {
-
-        val fromId: String? = FirebaseAuth.getInstance().uid
+        val fromId = FirebaseAuth.getInstance().uid
         val toId = toUser?.id
+        //User-Messages query, between two users
+        val reference = FirebaseFirestore.getInstance()
+            .collection(Constants.USER_MESSAGES)
+            .document(fromId!!)
+            .collection(toId!!)
 
-        val reference =
-            FirebaseFirestore.getInstance().collection(Constants.USER_MESSAGES).document(fromId!!)
-                .collection(toId!!)
+
         reference.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 Log.w(TAG, "Listen Failed", error)
@@ -81,21 +87,21 @@ class ChatLogActivity : BaseActivity() {
                 for (dc: DocumentChange in snapshot.documentChanges) {
                     when (dc.type) {
                         DocumentChange.Type.ADDED -> {
+
+
                             val chatMessage = dc.document.toObject(ChatMessage::class.java)
                             Log.d(TAG, chatMessage.text)
 
-                            //conditional statement checks if message was sent by currently signed in user or from another user
+                            //conditional statement checks if message was sent by currently signed in user or from other user
                             if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
 
-                                val currentUser = LatestMessagesActivity.currentUser
                                 //chat items have different layouts and is dependant on who sent the message
-                                adapter.add(ChatFromItem(chatMessage.text, currentUser!!))
-
+                                adapter.add(ChatFromItem(chatMessage.text, currentUser!!, chatMessage.timeStamp))
                             } else {
-                                adapter.add(ChatToItem(chatMessage.text, toUser!!))
+                                adapter.add(ChatToItem(chatMessage.text, toUser!!, chatMessage.timeStamp))
                             }
 
-                            //scrolls to the bottom of the chat log wh
+                            //scrolls to the bottom of the chat log, to always display latest message
                             binding?.recyclerviewChatLog?.scrollToPosition(adapter.itemCount - 1)
 
                         }
@@ -137,9 +143,10 @@ class ChatLogActivity : BaseActivity() {
             text.toString(),
             System.currentTimeMillis() / 1000
         )
-
+        Log.d("long time", "Time is: ${convertLongToTime(chatMessage.timeStamp)}")
         reference.document().set(chatMessage).addOnSuccessListener {
             Log.d(TAG, "Saved chat message: ${reference.id}")
+
             //clears the edit text when the user hits the send button
             text?.clear()
 
@@ -164,9 +171,10 @@ class ChatLogActivity : BaseActivity() {
         latestMessageToRef.setValue(chatMessage)
     }
 
-    inner class ChatFromItem(val text: String, val user: User) : Item<GroupieViewHolder>() {
+    inner class ChatFromItem(val text: String, val user: User, private val timeSent: Long) : Item<GroupieViewHolder>() {
         override fun bind(viewHolder: GroupieViewHolder, position: Int) {
             viewHolder.itemView.findViewById<TextView>(R.id.tv_message_from).text = text
+            viewHolder.itemView.findViewById<TextView>(R.id.tv_time_sent_from).text = convertLongToTime(timeSent)
 
             val targetImageView =
                 viewHolder.itemView.findViewById<ImageView>(R.id.iv_profile_image_from)
@@ -188,11 +196,12 @@ class ChatLogActivity : BaseActivity() {
     }
 
     //this class is responsible for
-    inner class ChatToItem(val text: String, val user: User) : Item<GroupieViewHolder>() {
+    inner class ChatToItem(val text: String, val user: User, val timeStamp: Long) : Item<GroupieViewHolder>() {
         override fun bind(viewHolder: GroupieViewHolder, position: Int) {
             //textview that shows the users message sent in the chat log
             val toMessageView = viewHolder.itemView.findViewById<TextView>(R.id.tv_message_to)
             toMessageView.text = text
+            viewHolder.itemView.findViewById<TextView>(R.id.tv_time_sent_to).text = convertLongToTime(timeStamp)
 
             //The imageview that holds the users image in the xml file
             val targetImageView =
@@ -230,6 +239,12 @@ class ChatLogActivity : BaseActivity() {
         toolbar?.setNavigationOnClickListener {
             onBackPressed()
         }
+    }
+
+    fun convertLongToTime(time: Long): String {
+        val date = Date(time)
+        val format = SimpleDateFormat("HH:mm", Locale.ENGLISH)
+        return format.format(date)
     }
 
 }

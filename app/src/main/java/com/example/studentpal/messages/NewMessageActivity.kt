@@ -106,12 +106,9 @@ class NewMessageActivity : BaseActivity() {
                         intent.putExtra(Constants.USER_KEY, userItem.user)
                         startActivity(intent)
 
-
                     }
 
                     recyclerView?.adapter = adapter
-
-
                 }
             })
     }

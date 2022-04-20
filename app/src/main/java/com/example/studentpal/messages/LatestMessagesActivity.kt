@@ -9,6 +9,7 @@ import android.view.MenuItem
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityLatestMessagesBinding
+import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.ChatMessage
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
@@ -54,7 +55,7 @@ class LatestMessagesActivity : BaseActivity() {
 
         listenForLatestMessages()
 
-        fetchCurrentUser()
+        FirestoreClass().fetchCurrentUser(this)
 
         setupActionBar()
     }
@@ -63,7 +64,8 @@ class LatestMessagesActivity : BaseActivity() {
     private fun listenForLatestMessages() {
         val fromId = FirebaseAuth.getInstance().uid
         val ref =
-            FirebaseDatabase.getInstance("https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app/")
+            FirebaseDatabase.getInstance(
+                "https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app/")
                 .getReference("/latest-messages/$fromId")
 
         ref.addChildEventListener(object : ChildEventListener {
@@ -101,29 +103,7 @@ class LatestMessagesActivity : BaseActivity() {
         }
     }
 
-    //This method
-    private fun fetchCurrentUser() {
-        //retrieves currently signed in users id
-        val uid = FirebaseAuth.getInstance().uid
-        //A reference to currently signed in user in Firestore
-        val ref =
-            FirebaseFirestore.getInstance().collection(Constants.USERS).document(uid.toString())
 
-        //listener listens to modifications made to currently signed in users document
-        ref.addSnapshotListener(object : EventListener<DocumentSnapshot> {
-            override fun onEvent(value: DocumentSnapshot?, error: FirebaseFirestoreException?) {
-                if (error != null) {
-                    Log.w("Firestore Error", "Listen failed.")
-                    return
-                }
-                if (value != null) {
-                    currentUser = value.toObject(User::class.java)
-                    Log.d("Latest Messages", "Current User ${currentUser?.image}")
-                }
-            }
-
-        })
-    }
 
 
     //Denis Panjuta code.

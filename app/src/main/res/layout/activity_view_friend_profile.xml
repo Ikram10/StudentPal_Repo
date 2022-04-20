@@ -25,16 +25,16 @@
     <FrameLayout
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="160dp"
         android:background="@drawable/cover_image_bg"
         app:layout_constraintTop_toBottomOf="@+id/appbar_friend_profile"
-        android:padding="2dp">
+        android:padding="2dp"
+        android:layout_margin="2dp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/cover_image_friend"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="#D0CDCD"
           >
         </androidx.appcompat.widget.AppCompatImageView>
 

@@ -4,6 +4,8 @@ import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import com.example.studentpal.activities.*
+import com.example.studentpal.messages.ChatLogActivity
+import com.example.studentpal.messages.LatestMessagesActivity
 import com.example.studentpal.models.Board
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
@@ -130,6 +132,42 @@ class FirestoreClass {
         }
 
         return currentUserID
+    }
+
+    //Mycode:
+    fun fetchCurrentUser(activity: Activity) {
+        //retrieves currently signed in users id
+        val uid = FirebaseAuth.getInstance().uid
+        //A reference to currently signed in user in Firestore
+        val ref =
+            FirebaseFirestore.getInstance().collection(Constants.USERS).document(uid.toString())
+
+        //listener listens to modifications made to currently signed in users document
+        ref.addSnapshotListener(object : EventListener<DocumentSnapshot> {
+            override fun onEvent(value: DocumentSnapshot?, error: FirebaseFirestoreException?) {
+                if (error != null) {
+                    Log.w("Firestore Error", "Listen failed.")
+                    return
+                }
+                if (value != null) {
+                    when (activity) {
+                        is LatestMessagesActivity -> {
+                            LatestMessagesActivity.currentUser = value.toObject(User::class.java)
+                        }
+                        is ViewFriendProfile -> {
+                            ViewFriendProfile.currentUser = value.toObject(User::class.java)
+                        }
+                        is ChatLogActivity -> {
+                            ChatLogActivity.currentUser = value.toObject(User::class.java)
+
+                        }
+                    }
+
+                    Log.d("Latest Messages", "Current User ${LatestMessagesActivity.currentUser?.image}")
+                }
+            }
+
+        })
     }
 
 
