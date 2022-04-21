@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
@@ -57,15 +58,16 @@ class ViewFriendProfile : BaseActivity() {
         var currentUser: User? = null
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityViewFriendProfileBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding!!.root)
 
+        // Retrieves users from intent
         if (intent.hasExtra(Constants.USER_KEY)) {
             friendDetails = intent.getParcelableExtra<User>(Constants.USER_KEY)
         }
+
         setupActionBar()
 
         mUser = FirebaseAuth.getInstance().currentUser
@@ -142,7 +144,7 @@ class ViewFriendProfile : BaseActivity() {
                                             Toast.LENGTH_LONG
                                         ).show()
                                         currentState = DEFAULT
-                                        btnPerform?.text = "Send Friend Request"
+                                        btnPerform?.text = resources.getString(R.string.send_friend_request)
                                         btnDeclineFriendRequest?.visibility = View.GONE
                                     }
                                 }
@@ -168,7 +170,7 @@ class ViewFriendProfile : BaseActivity() {
                                             Toast.LENGTH_LONG
                                         ).show()
                                         currentState = DEFAULT
-                                        btnPerform?.text = "Send Friend Request"
+                                        btnPerform?.text = resources.getString(R.string.send_friend_request)
                                         btnDeclineFriendRequest?.visibility = View.GONE
                                     }
                                 }
@@ -226,7 +228,7 @@ class ViewFriendProfile : BaseActivity() {
                             DocumentChange.Type.ADDED -> {
                                 currentState = FRIEND
 
-                                btnPerform?.text = "Message"
+                                btnPerform?.text = resources.getString(R.string.message)
                                 btnDeclineFriendRequest?.text = "Unfriend"
                                 btnDeclineFriendRequest?.visibility = View.VISIBLE
 
@@ -258,7 +260,7 @@ class ViewFriendProfile : BaseActivity() {
                         when (dc.type) {
                             DocumentChange.Type.ADDED -> {
                                 currentState = FRIEND
-                                btnPerform?.text = "Message"
+                                btnPerform?.text = resources.getString(R.string.message)
                                 btnDeclineFriendRequest?.text = "Unfriend"
                                 btnDeclineFriendRequest?.visibility = View.VISIBLE
 
@@ -301,7 +303,7 @@ class ViewFriendProfile : BaseActivity() {
                                 }
                                 if (dc.document[STATUS] == DECLINE) {
                                     currentState = DECLINED_REQUEST
-                                    btnPerform?.text = "Cancel Friend Request"
+                                    btnPerform?.text = resources.getString(R.string.send_friend_request)
                                     btnDeclineFriendRequest?.visibility = View.GONE
                                     btnPerform?.background =
                                         resources.getDrawable(R.drawable.btn_decline_request, theme)
@@ -350,16 +352,15 @@ class ViewFriendProfile : BaseActivity() {
             }
 
         if (currentState == DEFAULT) {
-            btnPerform?.text = "Send Friend Request"
+            btnPerform?.text = resources.getString(R.string.send_friend_request)
             btnDeclineFriendRequest?.visibility = View.GONE
         }
     }
 
 //My code: This is responsible for handling all the account states between users when sending friend requests
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun performAction(friendUserID: String?) {
 
+    private fun performAction(friendUserID: String?) {
         when (currentState) {
 
             /* Default state
@@ -407,7 +408,7 @@ class ViewFriendProfile : BaseActivity() {
                         if (it.isSuccessful) {
                             //change state back to default
                             currentState = DEFAULT
-                            btnPerform?.text = "Send Friend Request"
+                            btnPerform?.text = resources.getString(R.string.send_friend_request)
                             btnPerform?.background =
                                 resources.getDrawable(R.drawable.btn_send_request, theme)
 
@@ -448,7 +449,7 @@ class ViewFriendProfile : BaseActivity() {
                                 .show()
                             //change state back to default
                             currentState = DEFAULT
-                            btnPerform?.text = "Send Friend Request"
+                            btnPerform?.text = resources.getString(R.string.send_friend_request)
                             btnDeclineFriendRequest?.visibility = View.GONE
 
                             for (doc in it.result.documents) {
@@ -495,9 +496,10 @@ class ViewFriendProfile : BaseActivity() {
                                                 .show()
                                             currentState = FRIEND
                                             btnPerform?.text = "Message"
+                                            btnPerform?.background =
+                                                resources.getDrawable(R.drawable.shape_button_rounded, theme)
                                             btnDeclineFriendRequest?.text = "Unfriend"
                                             btnDeclineFriendRequest?.visibility = View.VISIBLE
-
 
 
                                             btnPerform?.setOnClickListener {

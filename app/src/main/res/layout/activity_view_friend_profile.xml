@@ -25,7 +25,7 @@
     <FrameLayout
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="170dp"
         android:background="@drawable/cover_image_bg"
         app:layout_constraintTop_toBottomOf="@+id/appbar_friend_profile"
         android:padding="2dp"
@@ -37,8 +37,6 @@
             android:layout_height="match_parent"
           >
         </androidx.appcompat.widget.AppCompatImageView>
-
-
 
 
     </FrameLayout>
@@ -65,7 +63,7 @@
         app:cardCornerRadius="@dimen/card_view_corner_radius"
         app:layout_constraintTop_toBottomOf="@+id/civ_friend_image"
         app:cardUseCompatPadding="true"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="8dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         app:cardBackgroundColor="@color/white"
@@ -84,9 +82,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
                 android:text="Ikram Rashid"
                 android:textColor="#0A629D"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -94,7 +93,8 @@
             <View
                 android:layout_width="320dp"
                 android:layout_height="1dp"
-                android:layout_margin="6dp"
+                android:layout_margin="10dp"
+
                 android:background="@color/secondary_text_color"/>
             <TextView
                 android:id="@+id/cv_friend_status"
@@ -110,7 +110,7 @@
             <View
                 android:layout_width="320dp"
                 android:layout_height="1dp"
-                android:layout_margin="6dp"
+                android:layout_margin="10dp"
                 android:background="@color/secondary_text_color"/>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -119,18 +119,18 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="4dp"
-                android:layout_marginStart="60dp"
-                android:layout_marginEnd="60dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"
                 android:layout_marginBottom="8dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="3dp"
+
                     android:background="@drawable/white_border_shape_button_rounded"
                     android:orientation="horizontal"
-                    android:padding="8dp"
-                    android:layout_weight="1">
+                    android:padding="10dp">
 
                     <TextView
                         android:id="@+id/friends_label"
@@ -140,7 +140,7 @@
                         android:layout_weight="1"
                         android:text="@string/friends_num"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -150,10 +150,10 @@
                         android:layout_gravity="center"
                         android:layout_marginEnd="1dp"
                         android:layout_weight="1"
-                        tools:text="0"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:textStyle="normal" />
+                        android:textSize="14sp"
+                        android:textStyle="normal"
+                        tools:text="0" />
 
                 </LinearLayout>
 
@@ -163,8 +163,9 @@
                     android:layout_marginStart="3dp"
                     android:background="@drawable/white_border_shape_button_rounded"
                     android:orientation="horizontal"
-                    android:padding="8dp"
-                    android:layout_weight="1">
+                    android:padding="10dp"
+
+                   >
 
                     <TextView
                         android:id="@+id/date_label"
@@ -174,7 +175,7 @@
                         android:layout_weight="1"
                         android:text="@string/date_joined"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -182,10 +183,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        tools:text="1/1/1"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:textStyle="normal" />
+                        android:textSize="14sp"
+                        android:textStyle="normal"
+                        tools:text="01/01/2022" />
 
                 </LinearLayout>
 
@@ -199,27 +200,29 @@
     </androidx.cardview.widget.CardView>
 
 
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cv_friend_profile"
-        app:layout_constraintVertical_bias="0.409"
-        tools:layout_editor_absoluteX="10dp">
+        app:layout_constraintVertical_bias="0.851"
+        tools:layout_editor_absoluteX="-15dp">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_send_request"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+
             android:layout_weight="1"
             android:background="@drawable/btn_send_request"
             android:padding="10dp"
-            android:textSize="@dimen/btn_text_size"
             android:text="Send Request"
+            android:textSize="@dimen/btn_text_size"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/btn_decline_request" />
 
@@ -231,8 +234,8 @@
             android:layout_weight="1"
             android:background="@drawable/btn_decline_request"
             android:padding="10dp"
-            android:textSize="@dimen/btn_text_size"
             android:text="Decline Request"
+            android:textSize="@dimen/btn_text_size"
             android:visibility="gone"
             tools:visibility="visible" />
 

@@ -140,7 +140,7 @@ class ChatLogActivity : BaseActivity() {
             fromId,
             toId,
             text.toString(),
-            System.currentTimeMillis() / 1000
+            System.currentTimeMillis()
         )
         Log.d("long time", "Time is: ${convertLongToTime(chatMessage.timeStamp)}")
         reference.document().set(chatMessage).addOnSuccessListener {
