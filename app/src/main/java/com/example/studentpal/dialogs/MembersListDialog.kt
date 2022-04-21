@@ -9,8 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studentpal.R
-import com.example.studentpal.adapter.CardColorItemsAdapter
-import com.example.studentpal.adapter.FriendsListItemsAdapter
+import com.example.studentpal.adapter.FriendsAssignedAdapter
 import com.example.studentpal.models.User
 
 abstract class MembersListDialog(
@@ -19,7 +18,7 @@ abstract class MembersListDialog(
         private val title: String = ""
     ) : Dialog(context) {
 
-        private var adapter: FriendsListItemsAdapter? = null
+        private var adapter: FriendsAssignedAdapter? = null
 
     //inflates the dialog's view
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,11 +44,11 @@ abstract class MembersListDialog(
             //if there are users assigned to the event
             if (list.size > 0) {
             recyclerView.layoutManager = LinearLayoutManager(context)
-            adapter = FriendsListItemsAdapter(context, list)
+            adapter = FriendsAssignedAdapter(context, list)
             recyclerView.adapter = adapter
 
             adapter!!.setOnClickListener( object :
-                FriendsListItemsAdapter.OnClickListener {
+                FriendsAssignedAdapter.OnClickListener {
                 override fun onClick(position: Int, user: User, action: String) {
                     dismiss()
                     onItemSelected(user, action)

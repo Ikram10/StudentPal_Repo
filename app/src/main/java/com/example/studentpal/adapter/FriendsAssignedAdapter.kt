@@ -13,7 +13,7 @@ import com.example.studentpal.R
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 
-open class FriendsListItemsAdapter(
+open class FriendsAssignedAdapter(
     private val context: Context,
     private var list: ArrayList<User>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){

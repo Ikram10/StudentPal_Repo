@@ -15,7 +15,8 @@ data class User (
     val status: String = "Available",
     val fcmToken : String = "",
     var selected: Boolean = false,
-    val coverImage : String = ""
+    val coverImage : String = "",
+    var numFriends : Int = 0
 ): Parcelable {
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -28,7 +29,8 @@ data class User (
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readBoolean(),
-        parcel.readString()!!
+        parcel.readString()!!,
+        parcel.readInt()
     )
 
     override fun describeContents() = 0
@@ -44,6 +46,7 @@ data class User (
         writeString(fcmToken)
         writeBoolean(selected)
         writeString(coverImage)
+        writeInt(numFriends)
     }
 
     companion object CREATOR : Parcelable.Creator<User> {

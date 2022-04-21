@@ -26,6 +26,13 @@ class UsersAdapter(var context: Context, var list: ArrayList<User>)
             fun bindItem(user: User){
                 itemBinding.tvMemberName.text = user.name
                 itemBinding.tvMemberEmail.text = user.email
+                Glide
+                    .with(context)
+                    .load(user.image)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_user_place_holder)
+                    .into(itemBinding.ivFriendImage)
+
 
             }
     }
@@ -40,23 +47,29 @@ class UsersAdapter(var context: Context, var list: ArrayList<User>)
         val model = list[position]
 
         holder.bindItem(model)
-        Glide
-            .with(context)
-            .load(model.image)
-            .centerCrop()
-            .placeholder(R.drawable.ic_user_place_holder)
-            .into(holder.itemView.findViewById(R.id.iv_friend_image))
-
         holder.itemView.setOnClickListener {
             val intent = Intent(it.context, ViewFriendProfile::class.java)
             intent.putExtra(Constants.USER_KEY, model)
             it.context.startActivity(intent)
         }
+
+
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
+
+
+
+
+
+
+
+
+
+
+
 
     override fun getFilter(): Filter {
         return filters

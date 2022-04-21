@@ -75,6 +75,7 @@ class SignInActivity : BaseActivity() {
                     }
                 }
         }
+
     }
 
     private fun validateForm(email: String, password: String): Boolean {

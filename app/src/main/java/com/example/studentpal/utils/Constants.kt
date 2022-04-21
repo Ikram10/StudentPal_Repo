@@ -11,6 +11,10 @@ import com.example.studentpal.activities.MyProfileActivity
 
 object Constants {
 
+
+
+
+
     //user related Constants
     const val USER_KEY = "USER_KEY"
     const val USERS : String = "Users"
@@ -22,6 +26,10 @@ object Constants {
     const val EMAIL: String = "email"
     const val ID : String = "id"
     const val COVER_IMAGE = "coverImage"
+    const val NUMBER_FRIENDS = "numFriends"
+    const val SENDER: String = "sender"
+    const val RECEIVER: String = "receiver"
+
 
     // Friend Requests
     const val FRIENDSHIPS = "Friendships" // friendships collection

@@ -19,6 +19,7 @@ import com.example.studentpal.R
 import com.example.studentpal.activities.events.CreateBoardActivity
 import com.example.studentpal.activities.events.EventInfoActivity
 import com.example.studentpal.activities.friends.FindFriends
+import com.example.studentpal.activities.friends.FriendsActivity
 import com.example.studentpal.activities.registration.IntroActivity
 import com.example.studentpal.adapter.BoardItemsAdapter
 import com.example.studentpal.databinding.ActivityMainBinding
@@ -195,6 +196,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             }
             R.id.nav_friends -> {
+                startActivity(Intent(this, FriendsActivity::class.java))
 
             }
             R.id.nav_messages -> {

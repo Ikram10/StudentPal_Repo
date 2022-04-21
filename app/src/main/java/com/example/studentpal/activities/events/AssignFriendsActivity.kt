@@ -13,7 +13,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
-import com.example.studentpal.adapter.FriendsListItemsAdapter
+import com.example.studentpal.adapter.FriendsAssignedAdapter
 import com.example.studentpal.databinding.ActivityAssignFriendsBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.Board
@@ -81,7 +81,7 @@ class AssignFriendsActivity : BaseActivity() {
         binding?.rvFriendsActivity?.layoutManager = LinearLayoutManager(this)
         binding?.rvFriendsActivity?.setHasFixedSize(true)
 
-        val adapter = FriendsListItemsAdapter(this, list)
+        val adapter = FriendsAssignedAdapter(this, list)
         binding?.rvFriendsActivity?.adapter = adapter
     }
 

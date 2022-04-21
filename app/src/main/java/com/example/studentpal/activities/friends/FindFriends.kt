@@ -21,22 +21,20 @@ class FindFriends : BaseActivity() {
         binding = ActivityFindFriendsBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
-
-
         setupActionBar()
 
         FirestoreClass().getAllUsers(this)
     }
 
 
-    fun setUpFriendsList(list: ArrayList<User>){
+    fun setUpUsersList(list: ArrayList<User>){
         userList = list
         hideProgressDialog()
 
         binding?.rvFindFriends?.layoutManager = LinearLayoutManager(this)
         binding?.rvFindFriends?.setHasFixedSize(true)
 
-        val usersAdapter = UsersAdapter(this, list)
+        usersAdapter = UsersAdapter(this, list)
         binding?.rvFindFriends?.adapter = usersAdapter
     }
 

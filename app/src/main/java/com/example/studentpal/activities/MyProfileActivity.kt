@@ -215,6 +215,7 @@ class MyProfileActivity : BaseActivity() {
             it.profileName.text = user.name
             it.civStatus.text = user.status
             it.dateNum.text = user.dateJoined //Sets the date joined text in user's profile card
+            it.friendsNum.text = user.numFriends.toString()
 
             // My profile Cover image
             Glide
