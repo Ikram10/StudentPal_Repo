@@ -16,10 +16,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
+import com.example.studentpal.activities.events.CreateBoardActivity
+import com.example.studentpal.activities.events.EventInfoActivity
+import com.example.studentpal.activities.friends.FindFriends
+import com.example.studentpal.activities.registration.IntroActivity
 import com.example.studentpal.adapter.BoardItemsAdapter
 import com.example.studentpal.databinding.ActivityMainBinding
 import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.messages.LatestMessagesActivity
+import com.example.studentpal.activities.messages.LatestMessagesActivity
 import com.example.studentpal.models.Board
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants

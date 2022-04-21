@@ -1,8 +1,8 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.registration
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityIntroBinding
 
 class IntroActivity : BaseActivity() {

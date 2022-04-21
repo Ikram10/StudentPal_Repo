@@ -15,9 +15,8 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
-import com.example.studentpal.activities.EditEventActivity
-import com.example.studentpal.activities.FriendsActivity
-import com.example.studentpal.activities.MainActivity
+import com.example.studentpal.activities.events.EditEventActivity
+import com.example.studentpal.activities.events.AssignFriendsActivity
 import com.example.studentpal.models.Board
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -121,7 +120,7 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
 
         holder.itemView.findViewById<AppCompatImageButton>(R.id.assign_friends).setOnClickListener {
             //intent passes this event details to the friends activity
-            val intent = Intent(it.context, FriendsActivity::class.java)
+            val intent = Intent(it.context, AssignFriendsActivity::class.java)
             intent.putExtra(Constants.BOARD_DETAIL, model)
             //TODO start activity for result
             it.context.startActivity(intent)

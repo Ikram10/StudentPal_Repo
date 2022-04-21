@@ -11,7 +11,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.studentpal.R
 import com.example.studentpal.activities.MainActivity
-import com.example.studentpal.activities.SignInActivity
+import com.example.studentpal.activities.registration.SignInActivity
 import com.example.studentpal.firebase.FirestoreClass
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage

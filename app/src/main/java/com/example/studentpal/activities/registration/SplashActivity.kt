@@ -1,4 +1,4 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.registration
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.studentpal.R
+import com.example.studentpal.activities.MainActivity
 import com.example.studentpal.firebase.FirestoreClass
 import com.google.firebase.auth.FirebaseAuth
 

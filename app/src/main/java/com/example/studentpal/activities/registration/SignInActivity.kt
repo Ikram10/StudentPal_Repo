@@ -1,4 +1,4 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.registration
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,8 +6,9 @@ import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import com.example.studentpal.R
+import com.example.studentpal.activities.BaseActivity
+import com.example.studentpal.activities.MainActivity
 import com.example.studentpal.databinding.ActivitySignInBinding
-import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.User
 import com.google.firebase.auth.FirebaseAuth
 

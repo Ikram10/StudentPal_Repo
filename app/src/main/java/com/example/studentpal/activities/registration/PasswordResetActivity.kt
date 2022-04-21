@@ -1,4 +1,4 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.registration
 
 import android.content.Intent
 import android.os.Bundle

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:background="@color/bg_color"
         android:orientation="vertical"
-        tools:context=".activities.CreateBoardActivity">
+        tools:context=".activities.events.CreateBoardActivity">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.EditEventActivity"
+    tools:context=".activities.events.EditEventActivity"
     android:background="@color/bg_color">
 
     <com.google.android.material.appbar.AppBarLayout

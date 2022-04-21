@@ -1,7 +1,6 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.friends
 
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -14,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivityViewFriendProfileBinding
 import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.messages.ChatLogActivity
+import com.example.studentpal.activities.messages.ChatLogActivity
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +30,7 @@ class ViewFriendProfile : AppCompatActivity() {
     var binding: ActivityViewFriendProfileBinding? = null
     var btnSendFriendRequest: AppCompatButton? = null
     var btnDeclineFriendRequest: AppCompatButton? = null
+
     // Starting state
     var currentState = DEFAULT
 
@@ -85,6 +85,7 @@ class ViewFriendProfile : AppCompatActivity() {
 
 
     }
+
     //MY code
     private fun loadFriendData() {
         //Users profile image
@@ -106,9 +107,9 @@ class ViewFriendProfile : AppCompatActivity() {
                 .into(it)
         }
         binding?.tvFriendName?.text = friendDetails?.name.toString()
-        binding?.cvFriendStatus?.text  = friendDetails?.status
-        binding?.dateNum?.text  = friendDetails?.dateJoined
-        binding?.friendsNum?.text  = "0"
+        binding?.cvFriendStatus?.text = friendDetails?.status
+        binding?.dateNum?.text = friendDetails?.dateJoined
+        binding?.friendsNum?.text = "0"
 
     }
 
@@ -274,7 +275,8 @@ class ViewFriendProfile : AppCompatActivity() {
                             btnDeclineFriendRequest?.visibility = View.GONE
                             currentState = SENT_REQUEST
                             btnSendFriendRequest?.text = "Cancel Friend Request"
-                            btnSendFriendRequest?.background = resources.getDrawable(R.drawable.btn_decline_request, theme)
+                            btnSendFriendRequest?.background =
+                                resources.getDrawable(R.drawable.btn_decline_request, theme)
 
                         } else {
                             Log.e(javaClass.simpleName, it.exception.toString())
@@ -303,7 +305,8 @@ class ViewFriendProfile : AppCompatActivity() {
                             //change state back to default
                             currentState = DEFAULT
                             btnSendFriendRequest?.text = "Send Friend Request"
-                            btnSendFriendRequest?.background = resources.getDrawable(R.drawable.btn_send_request, theme)
+                            btnSendFriendRequest?.background =
+                                resources.getDrawable(R.drawable.btn_send_request, theme)
 
                             btnDeclineFriendRequest?.visibility = View.GONE
                         } else {
@@ -347,7 +350,7 @@ class ViewFriendProfile : AppCompatActivity() {
 
             }
             // Current user is a recipient of a friend request
-                RECEIVED_REQUEST -> {
+            RECEIVED_REQUEST -> {
                 requestRef!!.child(userID!!).child(mUser!!.uid).removeValue()
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
@@ -373,8 +376,12 @@ class ViewFriendProfile : AppCompatActivity() {
                                                 btnSendFriendRequest?.setOnClickListener {
                                                     FirestoreClass().fetchCurrentUser(this)
                                                     // Sends the friend details to the Chat log activity
-                                                    val intent = Intent(this, ChatLogActivity::class.java)
-                                                    intent.putExtra(Constants.USER_KEY, friendDetails)
+                                                    val intent =
+                                                        Intent(this, ChatLogActivity::class.java)
+                                                    intent.putExtra(
+                                                        Constants.USER_KEY,
+                                                        friendDetails
+                                                    )
                                                     startActivity(intent)
                                                 }
                                             }

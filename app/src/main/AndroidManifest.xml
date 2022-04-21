@@ -33,17 +33,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentPal">
         <activity
-            android:name=".activities.FindFriends"
+            android:name=".activities.friends.FriendsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.friends.FindFriends"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.StudentPal"/>
+            android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".activities.ViewFriendProfile"
+            android:name=".activities.friends.ViewFriendProfile"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.StudentPal"/>
+            android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".activities.MapActivity"
+            android:name=".activities.events.MapActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
@@ -63,45 +66,45 @@
             android:value="@string/google_maps_api_key" />
 
         <activity
-            android:name=".activities.EditEventActivity"
+            android:name=".activities.events.EditEventActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".activities.FriendsActivity"
+            android:name=".activities.events.AssignFriendsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".activities.PasswordResetActivity"
+            android:name=".activities.registration.PasswordResetActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.EventInfoActivity"
+            android:name=".activities.events.EventInfoActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".activities.CreateBoardActivity"
+            android:name=".activities.events.CreateBoardActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".messages.ChatLogActivity"
+            android:name="com.example.studentpal.activities.messages.ChatLogActivity"
             android:exported="false"
-            android:parentActivityName=".messages.LatestMessagesActivity"
+            android:parentActivityName="com.example.studentpal.activities.messages.LatestMessagesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".messages.LatestMessagesActivity"
+            android:name="com.example.studentpal.activities.messages.LatestMessagesActivity"
             android:exported="false"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".messages.NewMessageActivity"
+            android:name="com.example.studentpal.activities.messages.NewMessageActivity"
             android:exported="false"
-            android:parentActivityName=".messages.LatestMessagesActivity"
+            android:parentActivityName="com.example.studentpal.activities.messages.LatestMessagesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SearchBar">
             <meta-data
@@ -118,17 +121,17 @@
             android:name=".activities.BaseActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.SignInActivity"
+            android:name=".activities.registration.SignInActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".activities.SignUpActivity"
+            android:name=".activities.registration.SignUpActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".activities.SplashActivity"
+            android:name=".activities.registration.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal">
@@ -139,7 +142,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.IntroActivity"
+            android:name=".activities.registration.IntroActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />

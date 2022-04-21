@@ -1,4 +1,4 @@
-package com.example.studentpal.messages
+package com.example.studentpal.activities.messages
 
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -18,7 +18,6 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 

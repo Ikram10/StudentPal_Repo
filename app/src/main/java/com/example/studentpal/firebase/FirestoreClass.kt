@@ -4,8 +4,16 @@ import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import com.example.studentpal.activities.*
-import com.example.studentpal.messages.ChatLogActivity
-import com.example.studentpal.messages.LatestMessagesActivity
+import com.example.studentpal.activities.events.AssignFriendsActivity
+import com.example.studentpal.activities.events.CreateBoardActivity
+import com.example.studentpal.activities.events.EditEventActivity
+import com.example.studentpal.activities.events.EventInfoActivity
+import com.example.studentpal.activities.friends.FindFriends
+import com.example.studentpal.activities.friends.ViewFriendProfile
+import com.example.studentpal.activities.registration.SignInActivity
+import com.example.studentpal.activities.registration.SignUpActivity
+import com.example.studentpal.activities.messages.ChatLogActivity
+import com.example.studentpal.activities.messages.LatestMessagesActivity
 import com.example.studentpal.models.Board
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
@@ -305,7 +313,7 @@ class FirestoreClass {
                     usersList.add(user!!)
                 }
 
-                if (activity is FriendsActivity) {
+                if (activity is AssignFriendsActivity) {
                     activity.setUpFriendsList(usersList)
 
                 } else
@@ -313,7 +321,7 @@ class FirestoreClass {
                         activity.setUpAssignedMembersList(usersList)
 
             }.addOnFailureListener {
-                if (activity is FriendsActivity) {
+                if (activity is AssignFriendsActivity) {
                     activity.hideProgressDialog()
                     Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
                 } else
@@ -325,7 +333,7 @@ class FirestoreClass {
     }
 
     //retrieves friend details by querying for their email in firestore
-    fun getFriendDetails(activity: FriendsActivity, email: String) {
+    fun getFriendDetails(activity: AssignFriendsActivity, email: String) {
         mFireStore.collection(Constants.USERS)
             .whereEqualTo(Constants.EMAIL, email)
             .get()
@@ -343,7 +351,7 @@ class FirestoreClass {
             }
     }
 
-    fun assignMemberToEvent(activity: FriendsActivity, board: Board, user: User) {
+    fun assignMemberToEvent(activity: AssignFriendsActivity, board: Board, user: User) {
         //hash map of assigned to field in Firestore (Event documents)
         val assignedToHashMap = HashMap<String, Any>()
         assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo

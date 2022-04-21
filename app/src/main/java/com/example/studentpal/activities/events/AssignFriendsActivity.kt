@@ -1,9 +1,8 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.events
 
 import android.app.Activity
 import android.app.Dialog
 import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -13,8 +12,9 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studentpal.R
+import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.adapter.FriendsListItemsAdapter
-import com.example.studentpal.databinding.ActivityFriendsBinding
+import com.example.studentpal.databinding.ActivityAssignFriendsBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.Board
 import com.example.studentpal.models.User
@@ -30,9 +30,9 @@ import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
 
-class FriendsActivity : BaseActivity() {
+class AssignFriendsActivity : BaseActivity() {
 
-    private var binding: ActivityFriendsBinding? = null
+    private var binding: ActivityAssignFriendsBinding? = null
     private lateinit var mBoardDetails : Board
     private lateinit var mAssignedFriendsList : ArrayList<User>
 
@@ -44,7 +44,7 @@ class FriendsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityFriendsBinding.inflate(layoutInflater)
+        binding = ActivityAssignFriendsBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
         //retrieves the Event details passed from the main activity
@@ -59,7 +59,7 @@ class FriendsActivity : BaseActivity() {
     }
 
     private fun setupActionBar() {
-        val toolbar = binding?.toolbarFriendsActivity
+        val toolbar = binding?.toolbarAssignFriendsActivity
         setSupportActionBar(toolbar)
 
         val actionBar = supportActionBar

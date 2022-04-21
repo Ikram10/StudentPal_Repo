@@ -1,26 +1,19 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.friends
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studentpal.R
-import com.example.studentpal.adapter.FriendsListItemsAdapter
+import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.adapter.UsersAdapter
 import com.example.studentpal.databinding.ActivityFindFriendsBinding
 import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.messages.NewMessageActivity
 import com.example.studentpal.models.User
-import com.example.studentpal.utils.Constants
-import com.google.firebase.firestore.*
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.GroupieViewHolder
 
 class FindFriends : BaseActivity() {
     var binding : ActivityFindFriendsBinding? = null
-    private var db : FirebaseFirestore? = null
     private var userList : ArrayList<User>? = null
     private var usersAdapter: UsersAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,8 +27,6 @@ class FindFriends : BaseActivity() {
 
         FirestoreClass().getAllUsers(this)
     }
-
-
 
 
     fun setUpFriendsList(list: ArrayList<User>){

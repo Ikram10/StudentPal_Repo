@@ -1,12 +1,10 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.events
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.renderscript.ScriptGroup
 import com.example.studentpal.R
+import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityEventInfoBinding
-import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.Board
 import com.example.studentpal.utils.Constants
 

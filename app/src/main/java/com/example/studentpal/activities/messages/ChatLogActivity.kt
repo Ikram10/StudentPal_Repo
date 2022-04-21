@@ -1,4 +1,4 @@
-package com.example.studentpal.messages
+package com.example.studentpal.activities.messages
 
 import android.os.Bundle
 import android.util.Log
@@ -7,7 +7,6 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
-import com.example.studentpal.activities.ViewFriendProfile
 import com.example.studentpal.databinding.ActivityChatLogBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.ChatMessage

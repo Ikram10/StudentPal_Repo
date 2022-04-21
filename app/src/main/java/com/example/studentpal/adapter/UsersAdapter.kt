@@ -2,23 +2,17 @@ package com.example.studentpal.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.print.PrintDocumentAdapter
-import android.provider.SyncStateContract
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
-import com.example.studentpal.activities.ViewFriendProfile
+import com.example.studentpal.activities.friends.ViewFriendProfile
 import com.example.studentpal.databinding.ItemAssignFriendBinding
-import com.example.studentpal.databinding.ItemProfileBinding
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
-import com.google.firebase.auth.FirebaseUser
 
 //UserAdapter will display a list of Users in the Recycler view
 class UsersAdapter(var context: Context, var list: ArrayList<User>)

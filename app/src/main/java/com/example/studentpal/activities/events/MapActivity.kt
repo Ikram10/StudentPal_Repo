@@ -1,9 +1,8 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.events
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.SyncStateContract
 import com.example.studentpal.R
+import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityMapBinding
 import com.example.studentpal.models.Board
 import com.example.studentpal.utils.Constants

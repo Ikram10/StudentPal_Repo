@@ -1,4 +1,4 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.events
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
+import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityCreateBoardBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.Board
@@ -329,7 +330,6 @@ class CreateBoardActivity : BaseActivity() {
         setResult(Activity.RESULT_OK)
         finish()
     }
-
 
     private fun setupActionBar() {
         setSupportActionBar(binding?.toolbarCreateBoardActivity)

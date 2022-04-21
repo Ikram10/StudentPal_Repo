@@ -1,4 +1,4 @@
-package com.example.studentpal.activities
+package com.example.studentpal.activities.events
 
 import android.app.Activity
 import android.content.Intent
@@ -9,11 +9,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.studentpal.R
+import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.adapter.CardAttendeeItemAdapter
 import com.example.studentpal.databinding.ActivityEditEventBinding
 import com.example.studentpal.dialogs.EventCardColorListDialog
@@ -230,7 +230,7 @@ class EditEventActivity : BaseActivity() {
             adapter.setOnClickListener(
                 object : CardAttendeeItemAdapter.OnClickListener{
                     override fun onClick() {
-                       val intent = Intent(this@EditEventActivity, FriendsActivity::class.java)
+                       val intent = Intent(this@EditEventActivity, AssignFriendsActivity::class.java)
                         intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails )
                         startActivityForResult(intent, MEMBERS_REQUEST_CODE)
                     }

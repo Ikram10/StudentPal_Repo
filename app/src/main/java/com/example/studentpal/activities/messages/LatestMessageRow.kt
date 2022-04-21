@@ -1,4 +1,4 @@
-package com.example.studentpal.messages
+package com.example.studentpal.activities.messages
 
 import android.content.ContentValues
 import android.util.Log

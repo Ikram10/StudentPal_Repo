@@ -1,4 +1,4 @@
-package com.example.studentpal.messages
+package com.example.studentpal.activities.messages
 
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
@@ -17,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
-import com.example.studentpal.activities.ViewFriendProfile
+import com.example.studentpal.activities.friends.ViewFriendProfile
 import com.example.studentpal.databinding.ActivityNewMessageBinding
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
