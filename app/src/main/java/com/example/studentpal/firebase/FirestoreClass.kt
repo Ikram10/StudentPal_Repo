@@ -527,6 +527,19 @@ class FirestoreClass {
                 }
         }
 
+    fun getEventHost(activity: EventInfoActivity,userId : String) {
+        mFireStore
+            .collection(Constants.USERS)
+            .document(userId)
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()){
+                    val user = it.toObject(User::class.java)
+                     activity.setHost(user!!)
+                }
+        }
+    }
+
 
     }
 

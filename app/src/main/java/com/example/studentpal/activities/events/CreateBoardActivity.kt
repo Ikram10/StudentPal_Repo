@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -56,6 +57,7 @@ class CreateBoardActivity : BaseActivity() {
     private var eventLongitude: Double? = null
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private var mSelectedDueDateMilliSeconds: Long = 0
+    private var mSelectedTime: String = ""
 
 
     // Constants for permission code
@@ -111,6 +113,8 @@ class CreateBoardActivity : BaseActivity() {
 
             }
         }
+
+
 
         binding?.etEventLocation?.setOnClickListener {
             try {
@@ -171,7 +175,10 @@ class CreateBoardActivity : BaseActivity() {
         binding?.etEventDate?.setOnClickListener {
             showDatePicker()
         }
+        binding?.etEventTime?.setOnClickListener {
 
+            showTimePicker()
+        }
         //handles the functionality when user selects the create button
         binding!!.btnCreate.setOnClickListener {
             if (mSelectedImageFileUri != null) {
@@ -183,6 +190,7 @@ class CreateBoardActivity : BaseActivity() {
         }
     }
 
+
     //method is responsible setting up the event details to be stored in cloud Firestore
     private fun createBoard() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
@@ -191,7 +199,7 @@ class CreateBoardActivity : BaseActivity() {
         val etEventLocation = binding?.etEventLocation?.text.toString()
         val etEventDate = binding?.etEventDate?.text.toString()
 
-        if (validateEditForm(etEventName, etEventLocation,etEventDate)) {
+        if (validateEditForm(etEventName, etEventLocation, etEventDate)) {
             //board information that will be stored in Firestore
             val board = Board(
                 binding?.etBoardName?.text.toString(),
@@ -203,7 +211,8 @@ class CreateBoardActivity : BaseActivity() {
                 latitude = eventLatitude!!,
                 longitude = eventLongitude!!,
                 eventDate = mSelectedDueDateMilliSeconds,
-                eventDescription = binding?.etEventDescription?.text.toString()
+                eventDescription = binding?.etEventDescription?.text.toString(),
+                eventTime = mSelectedTime
             )
 
             //this function handles the creation of the board in cloud Firestore
@@ -213,16 +222,19 @@ class CreateBoardActivity : BaseActivity() {
         }
 
 
-
     }
 
-    private fun validateEditForm(eventName: String, eventLocation: String, eventDate: String): Boolean {
+    private fun validateEditForm(
+        eventName: String,
+        eventLocation: String,
+        eventDate: String
+    ): Boolean {
         return when {
             TextUtils.isEmpty(eventName) -> {
                 showErrorSnackBar("Please enter an event name")
                 false
             }
-            TextUtils.isEmpty(eventLocation)-> {
+            TextUtils.isEmpty(eventLocation) -> {
                 showErrorSnackBar("Please enter an event Location")
                 false
             }
@@ -422,7 +434,7 @@ class CreateBoardActivity : BaseActivity() {
             android.R.style.Theme_DeviceDefault_Light_Dialog,
             DatePickerDialog.OnDateSetListener { datePicker, year, month, day ->
                 val sDayOfMonth = if (day < 10) "0$day" else "$day"
-                val sMonthOfYear = if ((month + 1) < 10) "0${month + 1}" else "${month+1}"
+                val sMonthOfYear = if ((month + 1) < 10) "0${month + 1}" else "${month + 1}"
 
                 val selectedDate = "$sDayOfMonth/$sMonthOfYear/$year"
                 binding?.etEventDate?.setText(selectedDate)
@@ -435,5 +447,30 @@ class CreateBoardActivity : BaseActivity() {
             month,
             day
         ).show()
+    }
+
+    private fun showTimePicker() {
+        val t = Calendar.getInstance()
+        val hourOfDay = t.get(Calendar.HOUR_OF_DAY)
+        val minute = t.get(Calendar.MINUTE)
+
+        val tpd = TimePickerDialog(
+            this,
+            android.R.style.Theme_DeviceDefault_Light_Dialog,
+            TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
+
+                val sHour = if (hour  < 10) "0${hour}" else "$hour"
+                val sMinute = if (minute  < 10) "0${minute}" else "$minute"
+
+                val selectedTime  = "$sHour:$sMinute"
+                binding?.etEventTime?.setText(selectedTime)
+
+                mSelectedTime = selectedTime
+            },
+            hourOfDay,
+            minute,
+            true
+        )
+            .show()
     }
 }

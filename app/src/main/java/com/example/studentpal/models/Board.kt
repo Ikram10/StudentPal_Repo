@@ -26,7 +26,8 @@ data class Board (
     val cardColor : String = "",
     val eventLocation : String = "",
     var latitude: Double = 0.0,
-    var longitude: Double = 0.0
+    var longitude: Double = 0.0,
+    var eventTime: String = ""
 
 
 ) : Parcelable {
@@ -43,7 +44,8 @@ data class Board (
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readDouble(),
-        parcel.readDouble()
+        parcel.readDouble(),
+        parcel.readString()!!
     )
     {
     }
@@ -61,6 +63,7 @@ data class Board (
         parcel.writeString(eventLocation)
         parcel.writeDouble(latitude)
         parcel.writeDouble(longitude)
+        parcel.writeString(eventTime)
 
     }
 

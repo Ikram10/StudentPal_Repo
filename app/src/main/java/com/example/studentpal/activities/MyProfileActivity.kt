@@ -209,6 +209,7 @@ class MyProfileActivity : BaseActivity() {
                 .circleCrop()
                 .placeholder(R.drawable.ic_nav_user)
                 .into(it.ivProfileUserImage)
+
             it.etName.setText(user.name)
             it.etEmail.setText(user.email)
             it.etStatus.setText(user.status)
