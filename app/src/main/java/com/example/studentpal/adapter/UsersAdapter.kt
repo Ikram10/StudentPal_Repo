@@ -64,26 +64,21 @@ class UsersAdapter(var context: Context, var list: ArrayList<User>)
 
 
 
-
-
-
-
-
-
-
     override fun getFilter(): Filter {
         return filters
     }
 
     private val filters : Filter = object : Filter() {
         override fun performFiltering(charSequence: CharSequence?): FilterResults {
-            var filteredList : ArrayList<User> = ArrayList()
+            val filteredList : ArrayList<User> = ArrayList()
             // Show all users if no search is occurring
             if(charSequence.toString().isEmpty()){
                 filteredList.addAll(listAll)
             } else {
                 for (user: User in listAll ) {
-                    if (user.email.lowercase().contains(charSequence.toString().lowercase())){
+                    // Add users to the filtered list matching the search query
+                    if (user.email.lowercase()
+                            .contains(charSequence.toString().lowercase())){
                         filteredList.add(user)
                     }
                 }

@@ -232,7 +232,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="6dp">
 
                     <TextView
                         android:id="@+id/tv_contact_host"
@@ -273,7 +274,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="2dp"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="15dp">
 
                     <LinearLayout
                         android:id="@+id/ib_notify_me"

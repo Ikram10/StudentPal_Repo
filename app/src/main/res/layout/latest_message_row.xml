@@ -1,62 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/constraint_latest_message"
-    android:padding="4dp">
+    >
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_iv"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_nav_user"
-        app:civ_border_color="@color/color_primary_dark"
-        app:civ_border_width="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/name_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="TextView"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/latest_message_tv"
-        app:layout_constraintStart_toEndOf="@+id/profile_iv"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.516"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <TextView
-        android:id="@+id/latest_message_tv"
-        android:layout_width="269dp"
-        android:layout_height="16dp"
-        android:layout_marginStart="16dp"
-        android:text="Latest Message"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/profile_iv"
-        app:layout_constraintTop_toBottomOf="@+id/name_tv" />
-
-    <View
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="@id/constraint_latest_message" />
+        android:layout_height="wrap_content"
+        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="@dimen/card_view_corner_radius"
+        app:cardElevation="@dimen/card_view_elevation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardBackgroundColor="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_iv"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_nav_user"
+                app:civ_border_color="@color/color_primary_dark"
+                app:civ_border_width="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="8dp"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/latest_message_tv"
+                app:layout_constraintStart_toEndOf="@+id/profile_iv"
+                app:layout_constraintTop_toTopOf="@+id/profile_iv"
+                app:layout_constraintVertical_bias="0.516"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="Ikram" />
+
+            <TextView
+                android:id="@+id/latest_message_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:maxWidth="250dp"
+                android:maxHeight="21dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/profile_iv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/profile_iv"
+                app:layout_constraintTop_toBottomOf="@+id/name_tv"
+                tools:text="Latest Message" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+    </androidx.cardview.widget.CardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

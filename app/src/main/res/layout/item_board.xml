@@ -13,6 +13,7 @@
         app:cardCornerRadius="15dp"
         app:cardElevation="@dimen/card_view_corner_radius"
         app:cardUseCompatPadding="true">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,18 +23,18 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_board_image"
-                android:layout_width="@dimen/item_board_image_size"
-                android:layout_height="@dimen/item_board_image_size"
+                android:layout_width="78dp"
+                android:layout_height="71dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="2dp"
                 android:background="@drawable/shape_image_view_border"
                 android:contentDescription="@string/image_contentDescription"
+                android:padding="1dp"
                 android:src="@drawable/add_screen_image_placeholder"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.409"
-                android:padding="1dp"
 
                 />
 
@@ -42,18 +43,18 @@
                 android:layout_width="191dp"
                 android:layout_height="125dp"
                 android:layout_gravity="center"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_board_image"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.355">
+                app:layout_constraintVertical_bias="0.222">
 
                 <TextView
                     android:id="@+id/tv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:layout_marginBottom="10dp"
                     android:maxWidth="100dp"
                     android:maxHeight="40dp"
@@ -71,7 +72,7 @@
                     android:layout_marginBottom="1dp"
                     android:textColor="@color/secondary_text_color"
                     android:textSize="@dimen/item_board_created_by_text_size"
-                    tools:text="Created By" />
+                    tools:text="Host" />
 
                 <TextView
                     android:id="@+id/tv_event_date"
@@ -94,40 +95,44 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/layout_edit_btns"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toEndOf="@+id/linearLayoutCompat3"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.516">
+                app:layout_constraintVertical_bias="0.516"
+                tools:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/ib_edit_event"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:src="@drawable/ic_round_edit_24"
                     android:layout_marginBottom="10dp"
-                    android:padding="10dp"/>
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_round_edit_24" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/ib_delete_event"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
-                    android:src="@drawable/ic_round_delete_24"
-                    android:padding="10dp"/>
+                    android:padding="10dp"
+                    android:src="@drawable/ic_round_delete_24" />
+
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/assign_friends"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_round_group_add_24"
+                    android:layout_marginStart="3dp"
                     android:background="?attr/selectableItemBackground"
                     android:padding="10dp"
-                    android:layout_marginStart="3dp"/>
+                    android:src="@drawable/ic_round_group_add_24" />
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>

@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.lifecycle.GenericLifecycleObserver
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
@@ -19,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
+import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,10 +34,8 @@ class ChatLogActivity : BaseActivity() {
 
     private var binding: ActivityChatLogBinding? = null
     private var toolbar: androidx.appcompat.widget.Toolbar? = null
-
     //toUser = the user the currently signed in User wants to interact with
     private var toUser: User? = null
-
     private val adapter = GroupAdapter<GroupieViewHolder>()
 
 
@@ -64,6 +65,7 @@ class ChatLogActivity : BaseActivity() {
         listenForMessages()
 
     }
+
 
     //My code:
     private fun listenForMessages() {
@@ -117,7 +119,6 @@ class ChatLogActivity : BaseActivity() {
     }
 
     private fun performSendMessage() {
-
         //the text box the allows users to enter a message
         val text = binding?.editTextChatLog?.text
 
@@ -125,49 +126,57 @@ class ChatLogActivity : BaseActivity() {
 
         val toId = toUser?.id
 
-        // reference points to the User-Message collection in Firestore which includes a sub-collection of the receiving user.
-        val reference =
-            FirebaseFirestore.getInstance().collection(Constants.USER_MESSAGES).document(fromId!!)
-                .collection(toId!!)
+        if (text!!.isNotEmpty()){
+            // reference points to the User-Message collection in Firestore which includes a sub-collection of the receiving user.
+            val reference =
+                FirebaseFirestore.getInstance().collection(Constants.USER_MESSAGES).document(fromId!!)
+                    .collection(toId!!)
 
-        //a reference to the user the currently signed in user is sending a message to
-        val toReference =
-            FirebaseFirestore.getInstance().collection(Constants.USER_MESSAGES).document(toId)
-                .collection(fromId)
+            //a reference to the user the currently signed in user is sending a message to
+            val toReference =
+                FirebaseFirestore.getInstance().collection(Constants.USER_MESSAGES).document(toId)
+                    .collection(fromId)
 
-        val chatMessage = ChatMessage(
-            reference.document().id,
-            fromId,
-            toId,
-            text.toString(),
-            System.currentTimeMillis()
-        )
-        Log.d("long time", "Time is: ${convertLongToTime(chatMessage.timeStamp)}")
-        reference.document().set(chatMessage).addOnSuccessListener {
-            Log.d(TAG, "Saved chat message: ${reference.id}")
+            val chatMessage = ChatMessage(
+                reference.document().id,
+                fromId,
+                toId,
+                text.toString(),
+                System.currentTimeMillis()
+            )
+            Log.d("long time", "Time is: ${convertLongToTime(chatMessage.timeStamp)}")
+            reference.document().set(chatMessage).addOnSuccessListener {
+                Log.d(TAG, "Saved chat message: ${reference.id}")
 
-            //clears the edit text when the user hits the send button
-            text?.clear()
+                //clears the edit text when the user hits the send button
+                text?.clear()
 
-            //when user hits the send button recycler view scrolls to the last message sent position
-            binding?.recyclerviewChatLog?.scrollToPosition(adapter.itemCount - 1)
-            Log.d("ChatLogTest", "Message sent by: $fromId to $toId")
+                //when user hits the send button recycler view scrolls to the last message sent position
+                binding?.recyclerviewChatLog?.scrollToPosition(adapter.itemCount - 1)
+                Log.d("ChatLogTest", "Message sent by: $fromId to $toId")
 
+            }
+            toReference.document().set(chatMessage)
+
+            //A realtime database is used here because it provides the necessary functionalities to display the latest messages
+            val latestMessageRef =
+                FirebaseDatabase.getInstance("https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app/")
+                    .getReference("/latest-messages/$fromId/$toId")
+
+            latestMessageRef.setValue(chatMessage)
+
+            val latestMessageToRef =
+                FirebaseDatabase.getInstance("https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app/")
+                    .getReference("/latest-messages/$toId/$fromId")
+
+            latestMessageToRef.setValue(chatMessage)
+
+
+        } else {
+            Toast.makeText(this, "Please enter a message", Toast.LENGTH_SHORT).show()
         }
-        toReference.document().set(chatMessage)
 
-        //A realtime database is used here because it provides the necessary functionalities to display the latest messages
-        val latestMessageRef =
-            FirebaseDatabase.getInstance("https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app/")
-                .getReference("/latest-messages/$fromId/$toId")
 
-        latestMessageRef.setValue(chatMessage)
-
-        val latestMessageToRef =
-            FirebaseDatabase.getInstance("https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app/")
-                .getReference("/latest-messages/$toId/$fromId")
-
-        latestMessageToRef.setValue(chatMessage)
     }
 
     inner class ChatFromItem(val text: String, val user: User, private val timeSent: Long) : Item<GroupieViewHolder>() {
@@ -224,7 +233,7 @@ class ChatLogActivity : BaseActivity() {
     }
 
     private fun setupActionBar() {
-        toolbar = binding?.toolbarChatLog
+        toolbar = binding?.include?.tbChatlog
         setSupportActionBar(toolbar)
 
         val actionBar = supportActionBar
@@ -232,9 +241,26 @@ class ChatLogActivity : BaseActivity() {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_round_arrow_back_24)
             actionBar.title = toUser?.name
+        }
 
+        // Sets the profile image in Action bar
+        toolbar?.findViewById<CircleImageView>(R.id.tb_profile_image).let {
+                Glide
+                    .with(this)
+                    .load(toUser?.image)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_user_place_holder)
+                    .into(it!!)
 
         }
+        // Sets the User name in Toolbar
+        toolbar?.findViewById<TextView>(R.id.tb_profile_name)?.text = toUser?.name
+        // Sets user status in Toolbat
+        toolbar?.findViewById<TextView>(R.id.tb_online)?.text  = toUser?.status
+
+
+
+
         toolbar?.setNavigationOnClickListener {
             onBackPressed()
         }

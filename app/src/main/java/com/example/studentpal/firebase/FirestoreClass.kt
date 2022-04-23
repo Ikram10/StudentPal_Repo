@@ -223,7 +223,8 @@ class FirestoreClass {
                 if (snapshot != null) {
                     for (dc: DocumentChange in snapshot.documentChanges) {
                         if (dc.type == DocumentChange.Type.ADDED) {
-                            val userID: String? = dc.document.get(Constants.SENDER) as String?
+                            val userID: String? = dc.document
+                                .get(Constants.SENDER) as String?
                             friendsList.add(userID!!)
                         }
                     }

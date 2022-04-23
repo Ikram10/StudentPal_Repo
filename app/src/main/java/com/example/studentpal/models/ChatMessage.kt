@@ -5,7 +5,8 @@ data class ChatMessage (
     val fromId : String,
     val toId: String,
     val text : String,
-    val timeStamp: Long
+    val timeStamp: Long,
+    val status: String = "unseen"
     ) {
 
     constructor():
@@ -13,5 +14,6 @@ data class ChatMessage (
                 "",
                 "",
                 "",
-                -1)
+                -1,
+            "unseen")
 }

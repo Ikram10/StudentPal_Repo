@@ -46,14 +46,12 @@ class ViewFriendProfile : BaseActivity() {
         const val SENT_REQUEST = "sent_request"
         const val RECEIVED_REQUEST = "received_request"
         const val DECLINED_REQUEST = "declined_request"
-
         // DB states & FIELDS
         const val STATUS = "status"
         const val DECLINE = "decline"
         const val PENDING = "pending"
         const val SENDER = "sender"
         const val RECEIVER = "receiver"
-        const val TIMESTAMP = "timestamp"
 
         var currentUser: User? = null
     }
@@ -362,7 +360,6 @@ class ViewFriendProfile : BaseActivity() {
 
     private fun performAction(friendUserID: String?) {
         when (currentState) {
-
             /* Default state
              * Users are not friends
              * No friend request is pending
@@ -373,7 +370,9 @@ class ViewFriendProfile : BaseActivity() {
                 friendRequestData[SENDER] = getCurrentUserID()
                 friendRequestData[RECEIVER] = friendUserID!!
 
-                requestRef?.document()?.set(friendRequestData)?.addOnCompleteListener {
+                requestRef?.document()
+                    ?.set(friendRequestData)
+                    ?.addOnCompleteListener {
                     if (it.isSuccessful) {
                         Toast.makeText(
                             this,
