@@ -11,10 +11,6 @@ import com.example.studentpal.activities.MyProfileActivity
 
 object Constants {
 
-
-
-
-
     //user related Constants
     const val USER_KEY = "USER_KEY"
     const val USERS : String = "Users"
@@ -50,8 +46,9 @@ object Constants {
 
 
     // START
-    const val FCM_BASE_URL:String = "https://fcm.googleapis.com/fcm/send"
+    const val FCM_BASE_URL:String = "https://fcm.googleapis.com"
     const val FCM_AUTHORIZATION:String = "authorization"
+    const val CONTENT_TYPE = "application/json"
     const val FCM_KEY:String = "key"
     const val FCM_SERVER_KEY:String = "AAAA5KLpOgc:APA91bEriQauq41gnZxAUt42ZxVU7c_cGzegCqd74Krc0038V2bLd9OJnmpSF0FhIc7DXTYEyZ1db_FKimnpspwNr3gA1Mj3ENbiQqP00X_UrCFUHppCoS8Eskh_gASSx9zjEWR2h0cX"
     const val FCM_KEY_TITLE:String = "title"
@@ -59,8 +56,6 @@ object Constants {
     const val FCM_KEY_DATA:String = "data"
     const val FCM_KEY_TO:String = "to"
     // END
-
-
 
     const val READ_STORAGE_PERMISSION_CODE = 1
     const val PICK_IMAGE_REQUEST_CODE = 2

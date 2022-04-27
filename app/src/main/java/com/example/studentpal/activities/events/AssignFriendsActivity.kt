@@ -156,11 +156,13 @@ class AssignFriendsActivity : BaseActivity() {
     private inner class SendNotificationToUserAsyncTask (val eventName: String, val token : String)
         : AsyncTask<Any, Void, String> (){
 
+        @Deprecated("Deprecated in Java")
         override fun onPreExecute() {
             super.onPreExecute()
             showProgressDialog(resources.getString(R.string.please_wait))
         }
 
+        @Deprecated("Deprecated in Java")
         override fun doInBackground(vararg params: Any?): String {
             var result : String
 
@@ -236,6 +238,7 @@ class AssignFriendsActivity : BaseActivity() {
             return result
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
 

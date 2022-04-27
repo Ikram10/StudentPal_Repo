@@ -5,26 +5,34 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.GenericLifecycleObserver
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivityChatLogBinding
+import com.example.studentpal.fcm.RetrofitInstance
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.ChatMessage
+import com.example.studentpal.models.NotificationData
+import com.example.studentpal.models.PushNotification
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
+const val TOPIC = "/topics/myTopic"
 class ChatLogActivity : BaseActivity() {
 
     companion object {
@@ -45,6 +53,7 @@ class ChatLogActivity : BaseActivity() {
         binding = ActivityChatLogBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
 
         binding?.recyclerviewChatLog?.adapter = adapter
 
@@ -120,13 +129,13 @@ class ChatLogActivity : BaseActivity() {
 
     private fun performSendMessage() {
         //the text box the allows users to enter a message
-        val text = binding?.editTextChatLog?.text
+        val message = binding?.editTextChatLog?.text
 
         val fromId: String? = FirebaseAuth.getInstance().uid
 
         val toId = toUser?.id
 
-        if (text!!.isNotEmpty()){
+        if (message!!.isNotEmpty()){
             // reference points to the User-Message collection in Firestore which includes a sub-collection of the receiving user.
             val reference =
                 FirebaseFirestore.getInstance().collection(Constants.USER_MESSAGES).document(fromId!!)
@@ -141,15 +150,23 @@ class ChatLogActivity : BaseActivity() {
                 reference.document().id,
                 fromId,
                 toId,
-                text.toString(),
+                message.toString(),
                 System.currentTimeMillis()
             )
             Log.d("long time", "Time is: ${convertLongToTime(chatMessage.timeStamp)}")
             reference.document().set(chatMessage).addOnSuccessListener {
                 Log.d(TAG, "Saved chat message: ${reference.id}")
 
+                PushNotification(
+                    NotificationData("Message", message.toString()),
+                    TOPIC
+                ).also {
+                    sendNotification(it)
+                }
+
+
                 //clears the edit text when the user hits the send button
-                text?.clear()
+                message?.clear()
 
                 //when user hits the send button recycler view scrolls to the last message sent position
                 binding?.recyclerviewChatLog?.scrollToPosition(adapter.itemCount - 1)
@@ -270,6 +287,24 @@ class ChatLogActivity : BaseActivity() {
         val date = Date(time)
         val format = SimpleDateFormat("HH:mm", Locale.ENGLISH)
         return format.format(date)
+    }
+
+    // Sends notification to firebase server
+    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+
+            //network request: Post request
+            val response = RetrofitInstance.api.postNotification(notification)
+            if (response.isSuccessful) {
+                Log.d(TAG, "Response: ${Gson().toJson(response)}")
+            } else {
+                Log.e(TAG, response.errorBody().toString())
+            }
+        } catch(e: Exception) {
+
+            Log.e(TAG, e.toString())
+
+        }
     }
 
 }
