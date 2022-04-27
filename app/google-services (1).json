@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "981985737223",
+    "firebase_url": "https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "studentpal-8f3d3",
+    "storage_bucket": "studentpal-8f3d3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981985737223:android:36a4238ac1f947e51b08a2",
+        "android_client_info": {
+          "package_name": "com.example.studentpal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "981985737223-k3jtlbvjq5kubcni46ifdlhn1taabtjv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrAJ6ncU83uOLX-MfFlFM2NyPsQO2oaLI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "981985737223-k3jtlbvjq5kubcni46ifdlhn1taabtjv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

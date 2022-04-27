@@ -157,12 +157,14 @@ class ChatLogActivity : BaseActivity() {
             reference.document().set(chatMessage).addOnSuccessListener {
                 Log.d(TAG, "Saved chat message: ${reference.id}")
 
-                PushNotification(
-                    NotificationData("Message", message.toString()),
-                    TOPIC
-                ).also {
-                    sendNotification(it)
-                }
+                Log.d("userFCM","${toUser?.fcmToken}")
+
+                    PushNotification(
+                        NotificationData("Message", message.toString()),
+                        toUser!!.fcmToken
+                    ).also {
+                        sendNotification(it)
+                    }
 
 
                 //clears the edit text when the user hits the send button
@@ -272,7 +274,7 @@ class ChatLogActivity : BaseActivity() {
         }
         // Sets the User name in Toolbar
         toolbar?.findViewById<TextView>(R.id.tb_profile_name)?.text = toUser?.name
-        // Sets user status in Toolbat
+        // Sets user status in Toolbar
         toolbar?.findViewById<TextView>(R.id.tb_online)?.text  = toUser?.status
 
 

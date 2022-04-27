@@ -31,8 +31,9 @@ import com.example.studentpal.utils.Constants
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.installations.FirebaseInstallations
+
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -47,11 +48,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var mUserName: String
     private lateinit var mSharedPreferences: SharedPreferences
 
+
     //Constant values
     companion object {
         const val MY_PROFILE_REQUEST_CODE: Int = 11
         const val CREATE_BOARD_REQUEST_CODE: Int = 12
-        const val ASSIGN_FRIENDS_REQUEST_CODE: Int = 13
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +65,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         setupActionBar()
 
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            val token = it.result
+            Log.d("fcmToken", "$token")
+        }
         mainRecyclerView = binding?.appBarMain?.root?.findViewById(R.id.rv_boards_list)
         eventTextView = binding?.appBarMain?.root?.findViewById(R.id.tv_events)
 
@@ -79,9 +85,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().loadUserData(this, true)
         } else {
-            FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener {
-                if (it.isSuccessful)
-                    updateFCMToken(it.result!!.token)
+            FirebaseMessaging
+                .getInstance()
+                .token
+                .addOnSuccessListener {
+                    updateFCMToken(it)
             }
         }
             /* loads the currently logged in user's data into this activity, by retrieving their document from firebase

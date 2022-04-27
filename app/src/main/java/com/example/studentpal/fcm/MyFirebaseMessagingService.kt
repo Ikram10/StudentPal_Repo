@@ -3,8 +3,6 @@ package com.example.studentpal.fcm
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_IMMUTABLE
-import android.app.PendingIntent.FLAG_ONE_SHOT
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -27,7 +25,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
         private const val TAG = "MyFirebaseMsgService"
     }
+    override fun onNewToken(token: String) {
+        Log.e(TAG, "Refreshed token: $token")
 
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // Instance ID token to your app server.
+        sendRegistrationToServer(token)
+    }
+
+    private fun sendRegistrationToServer(token: String?) {
+        // Here we have saved the token in the Shared Preferences
+        val sharedPreferences =
+            this.getSharedPreferences(Constants.STUDENTPAL_PREFERENCES, Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString(Constants.FCM_TOKEN, token)
+        editor.apply()
+    }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
@@ -48,21 +62,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-
-        Log.e("", "Refreshed token: $token")
-        sendRegistrationToServer(token)
-    }
-
-    private fun sendRegistrationToServer(token: String?) {
-        // Here we have saved the token in the Shared Preferences
-        val sharedPreferences =
-            this.getSharedPreferences(Constants.STUDENTPAL_PREFERENCES, Context.MODE_PRIVATE)
-        val editor: SharedPreferences.Editor = sharedPreferences.edit()
-        editor.putString(Constants.FCM_TOKEN, token)
-        editor.apply()
-    }
 
     private fun sendNotification(title: String, message: String) {
         // User sent to MainActivity if logged in when clicking notification
@@ -77,7 +76,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     Intent.FLAG_ACTIVITY_CLEAR_TASK
         )
 
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent,  FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent,  PendingIntent.FLAG_MUTABLE)
 
         val channelId = this.resources.getString(R.string.default_notification_channel_id)
 
