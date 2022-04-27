@@ -13,12 +13,20 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
+import com.example.studentpal.activities.messages.ChatLogActivity
 import com.example.studentpal.adapter.FriendsAssignedAdapter
 import com.example.studentpal.databinding.ActivityAssignFriendsBinding
+import com.example.studentpal.fcm.RetrofitInstance
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.Board
+import com.example.studentpal.models.NotificationData
+import com.example.studentpal.models.PushNotification
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.DataOutputStream
@@ -141,8 +149,14 @@ class AssignFriendsActivity : BaseActivity() {
         //reloads the activity
         anyChangesMade = true
         setUpFriendsList(mAssignedFriendsList)
+        
+        val notification = NotificationData(
+            "Event Invite",
+            "You have received an Event invite from ${mAssignedFriendsList[0].name}").also {
+            sendNotification(PushNotification(it, user.fcmToken))
+        }
 
-        SendNotificationToUserAsyncTask(mBoardDetails.name, user.fcmToken).execute()
+
     }
 
     //reloads the activity when user clicks the back button if any changes made in this activity
@@ -153,101 +167,23 @@ class AssignFriendsActivity : BaseActivity() {
         super.onBackPressed()
     }
 
-    private inner class SendNotificationToUserAsyncTask (val eventName: String, val token : String)
-        : AsyncTask<Any, Void, String> (){
 
-        @Deprecated("Deprecated in Java")
-        override fun onPreExecute() {
-            super.onPreExecute()
-            showProgressDialog(resources.getString(R.string.please_wait))
-        }
+    // Sends notification to firebase server
+    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try {
 
-        @Deprecated("Deprecated in Java")
-        override fun doInBackground(vararg params: Any?): String {
-            var result : String
-
-            var connection : HttpURLConnection? = null
-
-            try {
-                val url = URL(Constants.FCM_BASE_URL)
-                connection = url.openConnection() as HttpURLConnection
-                connection.doOutput = true
-                connection.doInput = true
-                connection.instanceFollowRedirects = false
-                connection.requestMethod = "POST"
-
-                connection.setRequestProperty("Content-Type", "application/json")
-                connection.setRequestProperty("charset", "utf-8")
-                connection.setRequestProperty("Accept", "application/json")
-
-                connection.setRequestProperty(
-                    Constants.FCM_AUTHORIZATION, "${Constants.FCM_KEY}=${Constants.FCM_SERVER_KEY}"
-                )
-
-                connection.useCaches = false
-
-                val wr = DataOutputStream(connection.outputStream)
-                val jsonRequest = JSONObject()
-                val dataObject = JSONObject()
-                dataObject.put(Constants.FCM_KEY_TITLE,
-                    "Event Request: $eventName")
-                dataObject.put(Constants.FCM_KEY_MESSAGE,
-                    "You have been sent an event request from ${mAssignedFriendsList[0].name}")
-
-                jsonRequest.put(Constants.FCM_KEY_DATA, dataObject)
-                jsonRequest.put(Constants.FCM_KEY_TO, token)
-
-                wr.writeBytes(jsonRequest.toString())
-                wr.flush()
-                wr.close()
-
-                val httpResult : Int = connection.responseCode
-
-                if (httpResult == HttpURLConnection.HTTP_OK) {
-                    val inputStream = connection.inputStream
-                    val reader = BufferedReader(
-                        InputStreamReader(inputStream)
-                    )
-                    val sb = StringBuilder()
-                    var line: String?
-                    try {
-                        while (reader.readLine().also { line = it } != null){
-                            sb.append(line+"\n")
-                        }
-                    }catch (e: IOException) {
-                        e.printStackTrace()
-                    }finally {
-                        try {
-                            inputStream.close()
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-                    }
-                    result = sb.toString()
-                } else {
-                    result = connection.responseMessage
-                }
-            } catch (e: SocketTimeoutException) {
-                result = "Connection Timeout"
-            } catch (e : Exception){
-                result = "Error: " + e.message
-            } finally {
-                connection?.disconnect()
+            //network request: Post request
+            val response = RetrofitInstance.api.postNotification(notification)
+            if (response.isSuccessful) {
+                Log.d(ChatLogActivity.TAG, "Response: ${Gson().toJson(response)}")
+            } else {
+                Log.e(ChatLogActivity.TAG, response.errorBody().toString())
             }
+        } catch(e: Exception) {
 
-            return result
+            Log.e(ChatLogActivity.TAG, e.toString())
+
         }
-
-        @Deprecated("Deprecated in Java")
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-
-            hideProgressDialog()
-            if (result != null) {
-                Log.e("JSON Response Result", result)
-            }
-        }
-
     }
 
 }

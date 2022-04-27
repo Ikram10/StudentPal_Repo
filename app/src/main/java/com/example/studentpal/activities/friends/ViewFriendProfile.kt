@@ -15,7 +15,10 @@ import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.activities.messages.ChatLogActivity
 import com.example.studentpal.activities.messages.ChatLogActivity.Companion.TAG
 import com.example.studentpal.databinding.ActivityViewFriendProfileBinding
+import com.example.studentpal.fcm.RetrofitInstance
 import com.example.studentpal.firebase.FirestoreClass
+import com.example.studentpal.models.NotificationData
+import com.example.studentpal.models.PushNotification
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -24,6 +27,10 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 //My code
 class ViewFriendProfile : BaseActivity() {
@@ -379,6 +386,11 @@ class ViewFriendProfile : BaseActivity() {
                             "You have sent a friend Request to ${friendDetails?.name}",
                             Toast.LENGTH_LONG
                         ).show()
+                        val notification = NotificationData("Friend Request",
+                            "${currentUser?.name} sent a friend request")
+
+                        sendNotification(PushNotification(notification, friendDetails!!.fcmToken))
+
                         btnDeclineFriendRequest?.visibility = View.GONE
                         currentState = SENT_REQUEST
                         btnPerform?.text = "Cancel Friend Request"
@@ -546,4 +558,20 @@ class ViewFriendProfile : BaseActivity() {
 
     }
 
+    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+
+            //network request: Post request
+            val response = RetrofitInstance.api.postNotification(notification)
+            if (response.isSuccessful) {
+                Log.d(TAG, "Response: ${Gson().toJson(response)}")
+            } else {
+                Log.e(TAG, response.errorBody().toString())
+            }
+        } catch(e: Exception) {
+
+            Log.e(TAG, e.toString())
+
+        }
+    }
 }
