@@ -18,12 +18,15 @@ import com.example.studentpal.activities.messages.LatestMessagesActivity
 import com.example.studentpal.activities.registration.SignInActivity
 import com.example.studentpal.activities.registration.SignUpActivity
 import com.example.studentpal.models.Board
+import com.example.studentpal.models.ImagePost
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 
+
 class FirestoreClass {
+
 
     private val mFireStore = FirebaseFirestore.getInstance()
 
@@ -352,195 +355,244 @@ class FirestoreClass {
     }
 
 
-        /**
-         * ******************************************************************** EVENTS FIRESTORE FUNCTIONS ***************************************************************************************
-         */
+    /**
+     * ******************************************************************** EVENTS FIRESTORE FUNCTIONS ***************************************************************************************
+     */
 
-        fun updateBoardDetails(
-            activity: EditEventActivity,
-            boardHashMap: HashMap<String, Any>,
-            boardDocumentId: String
-        ) {
-            mFireStore.collection(Constants.BOARDS)
-                .document(boardDocumentId)
-                .update(boardHashMap)
-                .addOnSuccessListener {
-                    activity.hideProgressDialog()
-                    Log.d("UpdateEvent: ", "Event Updated successfully")
-                    Toast.makeText(
-                        activity,
-                        "You have successfully updated your event",
-                        Toast.LENGTH_LONG
-                    ).show()
+    fun updateBoardDetails(
+        activity: EditEventActivity,
+        boardHashMap: HashMap<String, Any>,
+        boardDocumentId: String
+    ) {
+        mFireStore.collection(Constants.BOARDS)
+            .document(boardDocumentId)
+            .update(boardHashMap)
+            .addOnSuccessListener {
+                activity.hideProgressDialog()
+                Log.d("UpdateEvent: ", "Event Updated successfully")
+                Toast.makeText(
+                    activity,
+                    "You have successfully updated your event",
+                    Toast.LENGTH_LONG
+                ).show()
 
-                }.addOnFailureListener {
-                    activity.hideProgressDialog()
-                    Log.d("UpdateEvent:", "Event Update Failed")
-                }
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.d("UpdateEvent:", "Event Update Failed")
+            }
 
-        }
+    }
 
-        /* This method responsible for retrieving the events list from Firestore
+    /* This method responsible for retrieving the events list from Firestore
  * A user is assigned an event when they create it or if someone else has assigned them to it,
  * This method gets all the events the user has been assigned to
  */
-        fun getBoardsList(activity: MainActivity) {
-            //this statement queries the boards collection where the assignedTo array contains the current user id
-            mFireStore.collection(Constants.BOARDS)
-                .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserId())
-                .get()
-                .addOnSuccessListener {
-                    Log.i(activity.javaClass.simpleName, it.documents.toString())
-                    val boardsList: ArrayList<Board> = ArrayList()
-                    //Adds every document queried to the boardsList arraylist
-                    for (document in it.documents) {
-                        //converts all documents queried into a Board object
-                        val board = document.toObject(Board::class.java)!!
-                        board.documentID = document.id
-                        boardsList.add(board)
-                    }
-                    //if query is successful, the events are populated into the main activity
-                    activity.populateBoardsListToUI(boardsList)
-                }.addOnFailureListener {
-                    activity.hideProgressDialog()
-                    Log.e(activity.javaClass.simpleName, "error while getting events list")
+    fun getBoardsList(activity: MainActivity) {
+        //this statement queries the boards collection where the assignedTo array contains the current user id
+        mFireStore.collection(Constants.BOARDS)
+            .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserId())
+            .get()
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName, it.documents.toString())
+                val boardsList: ArrayList<Board> = ArrayList()
+                //Adds every document queried to the boardsList arraylist
+                for (document in it.documents) {
+                    //converts all documents queried into a Board object
+                    val board = document.toObject(Board::class.java)!!
+                    board.documentID = document.id
+                    boardsList.add(board)
                 }
-        }
+                //if query is successful, the events are populated into the main activity
+                activity.populateBoardsListToUI(boardsList)
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "error while getting events list")
+            }
+    }
 
 
-        /*
+    /*
  * This method creates a new board in cloud Firestore
  * A boards collection is created, which generates a single document for each board
  * The board document data is filled using the board parameter
  */
-        fun createBoard(activity: CreateBoardActivity, board: Board) {
-            mFireStore.collection(Constants.BOARDS)
-                .document()
-                .set(board, SetOptions.merge())
-                .addOnSuccessListener {
-                    Log.d(activity.javaClass.simpleName, "Board created successfully")
-                    Toast.makeText(activity, "Board created successfully", Toast.LENGTH_SHORT)
-                        .show()
-                    activity.boardCreatedSuccessfully()
-                }.addOnFailureListener {
-                    Log.e(activity.javaClass.simpleName, "Error while creating board")
+    fun createBoard(activity: CreateBoardActivity, board: Board) {
+        mFireStore.collection(Constants.BOARDS)
+            .document()
+            .set(board, SetOptions.merge())
+            .addOnSuccessListener {
+                Log.d(activity.javaClass.simpleName, "Board created successfully")
+                Toast.makeText(activity, "Board created successfully", Toast.LENGTH_SHORT)
+                    .show()
+                activity.boardCreatedSuccessfully()
+            }.addOnFailureListener {
+                Log.e(activity.javaClass.simpleName, "Error while creating board")
+            }
+
+    }
+
+    //retrieves the board in Firestore by querying its Document id
+    fun getBoardDetails(activity: EventInfoActivity, boardDocumentId: String) {
+        mFireStore.collection(Constants.BOARDS)
+            .document(boardDocumentId)
+            .get()
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName, it.toString())
+                //converts the queried board document to a Board object and passes it to the boardDetails()
+                activity.boardDetails(it.toObject(Board::class.java)!!)
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "error while getting events list")
+            }
+    }
+
+    fun getAssignedFriendsListDetails(activity: Activity, assignedTo: ArrayList<String>) {
+        mFireStore.collection(Constants.USERS)
+            .whereIn(Constants.ID, assignedTo)
+            .get()
+            .addOnSuccessListener {
+                Log.e(activity.javaClass.simpleName, it.documents.toString())
+                val usersList: ArrayList<User> = ArrayList()
+                // Convert all the document snapshots to the object using the user data model class.
+                for (doc in it.documents) {
+
+                    val user = doc.toObject(User::class.java)
+                    usersList.add(user!!)
                 }
 
-        }
+                if (activity is AssignFriendsActivity) {
+                    activity.setUpFriendsList(usersList)
 
-        //retrieves the board in Firestore by querying its Document id
-        fun getBoardDetails(activity: EventInfoActivity, boardDocumentId: String) {
-            mFireStore.collection(Constants.BOARDS)
-                .document(boardDocumentId)
-                .get()
-                .addOnSuccessListener {
-                    Log.i(activity.javaClass.simpleName, it.toString())
-                    //converts the queried board document to a Board object and passes it to the boardDetails()
-                    activity.boardDetails(it.toObject(Board::class.java)!!)
-                }.addOnFailureListener {
+                } else
+                    if (activity is EditEventActivity)
+                        activity.setUpAssignedMembersList(usersList)
+
+            }.addOnFailureListener {
+                if (activity is AssignFriendsActivity) {
                     activity.hideProgressDialog()
-                    Log.e(activity.javaClass.simpleName, "error while getting events list")
-                }
-        }
-
-        fun getAssignedFriendsListDetails(activity: Activity, assignedTo: ArrayList<String>) {
-            mFireStore.collection(Constants.USERS)
-                .whereIn(Constants.ID, assignedTo)
-                .get()
-                .addOnSuccessListener {
-                    Log.e(activity.javaClass.simpleName, it.documents.toString())
-                    val usersList: ArrayList<User> = ArrayList()
-                    // Convert all the document snapshots to the object using the user data model class.
-                    for (doc in it.documents) {
-
-                        val user = doc.toObject(User::class.java)
-                        usersList.add(user!!)
-                    }
-
-                    if (activity is AssignFriendsActivity) {
-                        activity.setUpFriendsList(usersList)
-
-                    } else
-                        if (activity is EditEventActivity)
-                            activity.setUpAssignedMembersList(usersList)
-
-                }.addOnFailureListener {
-                    if (activity is AssignFriendsActivity) {
+                    Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
+                } else
+                    if (activity is EditEventActivity) {
                         activity.hideProgressDialog()
-                        Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
-                    } else
-                        if (activity is EditEventActivity) {
-                            activity.hideProgressDialog()
-                            Log.e(
-                                activity.javaClass.simpleName,
-                                "error while getting friends list",
-                                it
-                            )
-                        }
-                }
-        }
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "error while getting friends list",
+                            it
+                        )
+                    }
+            }
+    }
 
-        //retrieves friend details by querying for their email in firestore
-        fun getFriendDetails(activity: AssignFriendsActivity, email: String) {
-            mFireStore.collection(Constants.USERS)
-                .whereEqualTo(Constants.EMAIL, email)
-                .get()
-                .addOnSuccessListener {
-                    if (it.documents.size > 0) {
-                        /* Emails are unique
+    //retrieves friend details by querying for their email in firestore
+    fun getFriendDetails(activity: AssignFriendsActivity, email: String) {
+        mFireStore.collection(Constants.USERS)
+            .whereEqualTo(Constants.EMAIL, email)
+            .get()
+            .addOnSuccessListener {
+                if (it.documents.size > 0) {
+                    /* Emails are unique
                  * If an email exists in Firestore there can only be one (one email per user)
                  */
-                        val user = it.documents[0].toObject(User::class.java)
-                        activity.friendDetails(user!!)
-                    } else {
-                        activity.hideProgressDialog()
-                        activity.showErrorSnackBar("No friend found with the entered email")
-                    }
-                }
-        }
-
-        fun assignMemberToEvent(activity: AssignFriendsActivity, board: Board, user: User) {
-            //hash map of assigned to field in Firestore (Event documents)
-            val assignedToHashMap = HashMap<String, Any>()
-            assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo
-
-            mFireStore.collection(Constants.BOARDS)
-                .document(board.documentID)
-                .update(assignedToHashMap)
-                .addOnSuccessListener {
-                    activity.friendAssignedSuccess(user)
-                }.addOnFailureListener {
+                    val user = it.documents[0].toObject(User::class.java)
+                    activity.friendDetails(user!!)
+                } else {
                     activity.hideProgressDialog()
-                    Log.e(activity.javaClass.simpleName, "Error while assigning friend")
+                    activity.showErrorSnackBar("No friend found with the entered email")
                 }
-        }
+            }
+    }
 
-        fun deleteEvent(activity: EditEventActivity, board: Board) {
-            mFireStore.collection(Constants.BOARDS)
-                .document(board.documentID)
-                .delete()
-                .addOnSuccessListener {
-                    activity.hideProgressDialog()
-                    Toast.makeText(activity, "Event deleted successfully", Toast.LENGTH_LONG).show()
-                }.addOnFailureListener {
-                    activity.hideProgressDialog()
-                    Toast.makeText(activity, "Error deleting event", Toast.LENGTH_LONG).show()
-                }
-        }
+    fun assignMemberToEvent(activity: AssignFriendsActivity, board: Board, user: User) {
+        //hash map of assigned to field in Firestore (Event documents)
+        val assignedToHashMap = HashMap<String, Any>()
+        assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo
 
-    fun getEventHost(activity: EventInfoActivity,userId : String) {
+        mFireStore.collection(Constants.BOARDS)
+            .document(board.documentID)
+            .update(assignedToHashMap)
+            .addOnSuccessListener {
+                activity.friendAssignedSuccess(user)
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while assigning friend")
+            }
+    }
+
+    fun deleteEvent(activity: EditEventActivity, board: Board) {
+        mFireStore.collection(Constants.BOARDS)
+            .document(board.documentID)
+            .delete()
+            .addOnSuccessListener {
+                activity.hideProgressDialog()
+                Toast.makeText(activity, "Event deleted successfully", Toast.LENGTH_LONG).show()
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Toast.makeText(activity, "Error deleting event", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    fun getEventHost(activity: EventInfoActivity, userId: String) {
         mFireStore
             .collection(Constants.USERS)
             .document(userId)
             .get()
             .addOnSuccessListener {
-                if (it.exists()){
+                if (it.exists()) {
                     val user = it.toObject(User::class.java)
-                     activity.setHost(user!!)
+                    activity.setHost(user!!)
                 }
-        }
+            }
     }
 
 
+    /**
+     * Upload Posts
+     *
+     */
+
+    fun uploadPost(activity: MyProfileActivity, imagePost: ImagePost) {
+        mFireStore
+            .collection(Constants.POSTS)
+            .document()
+            .set(imagePost)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    activity.postUploaded()
+                    Log.d("Post Uploaded", "$imagePost")
+
+                } else {
+                    Log.d("Post Upload failed", "$imagePost")
+                    activity.hideProgressDialog()
+                }
+            }
+
     }
+
+    fun getImagePostsList(activity: MyProfileActivity) {
+        mFireStore.collection(Constants.POSTS)
+            .whereEqualTo(Constants.ID, getCurrentUserId())
+            .addSnapshotListener { snapshot, e ->
+                val postList = arrayListOf<ImagePost>()
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    for (dc: DocumentChange in snapshot.documentChanges) {
+                        if (dc.type == DocumentChange.Type.ADDED) {
+                            val post = dc.document.toObject(ImagePost::class.java)
+                            postList.add(post)
+                        }
+                    }
+                    activity.populatePostListToUI(postList)
+                }
+            }
+
+    }
+
+    fun incrementLikeCount(post: ImagePost) {
+
+
+    }
+}
 

@@ -7,36 +7,61 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
+import com.example.studentpal.activities.events.EventInfoActivity
+import com.example.studentpal.adapter.BoardItemsAdapter
+import com.example.studentpal.adapter.FriendsListAdapter
+import com.example.studentpal.adapter.ImagePostsAdapter
 import com.example.studentpal.databinding.ActivityMyProfileBinding
+import com.example.studentpal.databinding.SinglePostViewBinding
 import com.example.studentpal.firebase.FirestoreClass
+import com.example.studentpal.models.Board
+import com.example.studentpal.models.ImagePost
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 class MyProfileActivity : BaseActivity() {
 
-    //variable stores the selected image URI  value
+    private var binding: ActivityMyProfileBinding? = null
+    // Variables stores the selected image URI  value
     private var mSelectedImageFileUri: Uri? = null
     private var mSelectedCoverImageFileUri: Uri? = null
     private var mProfileImageURL: String = ""
     private var mProfileCoverImageURL: String = ""
-    private lateinit var mUserDetails: User
-    private val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
     private var profileImgSelected: Boolean = false
     private var profileCoverImgSelected: Boolean = false
+    private lateinit var mUserDetails: User
+    private val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
 
-
-    private var binding: ActivityMyProfileBinding? = null
+    // Variables handle the post image functionality
+    private var addImageBtnSelected: Boolean = false
+    private var mSelectedImagePostFileUri: Uri? = null
+    private var mPostImageURL: String = ""
+    private var addImagePost: AppCompatImageView? = null
+    private var uploadImagePost: AppCompatImageButton? = null
+    private var etCaption: AppCompatEditText? = null
+    private var postsList : ArrayList<ImagePost>? = null
+    private var postsAdapter: ImagePostsAdapter? = null
 
     private val toolbar = binding?.toolbarMyProfile
     private var mAuth: FirebaseAuth? = null
@@ -48,12 +73,23 @@ class MyProfileActivity : BaseActivity() {
 
         setupActionBar()
 
+        //initialise post image buttons
+        addImagePost = binding?.ibPostImage
+        uploadImagePost = binding?.ibUploadImage
+        etCaption = binding?.etPostImage
+
         FirestoreClass().loadUserData(this)
         mAuth = FirebaseAuth.getInstance()
 
+        itemClicked()
+        FirestoreClass().getImagePostsList(this)
+    }
+
+    private fun itemClicked(){
         //The user will be able to select the profile image
         binding?.ivProfileUserImage?.setOnClickListener {
             profileImgSelected = true
+
             //The user will be prompted to grant permission to read files from devices media storage in order to upload a profile image
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -90,25 +126,69 @@ class MyProfileActivity : BaseActivity() {
             }
         }
 
+        addImagePost?.setOnClickListener {
+            addImageBtnSelected = true
+            //The user will be prompted to grant permission to read files from devices media storage in order to upload a cover image image
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                // if granted permission, show image chooser
+                Constants.showImageChooser(this)
+            } else {
+                // prompt user to grant permission to media storage
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    Constants.READ_STORAGE_PERMISSION_CODE
+                )
+            }
+        }
+
+        uploadImagePost?.setOnClickListener {
+            addPost()
+        }
+
         //The user will be able to click on the update button
         binding?.btnUpdate?.setOnClickListener {
             // CheckS if an Image uri exists before uploading the user image
             if (mSelectedImageFileUri != null) {
-                uploadUserImage()
+                uploadToStorage()
             } else {
                 showProgressDialog(resources.getString(R.string.please_wait))
                 updateUserProfileData()
             }
             // Checks if a Cover image uri exists before uploading cover image
             if (mSelectedCoverImageFileUri != null) {
-                uploadUserImage()
+                uploadToStorage()
             } else {
                 showProgressDialog(resources.getString(R.string.please_wait))
                 updateUserProfileData()
             }
+
         }
+
     }
 
+    fun populatePostListToUI(list: ArrayList<ImagePost>) {
+        hideProgressDialog()
+        postsList = list
+
+        if (postsList?.size!! > 0) {
+            binding?.rvImagePosts?.visibility = View.VISIBLE
+            binding?.tvNoImagesPosted?.visibility = View.GONE
+            binding?.rvImagePosts?.layoutManager = GridLayoutManager(this, 2)
+            binding?.rvImagePosts?.setHasFixedSize(true)
+
+            postsAdapter = ImagePostsAdapter(this, postsList!!)
+            binding?.rvImagePosts?.adapter = postsAdapter
+            //handles the functionality when an event card is selected
+
+        } else {
+            binding?.rvImagePosts?.visibility = View.GONE
+            binding?.tvNoImagesPosted?.visibility = View.VISIBLE
+        }
+    }
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -149,9 +229,23 @@ class MyProfileActivity : BaseActivity() {
                 }
                 !profileCoverImgSelected
             }
+            if (addImageBtnSelected) {
+                mSelectedImagePostFileUri = data.data
+                try {
+                    Glide
+                        .with(this)
+                        .load(mSelectedImagePostFileUri)
+                        .centerCrop()
+                        .into(addImagePost!!)
+
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                !addImageBtnSelected
+            }
+
         }
     }
-
 
 
     //Checks for the specified request code permissions
@@ -226,8 +320,6 @@ class MyProfileActivity : BaseActivity() {
                 .into(it.ciMyProfile)
 
 
-
-
             //My code: Sets the text colour of users status depending on the Status
             when (user.status) {
                 "Available" -> {
@@ -251,7 +343,7 @@ class MyProfileActivity : BaseActivity() {
 
     }
 
-    private fun uploadUserImage() {
+    private fun uploadToStorage() {
         showProgressDialog(resources.getString(R.string.please_wait))
 
         if (mSelectedImageFileUri != null) {
@@ -282,7 +374,7 @@ class MyProfileActivity : BaseActivity() {
                 hideProgressDialog()
             }
         }
-         if (mSelectedCoverImageFileUri != null) {
+        if (mSelectedCoverImageFileUri != null) {
             val sref: StorageReference = FirebaseStorage.getInstance().reference.child(
                 "COVER_IMAGE" +
                         System.currentTimeMillis() + "." + Constants.getFileExtension(
@@ -304,6 +396,38 @@ class MyProfileActivity : BaseActivity() {
                     updateUserProfileData()
                 }
             }.addOnFailureListener { exception ->
+                Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
+
+                hideProgressDialog()
+            }
+        }
+
+
+        if (mSelectedImagePostFileUri != null) {
+            val postRef: StorageReference = FirebaseStorage.getInstance().reference.child(
+                "POST_IMAGES" +
+                        System.currentTimeMillis() + "." + Constants.getFileExtension(
+                    this,
+                    mSelectedImagePostFileUri
+                )
+            )
+            postRef.child(mUserDetails.id)
+                .putFile(mSelectedImagePostFileUri!!)
+                .addOnCompleteListener {
+                    if (it.isSuccessful){
+                        postRef.child(mUserDetails.id).downloadUrl.addOnSuccessListener {
+                            val date = Date()
+                            val dateString = simpleDateFormat.format(date)
+                            mPostImageURL = it.toString()
+                            val ref = FirebaseFirestore.getInstance().collection(Constants.POSTS).document()
+                            val docID = ref.id
+                            val imagePost = ImagePost(getCurrentUserID(), mPostImageURL, dateString, etCaption?.text.toString(),0,docID)
+                            FirestoreClass().uploadPost(this, imagePost)
+                        }
+                    }
+
+                }
+                .addOnFailureListener { exception ->
                 Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
 
                 hideProgressDialog()
@@ -353,7 +477,27 @@ class MyProfileActivity : BaseActivity() {
         finish()
     }
 
+    private fun addPost() {
+        val imageCaption: String = etCaption?.text.toString()
+
+        if (imageCaption.isEmpty()){
+            etCaption?.error   = "Please enter a caption for your post"
+        } else
+            if (mSelectedImagePostFileUri == null) {
+            showErrorSnackBar("Please select an image to post")
+        } else {
+            showProgressDialog(resources.getString(R.string.please_wait))
+                uploadToStorage()
+        }
+    }
+
+    fun postUploaded() {
+        hideProgressDialog()
+    }
+
 }
+
+
 
 
 

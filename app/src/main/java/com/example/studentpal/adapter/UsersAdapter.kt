@@ -21,7 +21,7 @@ class UsersAdapter(var context: Context, var list: ArrayList<User>)
     // contains all the Users in the database before filtering
     var listAll = ArrayList(list)
 
-    inner class  UsersViewHolder(private val itemBinding: ItemAssignFriendBinding):
+    inner class UsersViewHolder(private val itemBinding: ItemAssignFriendBinding):
         RecyclerView.ViewHolder(itemBinding.root) {
             fun bindItem(user: User){
                 itemBinding.tvMemberName.text = user.name

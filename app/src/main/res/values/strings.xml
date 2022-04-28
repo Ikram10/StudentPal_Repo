@@ -102,6 +102,8 @@
     <string name="more_information">More Information</string>
     <string name="notify_me">Notify Me</string>
     <string name="host">Host</string>
+    <string name="write_a_caption_here">Write a caption here</string>
+    <string name="no_images_posted">No Images Posted</string>
 
 
 </resources>

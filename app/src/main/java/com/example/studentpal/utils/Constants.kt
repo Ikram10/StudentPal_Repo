@@ -25,6 +25,7 @@ object Constants {
     const val NUMBER_FRIENDS = "numFriends"
     const val SENDER: String = "sender"
     const val RECEIVER: String = "receiver"
+    const val POSTS: String = "posts"
 
 
     // Friend Requests

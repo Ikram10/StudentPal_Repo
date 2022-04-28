@@ -15,7 +15,7 @@ class FriendsActivity : BaseActivity() {
     var binding : ActivityFriendsBinding? = null
     private var friendsIDList : ArrayList<String>? = null
     private var friendsList : ArrayList<User>? = null
-   private var friendsAdapter: FriendsListAdapter? = null
+    private var friendsAdapter: FriendsListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

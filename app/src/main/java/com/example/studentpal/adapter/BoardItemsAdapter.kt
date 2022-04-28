@@ -69,8 +69,6 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
                     onClickListener!!.onClick(position, model)
                 }
             }
-
-
             // Enables event edit buttons if the event creator id is the same as current user id
             if (model.creatorID == BaseActivity().getCurrentUserID()) {
                 holder.itemView.findViewById<LinearLayoutCompat>(R.id.layout_edit_btns).visibility =
