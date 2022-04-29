@@ -168,7 +168,7 @@ class ChatLogActivity : BaseActivity() {
 
 
                 //clears the edit text when the user hits the send button
-                message?.clear()
+                message.clear()
 
                 //when user hits the send button recycler view scrolls to the last message sent position
                 binding?.recyclerviewChatLog?.scrollToPosition(adapter.itemCount - 1)

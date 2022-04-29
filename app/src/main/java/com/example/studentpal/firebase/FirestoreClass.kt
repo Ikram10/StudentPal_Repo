@@ -213,12 +213,12 @@ class FirestoreClass {
     }
 
     fun getFriendsList(activity: FriendsActivity) {
+        val friendsList = arrayListOf<String>()
         //First query for friend request documents where current user is receiver
         mFireStore
             .collection(Constants.FRIENDSHIPS)
             .whereEqualTo(Constants.RECEIVER, getCurrentUserId())
             .addSnapshotListener { snapshot, e ->
-                val friendsList = arrayListOf<String>()
                 if (e != null) {
                     Log.w(TAG, "Listen failed.", e)
                     return@addSnapshotListener
@@ -231,47 +231,25 @@ class FirestoreClass {
                             friendsList.add(userID!!)
                         }
                     }
-                    mFireStore
-                        .collection(Constants.FRIENDSHIPS)
-                        .whereEqualTo(Constants.SENDER, getCurrentUserId())
-                        .addSnapshotListener { snapshot, e ->
-                            if (e != null) {
-                                Log.w(TAG, "Listen failed.", e)
-                                return@addSnapshotListener
-                            }
-                            if (snapshot != null) {
-                                for (dc: DocumentChange in snapshot.documentChanges) {
-                                    if (dc.type == DocumentChange.Type.ADDED) {
-                                        val userID: String =
-                                            dc.document.data[Constants.SENDER] as String
-                                        friendsList.add(userID)
-                                    }
-                                }
-                            }
-
-                        }
-                } else {
-                    mFireStore
-                        .collection(Constants.FRIENDSHIPS)
-                        .whereEqualTo(Constants.SENDER, getCurrentUserId())
-                        .addSnapshotListener { snapshot, e ->
-                            if (e != null) {
-                                Log.w(TAG, "Listen failed.", e)
-                                return@addSnapshotListener
-                            }
-                            for (dc: DocumentChange in snapshot?.documentChanges!!) {
-                                if (dc.type == DocumentChange.Type.ADDED) {
-                                    val user: String =
-                                        dc.document.data[Constants.RECEIVER] as String
-                                    friendsList.add(user)
-                                }
-                            }
-
-
-                        }
-
                 }
-
+            }
+        mFireStore
+            .collection(Constants.FRIENDSHIPS)
+            .whereEqualTo(Constants.SENDER, getCurrentUserId())
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    for (dc: DocumentChange in snapshot.documentChanges) {
+                        if (dc.type == DocumentChange.Type.ADDED) {
+                            val userID: String =
+                                dc.document.data[Constants.RECEIVER] as String
+                            friendsList.add(userID)
+                        }
+                    }
+                }
                 activity.setUpUsersListFromId(friendsList)
                 //Then query for friend request documents where current user is receive
             }
@@ -335,19 +313,16 @@ class FirestoreClass {
 
 
     fun fetchUsersById(activity: FriendsActivity, list: ArrayList<String>) {
-
+        val usersList = arrayListOf<User>()
         for (item in list) {
             mFireStore
                 .collection(Constants.USERS)
-                .document(item)
+                .whereEqualTo(Constants.ID, item)
                 .get()
-                .addOnSuccessListener {
-                    val usersList = arrayListOf<User>()
-                    if (it.exists()) {
-                        val user = it.toObject(User::class.java)
-                        if (user != null) {
-                            usersList.add(user)
-                        }
+                .addOnCompleteListener{
+                     for (doc in it.result.documents) {
+                        val user = doc.toObject(User::class.java)
+                         usersList.add(user!!)
                     }
                     activity.setUpFriendsList(usersList)
                 }
