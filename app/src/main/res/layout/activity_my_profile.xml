@@ -63,7 +63,7 @@
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/card_view_corner_radius"
             app:cardUseCompatPadding="true"
-            app:layout_constraintBottom_toTopOf="@+id/cl_post_image"
+            app:layout_constraintBottom_toTopOf="@+id/cardView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/iv_profile_user_image"
@@ -199,8 +199,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_profile_user_image"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/profile_image"
             android:elevation="10dp"
@@ -213,129 +213,17 @@
             app:layout_constraintTop_toBottomOf="@+id/frame" />
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_post_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/cv_my_profile">
-
-            <View
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="10dp"
-                android:background="@color/secondary_text_color"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_posts"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:text="@string/posts"
-                android:textColor="@color/logo_text_color"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/et_post_image"
-                app:layout_constraintTop_toBottomOf="@+id/view"
-                app:layout_constraintVertical_bias="0.636"
-                tools:layout_editor_absoluteX="0dp" />
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/et_post_image"
-                style="@style/TextInputLayoutTheme"
-                android:layout_width="303dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:background="@drawable/input_add_post"
-                android:gravity="center_vertical"
-                android:hint="@string/write_a_caption_here"
-                android:paddingStart="20dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="20dp"
-                android:paddingBottom="10dp"
-                android:textColor="@color/black"
-                android:textSize="@dimen/et_text_size"
-                app:layout_constraintEnd_toEndOf="@+id/view"
-                app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toBottomOf="@+id/view">
-
-            </androidx.appcompat.widget.AppCompatEditText>
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ib_post_image"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="7dp"
-                android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_round_image_24"
-                app:layout_constraintBottom_toBottomOf="@+id/et_post_image"
-                app:layout_constraintEnd_toStartOf="@+id/et_post_image"
-                app:layout_constraintHorizontal_bias="0.065"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/et_post_image" />
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/ib_upload_image"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginEnd="6dp"
-                android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_baseline_cloud_upload_24"
-                app:layout_constraintBottom_toBottomOf="@+id/et_post_image"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/et_post_image"
-                app:layout_constraintTop_toTopOf="@+id/et_post_image" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_image_posts"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="6dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:visibility="gone"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/et_post_image"
-                app:layout_constraintVertical_bias="1.0"
-                tools:listitem="@layout/single_post_view" />
-
-            <TextView
-                android:id="@+id/tv_no_images_posted"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="151dp"
-                android:gravity="center"
-                android:text="@string/no_images_posted"
-                android:textColor="@color/secondary_text_color"
-                android:textSize="20sp"
-                android:visibility="visible"
-                app:layout_constraintTop_toBottomOf="@+id/et_post_image" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
-            android:visibility="gone"
             app:cardCornerRadius="15dp"
-
             app:cardElevation="@dimen/card_view_corner_radius"
             app:cardUseCompatPadding="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:visibility="gone">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"

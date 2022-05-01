@@ -4,7 +4,7 @@ package com.example.studentpal.activities.registration
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
+import android.util. Log
 import android.util.Patterns
 import android.widget.Toast
 import com.example.studentpal.R
@@ -12,8 +12,15 @@ import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.databinding.ActivitySignUpBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.User
+import com.example.studentpal.utils.Constants
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,6 +28,13 @@ import java.util.*
 class SignUpActivity : BaseActivity() {
 
     private var binding: ActivitySignUpBinding? = null
+    // Stored the size of the number of same username
+    var mFirestoreRef: CollectionReference? = null
+    companion object {
+        var isUnique: Boolean = false
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +42,8 @@ class SignUpActivity : BaseActivity() {
         setContentView(binding?.root)
 
         setupActionBar()
+
+        mFirestoreRef = FirebaseFirestore.getInstance().collection(Constants.USERS)
 
         binding?.btnSignUp?.setOnClickListener {
             registerUser()
@@ -42,6 +58,7 @@ class SignUpActivity : BaseActivity() {
 
 
     }
+
 
     // My Code: This code will retrieve the current date and get the date the user first sign up to StudentPal
     private fun getCurrentDate(): String {
@@ -75,9 +92,10 @@ class SignUpActivity : BaseActivity() {
         val name: String = binding?.etName?.text.toString().trim { it <= ' ' }
         val email: String = binding?.etEmail?.text.toString().trim { it <= ' ' }
         val password: String = binding?.etPassword?.text.toString().trim { it <= ' ' }
+        val username: String = binding?.etUsername?.text.toString().trim { it <= ' ' }
 
 
-        if (validateForm(name, email, password)) {
+        if (validateForm(name, email, password, username)) {
             showProgressDialog(resources.getString(R.string.please_wait))
             mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
@@ -86,7 +104,7 @@ class SignUpActivity : BaseActivity() {
                         val registeredEmail = firebaseUser.email!!
                         val dateJoined = getCurrentDate()
                         //User object constructed to be stored in Firestore
-                        val user = User(firebaseUser.uid, name, registeredEmail, dateJoined)
+                        val user = User(firebaseUser.uid, name, registeredEmail, dateJoined, username = username)
                         //Verification email will be sent to the sign up email
                         sendVerificationEmail(firebaseUser, user)
                     } else {
@@ -130,10 +148,13 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    private fun validateForm(name: String, email: String, password: String): Boolean {
+    private fun validateForm(name: String, email: String, password: String, username: String): Boolean {
         return when {
             TextUtils.isEmpty(name) -> {
                 showErrorSnackBar("Please enter a name")
+                false
+            }
+            invalidUsername(username) -> {
                 false
             }
             invalidEmail(email) -> {
@@ -142,10 +163,20 @@ class SignUpActivity : BaseActivity() {
             invalidPassword(password) -> {
                 false
             }
+
             else -> {
                 return true
             }
         }
+    }
+
+    private fun invalidUsername(username: String): Boolean {
+        if (username.isEmpty()) {
+            showErrorSnackBar("Please enter a Username")
+            return true
+        }
+
+        return false
     }
 
     private fun invalidPassword(password: String): Boolean {

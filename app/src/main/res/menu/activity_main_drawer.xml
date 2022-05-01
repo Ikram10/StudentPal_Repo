@@ -8,6 +8,12 @@
         </item>
 
         <item
+            android:id="@+id/nav_posts"
+            android:icon="@drawable/ic_round_image_24"
+            android:title="@string/posts">
+        </item>
+
+        <item
             android:id="@+id/nav_active_users"
             android:icon="@drawable/ic_round_person_search_24"
             android:title="@string/active_users">

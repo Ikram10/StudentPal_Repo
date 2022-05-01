@@ -69,6 +69,7 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
                     onClickListener!!.onClick(position, model)
                 }
             }
+
             // Enables event edit buttons if the event creator id is the same as current user id
             if (model.creatorID == BaseActivity().getCurrentUserID()) {
                 holder.itemView.findViewById<LinearLayoutCompat>(R.id.layout_edit_btns).visibility =
@@ -129,7 +130,7 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
         }
     }
 
-    //converts the long value stored in firestore to 
+    //converts the long value stored in Firestore to
     private fun convertLongToTime(time: Long): String {
         val date = Date(time)
         val format = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)

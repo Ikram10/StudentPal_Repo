@@ -20,18 +20,17 @@ import com.example.studentpal.activities.events.CreateBoardActivity
 import com.example.studentpal.activities.events.EventInfoActivity
 import com.example.studentpal.activities.friends.FindFriends
 import com.example.studentpal.activities.friends.FriendsActivity
+import com.example.studentpal.activities.messages.LatestMessagesActivity
 import com.example.studentpal.activities.registration.IntroActivity
 import com.example.studentpal.adapter.BoardItemsAdapter
 import com.example.studentpal.databinding.ActivityMainBinding
 import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.activities.messages.LatestMessagesActivity
 import com.example.studentpal.models.Board
 import com.example.studentpal.models.User
 import com.example.studentpal.utils.Constants
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
@@ -45,7 +44,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private var mainRecyclerView: RecyclerView? = null
     private var eventTextView: TextView? = null
     private lateinit var refreshLayout: SwipeRefreshLayout
+
+    // A global variable for User Name
     private lateinit var mUserName: String
+
+    // A global variable for SharedPreferences
     private lateinit var mSharedPreferences: SharedPreferences
 
 
@@ -53,7 +56,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     companion object {
         const val MY_PROFILE_REQUEST_CODE: Int = 11
         const val CREATE_BOARD_REQUEST_CODE: Int = 12
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,13 +67,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         setupActionBar()
 
-        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-            val token = it.result
-            Log.d("fcmToken", "$token")
-        }
         mainRecyclerView = binding?.appBarMain?.root?.findViewById(R.id.rv_boards_list)
         eventTextView = binding?.appBarMain?.root?.findViewById(R.id.tv_events)
-
 
         binding?.navView?.setNavigationItemSelectedListener(this)
 
@@ -79,22 +76,31 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         mSharedPreferences =
             this.getSharedPreferences(Constants.STUDENTPAL_PREFERENCES, Context.MODE_PRIVATE)
 
+        // Variable is used get the value either token is updated in the database or not.
         val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
 
+        // Here if the token is already updated than we don't need to update it every time.
         if (tokenUpdated) {
             showProgressDialog(resources.getString(R.string.please_wait))
+            // Get the current logged in user details.
             FirestoreClass().loadUserData(this, true)
         } else {
             FirebaseMessaging
                 .getInstance()
                 .token
-                .addOnSuccessListener {
-                    updateFCMToken(it)
-            }
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d("FCM token update", "token: ${it.result}")
+                        // Get new FCM registration token and update it
+                        updateFCMToken(it.result)
+                    } else
+                        Log.d("FCM token update failed", "token: ${it.result}")
+
+                }
         }
-            /* loads the currently logged in user's data into this activity, by retrieving their document from firebase
-             * The events list for the current user is also loaded into this activity
-             */
+        /* loads the currently logged in user's data into this activity, by retrieving their document from firebase
+         * The events list for the current user is also loaded into this activity
+         */
         FirestoreClass().loadUserData(this, true)
 
         //create board action button can be clicked
@@ -203,6 +209,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 startActivity(Intent(this, FindFriends::class.java))
 
             }
+            R.id.nav_posts -> {
+                startActivity(Intent(this, PostsActivity::class.java))
+            }
             R.id.nav_friends -> {
                 startActivity(Intent(this, FriendsActivity::class.java))
 
@@ -301,8 +310,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         refreshLayout.isRefreshing = false
     }
 
+    // A function to notify the token is updated successfully in the database.
     fun tokenUpdateSuccess() {
         hideProgressDialog()
+        // Here we have added a another value in shared preference that the token is updated in the database successfully.
+        // So we don't need to update it every time.
         val editor: SharedPreferences.Editor = mSharedPreferences.edit()
         editor.putBoolean(Constants.FCM_TOKEN_UPDATED, true)
         editor.apply()
@@ -310,10 +322,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         FirestoreClass().loadUserData(this, true)
     }
 
+    // A function to update the user's FCM token into the database.
     private fun updateFCMToken(token: String) {
         val userHashMap = HashMap<String, Any>()
         userHashMap[Constants.FCM_TOKEN] = token
         showProgressDialog(resources.getString(R.string.please_wait))
+        // Update the data in the database.
         FirestoreClass().updateUserProfileData(this, userHashMap)
 
 

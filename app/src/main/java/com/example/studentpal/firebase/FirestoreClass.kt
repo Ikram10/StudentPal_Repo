@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.studentpal.activities.MainActivity
 import com.example.studentpal.activities.MyProfileActivity
+import com.example.studentpal.activities.PostsActivity
 import com.example.studentpal.activities.events.AssignFriendsActivity
 import com.example.studentpal.activities.events.CreateBoardActivity
 import com.example.studentpal.activities.events.EditEventActivity
@@ -36,7 +37,6 @@ class FirestoreClass {
                 Log.i(activity.javaClass.simpleName, "Profile data updated successfully")
                 Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_LONG).show()
                 when (activity) {
-
                     is MainActivity -> {
                         activity.tokenUpdateSuccess()
                     }
@@ -95,6 +95,11 @@ class FirestoreClass {
                         }
                     }
                     is MyProfileActivity -> {
+                        if (loggedInUser != null) {
+                            activity.setUserDataInUI(loggedInUser)
+                        }
+                    }
+                    is PostsActivity -> {
                         if (loggedInUser != null) {
                             activity.setUserDataInUI(loggedInUser)
                         }
@@ -319,10 +324,10 @@ class FirestoreClass {
                 .collection(Constants.USERS)
                 .whereEqualTo(Constants.ID, item)
                 .get()
-                .addOnCompleteListener{
-                     for (doc in it.result.documents) {
+                .addOnCompleteListener {
+                    for (doc in it.result.documents) {
                         val user = doc.toObject(User::class.java)
-                         usersList.add(user!!)
+                        usersList.add(user!!)
                     }
                     activity.setUpFriendsList(usersList)
                 }
@@ -521,29 +526,30 @@ class FirestoreClass {
 
 
     /**
-     * Upload Posts
+     * Upload PostsActivity
      *
      */
 
-    fun uploadPost(activity: MyProfileActivity, imagePost: ImagePost) {
+    fun uploadPost(activity: PostsActivity, imagePost: ImagePost) {
         mFireStore
             .collection(Constants.POSTS)
-            .document()
+            .document(imagePost.docID)
             .set(imagePost)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    activity.postUploaded()
+                    activity.hideProgressDialog()
                     Log.d("Post Uploaded", "$imagePost")
 
                 } else {
-                    Log.d("Post Upload failed", "$imagePost")
                     activity.hideProgressDialog()
+                    Log.d("Post Upload failed", "$imagePost")
+
                 }
             }
 
     }
 
-    fun getImagePostsList(activity: MyProfileActivity) {
+    fun getImagePostsList(activity: PostsActivity) {
         mFireStore.collection(Constants.POSTS)
             .whereEqualTo(Constants.ID, getCurrentUserId())
             .addSnapshotListener { snapshot, e ->
@@ -569,5 +575,37 @@ class FirestoreClass {
 
 
     }
-}
+
+    fun getFriendsPosts(activity: ViewFriendProfile, id: String?) {
+        mFireStore
+            .collection(Constants.POSTS)
+            .whereEqualTo(Constants.ID, id)
+            .addSnapshotListener { snapshot, e ->
+                val postList = arrayListOf<ImagePost>()
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    for (dc: DocumentChange in snapshot.documentChanges) {
+                        if (dc.type == DocumentChange.Type.ADDED) {
+                            val post = dc.document.toObject(ImagePost::class.java)
+                            postList.add(post)
+                        }
+                        if (dc.type == DocumentChange.Type.REMOVED) {
+                            val post = dc.document.toObject(ImagePost::class.java)
+                            postList.remove(post)
+                        }
+                    }
+                    //activity.populatePostListToUI(postList)
+                }
+
+
+            }
+    }
+
+
+
+    }
+
 

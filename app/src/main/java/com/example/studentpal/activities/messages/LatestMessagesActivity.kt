@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
+import com.example.studentpal.activities.friends.FriendsActivity
 import com.example.studentpal.databinding.ActivityLatestMessagesBinding
 import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.models.ChatMessage
@@ -131,11 +132,9 @@ class LatestMessagesActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_new_message -> {
-                startActivity(Intent(this, NewMessageActivity::class.java))
+                startActivity(Intent(this, FriendsActivity::class.java))
             }
-            R.id.menu_sign_out -> {
-                signOutUser()
-            }
+
         }
         return super.onOptionsItemSelected(item)
     }

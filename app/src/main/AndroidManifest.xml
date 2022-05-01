@@ -34,6 +34,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentPal">
         <activity
+            android:name=".activities.PostsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.friends.FriendsActivity"
             android:exported="false" />
         <activity
@@ -91,21 +94,21 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name="com.example.studentpal.activities.messages.ChatLogActivity"
+            android:name=".activities.messages.ChatLogActivity"
             android:exported="false"
-            android:parentActivityName="com.example.studentpal.activities.messages.LatestMessagesActivity"
+            android:parentActivityName=".activities.messages.LatestMessagesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name="com.example.studentpal.activities.messages.LatestMessagesActivity"
+            android:name=".activities.messages.LatestMessagesActivity"
             android:exported="false"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name="com.example.studentpal.activities.messages.NewMessageActivity"
+            android:name=".activities.messages.NewMessageActivity"
             android:exported="false"
-            android:parentActivityName="com.example.studentpal.activities.messages.LatestMessagesActivity"
+            android:parentActivityName=".activities.messages.LatestMessagesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SearchBar">
             <meta-data
@@ -155,12 +158,14 @@
 
         <service
             android:name=".fcm.MyFirebaseMessagingService"
-            android:permission="com.google.android.c2dm.permission.SEND"
-            android:exported="false">
+            android:exported="false"
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
     </application>
+
 </manifest>

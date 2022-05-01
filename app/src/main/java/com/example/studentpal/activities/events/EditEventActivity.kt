@@ -64,8 +64,6 @@ class EditEventActivity : BaseActivity() {
             setColor()
         }
 
-
-
         binding?.btnUpdateEventDetails?.setOnClickListener {
             if (etEventName.text.toString().isNotEmpty()) {
                 updateEventDetails()

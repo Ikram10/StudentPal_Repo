@@ -9,14 +9,17 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.activities.BaseActivity
 import com.example.studentpal.activities.messages.ChatLogActivity
 import com.example.studentpal.activities.messages.ChatLogActivity.Companion.TAG
+import com.example.studentpal.adapter.ImagePostsAdapter
 import com.example.studentpal.databinding.ActivityViewFriendProfileBinding
 import com.example.studentpal.fcm.RetrofitInstance
 import com.example.studentpal.firebase.FirestoreClass
+import com.example.studentpal.models.ImagePost
 import com.example.studentpal.models.NotificationData
 import com.example.studentpal.models.PushNotification
 import com.example.studentpal.models.User
@@ -31,6 +34,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.ArrayList
 
 //My code
 class ViewFriendProfile : BaseActivity() {
@@ -42,6 +46,9 @@ class ViewFriendProfile : BaseActivity() {
     var binding: ActivityViewFriendProfileBinding? = null
     var btnPerform: AppCompatButton? = null
     var btnDeclineFriendRequest: AppCompatButton? = null
+
+    private var postsList: ArrayList<ImagePost>? = null
+    private var postsAdapter: ImagePostsAdapter? = null
 
     // Starting state
     var currentState = DEFAULT
@@ -71,6 +78,7 @@ class ViewFriendProfile : BaseActivity() {
         // Retrieves users from intent
         if (intent.hasExtra(Constants.USER_KEY)) {
             friendDetails = intent.getParcelableExtra<User>(Constants.USER_KEY)
+            FirestoreClass().getFriendsPosts(this, friendDetails?.id)
         }
 
         setupActionBar()
@@ -362,8 +370,7 @@ class ViewFriendProfile : BaseActivity() {
         }
     }
 
-//My code: This is responsible for handling all the account states between users when sending friend requests
-
+    //My code: This is responsible for handling all the account states between users when sending friend requests
 
     private fun performAction(friendUserID: String?) {
         when (currentState) {
@@ -574,4 +581,7 @@ class ViewFriendProfile : BaseActivity() {
 
         }
     }
+
+
+
 }

@@ -32,16 +32,15 @@ open class BaseActivity : AppCompatActivity() {
 
 
     fun showProgressDialog(text : String) {
-
         mProgressDialog = Dialog(this)
         //sets the screen content from a layout resource.
-        mProgressDialog!!.setContentView(R.layout.dialog_progress)
+        mProgressDialog?.setContentView(R.layout.dialog_progress)
 
 
-        var tvProgress : TextView = mProgressDialog!!.findViewById(R.id.tv_progress_text)
+        val tvProgress : TextView = mProgressDialog!!.findViewById(R.id.tv_progress_text)
         tvProgress.text = text
 
-        mProgressDialog!!.show()
+        mProgressDialog?.show()
     }
 
     fun hideProgressDialog(){
@@ -101,5 +100,21 @@ open class BaseActivity : AppCompatActivity() {
             }
             .show()
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mProgressDialog != null) {
+            mProgressDialog?.dismiss();
+            mProgressDialog = null;
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (mProgressDialog != null) {
+            mProgressDialog?.dismiss()
+            mProgressDialog = null
+        }
     }
 }

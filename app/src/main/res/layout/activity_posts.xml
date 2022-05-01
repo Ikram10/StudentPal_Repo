@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.PostsActivity"
+    android:background="@color/bg_color">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height= "match_parent"
+       >
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar_posts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_posts"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/logo_text_color"
+                android:elevation="4dp"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Post's"
+            android:textColor="@color/logo_text_color"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/appbar_posts" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_post_image"
+            style="@style/TextInputLayoutTheme"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/input_add_post"
+            android:gravity="center_vertical"
+            android:hint="@string/write_a_caption_here"
+            android:paddingStart="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="10dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/et_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="2dp"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ib_post_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/ic_round_image_24"
+            app:layout_constraintBottom_toBottomOf="@+id/et_post_image"
+            app:layout_constraintEnd_toStartOf="@+id/et_post_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/et_post_image" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/ib_upload_image"
+            android:layout_width="42dp"
+            android:layout_height= "45dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="6dp"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/ic_baseline_cloud_upload_24"
+            app:layout_constraintBottom_toBottomOf="@+id/et_post_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/et_post_image"
+            app:layout_constraintTop_toTopOf="@+id/et_post_image" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_posts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_post_image"
+            tools:listitem="@layout/single_post_view"
+            tools:visibility="visible"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/ll_no_posts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_post_image"
+            android:gravity="center"
+            android:layout_marginTop="250dp"
+            tools:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No Images Posted"
+                android:textColor="@color/primary_text_color"
+                android:textSize="30sp"
+                android:gravity="center"/>
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_round_clear_24"
+                android:layout_marginTop="10dp"/>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

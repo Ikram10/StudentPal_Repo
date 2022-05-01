@@ -14,6 +14,7 @@ object Constants {
     //user related Constants
     const val USER_KEY = "USER_KEY"
     const val USERS : String = "Users"
+    const val USERNAME: String = "username"
     const val MESSAGES: String = "Messages"
     const val USER_MESSAGES: String = "User-Messages"
     const val IMAGE: String = "image"
@@ -26,6 +27,8 @@ object Constants {
     const val SENDER: String = "sender"
     const val RECEIVER: String = "receiver"
     const val POSTS: String = "posts"
+    const val POST_DATE: String = "postDate"
+
 
 
     // Friend Requests
