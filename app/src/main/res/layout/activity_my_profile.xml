@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:background="@color/bg_color"
         android:orientation="vertical"
-        tools:context=".activities.MyProfileActivity">
+        tools:context=".view.MyProfileActivity">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"

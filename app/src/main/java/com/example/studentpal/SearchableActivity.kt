@@ -1,16 +1,11 @@
 package com.example.studentpal
 
-import android.app.ListActivity
 import android.app.SearchManager
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.ListView
-import androidx.fragment.app.ListFragment
-import androidx.recyclerview.widget.RecyclerView
-import com.example.studentpal.utils.Constants
-import com.google.android.gms.common.internal.constants.ListAppsActivityContract
+import com.example.studentpal.common.Constants
 import com.google.firebase.firestore.FirebaseFirestore
 
 class SearchableActivity : AppCompatActivity(){
