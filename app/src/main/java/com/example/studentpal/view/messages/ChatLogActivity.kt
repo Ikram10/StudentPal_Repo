@@ -10,13 +10,12 @@ import com.example.studentpal.R
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.databinding.ActivityChatLogBinding
 import com.example.studentpal.common.fcm.RetrofitInstance
-import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.model.entities.ChatMessage
 import com.example.studentpal.model.entities.NotificationData
 import com.example.studentpal.model.entities.PushNotification
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
-import com.example.studentpal.model.remote.UserDatabase.fetchCurrentUser
+import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentChange
@@ -27,9 +26,7 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -49,6 +46,7 @@ class ChatLogActivity : BaseActivity() {
 
 
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatLogBinding.inflate(layoutInflater)
@@ -71,7 +69,10 @@ class ChatLogActivity : BaseActivity() {
             performSendMessage()
 
         }
-        fetchCurrentUser(this)
+        GlobalScope.launch {
+            fetchCurrentUser(getCurrentUserID())
+        }
+
         listenForMessages()
 
     }

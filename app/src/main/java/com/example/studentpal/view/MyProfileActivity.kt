@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,51 +12,45 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
-import com.example.studentpal.databinding.ActivityMyProfileBinding
-import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
+import com.example.studentpal.databinding.ActivityMyProfileBinding
+import com.example.studentpal.model.entities.User
+import com.example.studentpal.model.remote.UsersDatabase.loadUserData
+import com.example.studentpal.viewmodel.MyProfileViewModel
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
+
 //My code
 class MyProfileActivity : BaseActivity(), View.OnClickListener {
 
     private var binding: ActivityMyProfileBinding? = null
     private val toolbar = binding?.toolbarMyProfile
-    // Clickable views
-
+    // Buttons
     private var ivProfileImage: CircleImageView? = null
     private var btnAddCoverImage: AppCompatImageButton? = null
     private var btnUpdate: AppCompatButton? = null
-    // Variables stores the selected image URI  value
-    private var mSelectedImageFileUri: Uri? = null
-    private var mSelectedCoverImageFileUri: Uri? = null
-    private var mProfileImageURL: String = ""
-    private var mProfileCoverImageURL: String = ""
-    private var profileImgSelected: Boolean = false
-    private var profileCoverImgSelected: Boolean = false
-    private lateinit var mUserDetails: User
-    private val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
-    // Variables handle the post image functionality
-
-
-    private var mAuth: FirebaseAuth? = null
+    // ViewModel
+    private lateinit var viewModel : MyProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMyProfileBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
+        // Initialise ViewModel
+        viewModel = ViewModelProvider(this)[MyProfileViewModel::class.java]
+
+        // User Observer
+        viewModel.userProfile.observe(this) {
+            setUserDataInUI(it)
+        }
+
         setupActionBar()
 
-        //initialise clickable views
+        // Initialise buttons
         ivProfileImage = binding?.ivProfileUserImage
         btnAddCoverImage = binding?.btnAddCoverImage
         btnUpdate = binding?.btnUpdate
@@ -67,14 +60,13 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
         btnUpdate?.setOnClickListener(this)
 
 
-        FirestoreClass().loadUserData(this)
-        mAuth = FirebaseAuth.getInstance()
+        loadUserData(this)
     }
     //My code:
     override fun onClick(v: View) {
         when (v) {
             ivProfileImage -> {
-                profileImgSelected = true
+                viewModel.profileImgSelected = true
                 //The user will be prompted to grant permission to read files from devices media storage in order to upload a profile image
                 if (ContextCompat.checkSelfPermission(
                         this,
@@ -92,7 +84,7 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
             //My Code: Enables users to add a cover image
             btnAddCoverImage -> {
                 // when button clicked set this to true
-                profileCoverImgSelected = true
+                viewModel.profileCoverImgSelected = true
                 //The user will be prompted to grant permission to read files from devices media storage in order to upload a cover image image
                 if (ContextCompat.checkSelfPermission(
                         this,
@@ -112,40 +104,39 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
 
             //The user will be able to click on the update button
             btnUpdate -> {
-                // CheckS if an Image uri exists before uploading the user image
-                if (mSelectedImageFileUri != null) {
-                    uploadToStorage()
+                val name = binding?.etName?.text.toString()
+                val status = binding?.etStatus?.text.toString()
+                // Checks if an Image uri exists before uploading the user image
+                if (viewModel.mSelectedImageFileUri != null) {
+                    viewModel.uploadToStorage(this)
                 } else {
-                    showProgressDialog(resources.getString(R.string.please_wait))
-                    updateUserProfileData()
+                    showProgressDialog("Please Wait")
+                    viewModel.updateUserProfile(this, name, status)
                 }
-                // Checks if a Cover image uri exists before uploading cover image
-                if (mSelectedCoverImageFileUri != null) {
-                    uploadToStorage()
+                // Check if a Cover image uri exists before uploading cover image
+                if (viewModel.mSelectedCoverImageFileUri != null) {
+                    viewModel.uploadToStorage(this)
                 } else {
-                    showProgressDialog(resources.getString(R.string.please_wait))
-                    updateUserProfileData()
+                    showProgressDialog("Please Wait")
+                    viewModel.updateUserProfile(this,name, status)
                 }
 
             }
         }
     }
 
-
-
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
-            if (profileImgSelected) {
-                mSelectedImageFileUri = data.data
+            if (viewModel.profileImgSelected) {
+                viewModel.mSelectedImageFileUri = data.data
                 try {
-
                     binding?.ivProfileUserImage?.let {
                         Glide
                             .with(this)
-                            .load(mSelectedImageFileUri)
+                            .load(viewModel.mSelectedImageFileUri)
                             .centerCrop()
                             .placeholder(R.drawable.ic_nav_user)
                             .into(it)
@@ -153,15 +144,15 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-                !profileImgSelected
+                !viewModel.profileImgSelected
             }
-            if (profileCoverImgSelected) {
-                mSelectedCoverImageFileUri = data.data
+            if (viewModel.profileCoverImgSelected) {
+                viewModel.mSelectedCoverImageFileUri = data.data
                 try {
                     binding?.ciMyProfile?.let {
                         Glide
                             .with(this)
-                            .load(mSelectedCoverImageFileUri)
+                            .load(viewModel.mSelectedCoverImageFileUri)
                             .centerCrop()
                             .placeholder(R.drawable.add_screen_image_placeholder)
                             .into(it)
@@ -170,7 +161,7 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-                !profileCoverImgSelected
+                !viewModel.profileCoverImgSelected
             }
         }
     }
@@ -215,11 +206,8 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
         Toast.makeText(this, "onBackPressed", Toast.LENGTH_SHORT).show()
     }
 
-    fun getDateString(time: Long): String = simpleDateFormat.format(time * 1000)
 
     fun setUserDataInUI(user: User) {
-        mUserDetails = user
-
         binding?.let {
 
             // My profile image
@@ -268,101 +256,6 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
         }
 
     }
-
-    private fun uploadToStorage() {
-        showProgressDialog("Please wait")
-        if (mSelectedImageFileUri != null) {
-
-            val sref: StorageReference = FirebaseStorage.getInstance().reference.child(
-                "USER_IMAGE" +
-                        System.currentTimeMillis() + "." + Constants.getFileExtension(
-                    this,
-                    mSelectedImageFileUri
-                )
-            )
-
-            sref.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
-                Log.i(
-                    "Firebase Image URL",
-                    it.metadata!!.reference!!.downloadUrl.toString()
-                )
-                it.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
-                    Log.i(
-                        "Downloadable Image URL", it.toString()
-                    )
-                    mProfileImageURL = it.toString()
-
-                    updateUserProfileData()
-                }
-            }.addOnFailureListener { exception ->
-                Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
-                hideProgressDialog()
-            }
-        }
-        if (mSelectedCoverImageFileUri != null) {
-            val sref: StorageReference = FirebaseStorage.getInstance().reference.child(
-                "COVER_IMAGE" +
-                        System.currentTimeMillis() + "." + Constants.getFileExtension(
-                    this,
-                    mSelectedCoverImageFileUri
-                )
-            )
-            sref.putFile(mSelectedCoverImageFileUri!!).addOnSuccessListener {
-                Log.i(
-                    "Firebase Cover Img URL",
-                    it.metadata!!.reference!!.downloadUrl.toString()
-                )
-                it.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
-                    Log.i(
-                        "Downloadable Image URL", it.toString()
-                    )
-                    mProfileCoverImageURL = it.toString()
-
-                    updateUserProfileData()
-                }
-            }.addOnFailureListener {
-                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                hideProgressDialog()
-            }
-        }
-
-
-
-    }
-
-
-    private fun updateUserProfileData() {
-        val userHashMap = HashMap<String, Any>()
-
-        var anyChangesMade = false
-
-        if (mProfileImageURL.isNotEmpty() && mProfileImageURL != mUserDetails.image) {
-            userHashMap[Constants.IMAGE] = mProfileImageURL
-            anyChangesMade = true
-        }
-
-        if (mProfileCoverImageURL.isNotEmpty() && mProfileCoverImageURL != mUserDetails.coverImage) {
-            userHashMap[Constants.COVER_IMAGE] = mProfileCoverImageURL
-            anyChangesMade = true
-        }
-
-        if (binding?.etName?.text.toString() != mUserDetails.name) {
-            userHashMap[Constants.NAME] = binding?.etName?.text.toString()
-            anyChangesMade = true
-        }
-
-        if (binding?.etStatus?.text.toString() != mUserDetails.status) {
-            userHashMap[Constants.STATUS] = binding?.etStatus?.text.toString()
-            anyChangesMade = true
-        }
-
-        if (anyChangesMade) {
-            FirestoreClass().updateUserProfileData(this, userHashMap)
-        } else {
-            hideProgressDialog()
-        }
-    }
-
 
     fun profileUpdateSuccess() {
         setResult(Activity.RESULT_OK)

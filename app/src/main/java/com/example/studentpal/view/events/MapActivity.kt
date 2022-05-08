@@ -4,7 +4,7 @@ import android.os.Bundle
 import com.example.studentpal.R
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.databinding.ActivityMapBinding
-import com.example.studentpal.model.entities.Board
+import com.example.studentpal.model.entities.Event
 import com.example.studentpal.common.Constants
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -15,7 +15,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 
 class MapActivity : BaseActivity(), OnMapReadyCallback {
-    private var eventDetail: Board? = null //Global variable
+    private var eventDetail: Event? = null //Global variable
     private var binding : ActivityMapBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

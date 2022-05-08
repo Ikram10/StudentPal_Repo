@@ -12,13 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.databinding.SinglePostViewBinding
-import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.model.entities.ImagePost
+import com.example.studentpal.model.entities.Post
 import com.example.studentpal.common.Constants
-import com.example.studentpal.model.remote.UserDatabase.getCurrentUserId
+import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.google.firebase.firestore.FirebaseFirestore
 
-class ImagePostsAdapter(var context: Context, var list: ArrayList<ImagePost>)
+class ImagePostsAdapter(var context: Context, var list: ArrayList<Post>)
     : RecyclerView.Adapter<ImagePostsAdapter.ImagePostViewHolder>(){
 
     private var onClickListener: OnClickListener? = null
@@ -26,7 +25,7 @@ class ImagePostsAdapter(var context: Context, var list: ArrayList<ImagePost>)
     inner class  ImagePostViewHolder(private var itemBinding: SinglePostViewBinding ):
         RecyclerView.ViewHolder(itemBinding.root) {
 
-        fun bindItem(post: ImagePost) {
+        fun bindItem(post: Post) {
             itemBinding.tvPostDate.text = post.eventDate
             itemBinding.tvPostCaption.text = post.caption
             itemBinding.tvLikeCount.text = post.likes.toString()
@@ -115,7 +114,7 @@ class ImagePostsAdapter(var context: Context, var list: ArrayList<ImagePost>)
         /* onClick function takes a position where a click was recieved
          * and a model that was clicked, which contains the position
          */
-        fun onClick(position: Int, model: ImagePost)
+        fun onClick(position: Int, model: Post)
     }
 
     //on click listener when event cards are clicked

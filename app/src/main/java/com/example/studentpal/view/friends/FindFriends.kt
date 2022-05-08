@@ -9,9 +9,8 @@ import com.example.studentpal.R
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.adapter.UsersAdapter
 import com.example.studentpal.databinding.ActivityFindFriendsBinding
-import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.model.remote.UserDatabase.getAllUsers
+import com.example.studentpal.model.remote.UsersDatabase.getAllUsers
 
 class FindFriends : BaseActivity() {
     var binding : ActivityFindFriendsBinding? = null

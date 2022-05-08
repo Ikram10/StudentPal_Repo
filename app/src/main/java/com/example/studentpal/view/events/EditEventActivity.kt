@@ -18,14 +18,14 @@ import com.example.studentpal.view.adapter.CardAttendeeItemAdapter
 import com.example.studentpal.databinding.ActivityEditEventBinding
 import com.example.studentpal.common.dialogs.EventCardColorListDialog
 import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.model.entities.Board
+import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
 import com.google.firebase.auth.FirebaseAuth
 
 class EditEventActivity : BaseActivity() {
     private var binding: ActivityEditEventBinding? = null
-    private lateinit var mBoardDetails: Board
+    private lateinit var mEventDetails: Event
     private lateinit var mBoardDocumentId: String
     private lateinit var etEventName: AppCompatEditText
     private var mSelectedColor = ""
@@ -42,24 +42,24 @@ class EditEventActivity : BaseActivity() {
         setContentView(binding!!.root)
 
         if (intent.hasExtra(Constants.BOARD_DETAIL)) {
-            mBoardDetails = intent.getParcelableExtra<Board>(Constants.BOARD_DETAIL)!!
-            mBoardDocumentId = mBoardDetails.documentID
+            mEventDetails = intent.getParcelableExtra<Event>(Constants.BOARD_DETAIL)!!
+            mBoardDocumentId = mEventDetails.documentID
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getAssignedFriendsListDetails(this, mBoardDetails.assignedTo)
+            FirestoreClass().getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
 
         }
 
 
         etEventName = binding?.etNameEventDetails!!
         //sets the editable text to the event name
-        etEventName.setText(mBoardDetails.name)
+        etEventName.setText(mEventDetails.name)
         //when clicked the focus will be set to the end of the text string
         etEventName.setSelection(etEventName.text.toString().length)
 
 
         setupActionBar()
 
-        mSelectedColor = mBoardDetails.cardColor
+        mSelectedColor = mEventDetails.cardColor
         if (mSelectedColor.isNotEmpty()){
             setColor()
         }
@@ -84,14 +84,14 @@ class EditEventActivity : BaseActivity() {
 
         if (resultCode == Activity.RESULT_OK && requestCode == MEMBERS_REQUEST_CODE) {
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getAssignedFriendsListDetails(this, mBoardDetails.assignedTo)
+            FirestoreClass().getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
         } else {
             Log.e("Cancelled", "Cancelled")
         }
     }
 
     private fun friendsListDialog() {
-        var eventAssignedMembersList = mBoardDetails.assignedTo
+        var eventAssignedMembersList = mEventDetails.assignedTo
 
         if(eventAssignedMembersList.size > 0){
             for (i in eventAssignedMembersList){
@@ -149,7 +149,7 @@ class EditEventActivity : BaseActivity() {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_round_arrow_back_24)
-            actionBar.title = "Edit Event: ${mBoardDetails.name}"
+            actionBar.title = "Edit Event: ${mEventDetails.name}"
         }
         toolbar?.setNavigationOnClickListener {
             onBackPressed()
@@ -159,16 +159,16 @@ class EditEventActivity : BaseActivity() {
     private fun updateEventDetails() {
         val eventHashMap = HashMap<String, Any>()
 
-        if (etEventName.text.toString() != mBoardDetails.name) {
+        if (etEventName.text.toString() != mEventDetails.name) {
             eventHashMap[Constants.NAME] = binding?.etNameEventDetails?.text.toString()
         }
 
-        if(mBoardDetails.cardColor != mSelectedColor) {
+        if(mEventDetails.cardColor != mSelectedColor) {
             eventHashMap[Constants.CARD_COLOR] = mSelectedColor
         }
 
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().updateBoardDetails(this, eventHashMap, mBoardDetails.documentID)
+        FirestoreClass().updateBoardDetails(this, eventHashMap, mEventDetails.documentID)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -187,8 +187,8 @@ class EditEventActivity : BaseActivity() {
 
     private fun deleteEvent() {
         //The event can only be deleted by the event creator
-        if (mBoardDetails.creatorID == FirebaseAuth.getInstance().currentUser!!.uid) {
-            alertDialogForDeleteEvent(mBoardDetails.name)
+        if (mEventDetails.creatorID == FirebaseAuth.getInstance().currentUser!!.uid) {
+            alertDialogForDeleteEvent(mEventDetails.name)
         }
         else {
             Toast.makeText(this,"You don't have permission to delete event ", Toast.LENGTH_LONG).show()
@@ -202,7 +202,7 @@ class EditEventActivity : BaseActivity() {
             .setCancelable(true)
             .setIcon(R.drawable.ic_round_warning_24)
             .setPositiveButton("Yes") { _, _ ->
-                FirestoreClass().deleteEvent(this, mBoardDetails)
+                FirestoreClass().deleteEvent(this, mEventDetails)
             }
             .setNegativeButton("No") { DialogInterface, _ ->
                 DialogInterface.cancel()
@@ -229,7 +229,7 @@ class EditEventActivity : BaseActivity() {
                 object : CardAttendeeItemAdapter.OnClickListener{
                     override fun onClick() {
                        val intent = Intent(this@EditEventActivity, AssignFriendsActivity::class.java)
-                        intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails )
+                        intent.putExtra(Constants.BOARD_DETAIL, mEventDetails )
                         startActivityForResult(intent, MEMBERS_REQUEST_CODE)
                     }
                 }

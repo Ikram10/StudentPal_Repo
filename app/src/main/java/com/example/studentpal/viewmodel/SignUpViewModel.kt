@@ -6,7 +6,7 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.model.remote.UserDatabase.registerUser
+import com.example.studentpal.model.remote.UsersDatabase.registerUser
 import com.example.studentpal.view.registration.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

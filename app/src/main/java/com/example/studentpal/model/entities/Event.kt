@@ -4,12 +4,12 @@ import android.os.Parcel
 import android.os.Parcelable
 
 /**
- * The board data class will hold all the information about the board
- * Board class implements the Parcelable interface allowing board instances to be written and restored from a parcel
- * This interface allows board objects to be sent across activities with intents
+ * The Event data class will hold all the information about the Event
+ * Event class implements the Parcelable interface allowing Event instances to be written and restored from a parcel
+ * This interface allows Event objects to be sent across activities with intents
  *
  */
-data class Board (
+data class Event (
     val name: String = "",
     val image: String = "",
     val createBy: String = "", // name of the user who created the board
@@ -66,13 +66,13 @@ data class Board (
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<Board> {
+    companion object CREATOR : Parcelable.Creator<Event> {
 
-        override fun createFromParcel(parcel: Parcel): Board {
-            return Board(parcel)
+        override fun createFromParcel(parcel: Parcel): Event {
+            return Event(parcel)
         }
 
-        override fun newArray(size: Int): Array<Board?> {
+        override fun newArray(size: Int): Array<Event?> {
             return arrayOfNulls(size)
         }
     }

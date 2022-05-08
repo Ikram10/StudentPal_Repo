@@ -15,12 +15,12 @@ import com.example.studentpal.view.adapter.ImagePostsAdapter
 import com.example.studentpal.databinding.ActivityViewFriendProfileBinding
 import com.example.studentpal.common.fcm.RetrofitInstance
 import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.model.entities.ImagePost
+import com.example.studentpal.model.entities.Post
 import com.example.studentpal.model.entities.NotificationData
 import com.example.studentpal.model.entities.PushNotification
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
-import com.example.studentpal.model.remote.UserDatabase.fetchCurrentUser
+import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
@@ -28,9 +28,7 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.ArrayList
 
 //My code
@@ -44,7 +42,7 @@ class ViewFriendProfile : BaseActivity() {
     var btnPerform: AppCompatButton? = null
     var btnDeclineFriendRequest: AppCompatButton? = null
 
-    private var postsList: ArrayList<ImagePost>? = null
+    private var postsList: ArrayList<Post>? = null
     private var postsAdapter: ImagePostsAdapter? = null
 
     // Starting state
@@ -90,7 +88,10 @@ class ViewFriendProfile : BaseActivity() {
 
         //Loads the selected users information into the UI
         loadFriendData()
-        fetchCurrentUser(this)
+        GlobalScope.launch {
+            fetchCurrentUser(getCurrentUserID())
+        }
+
 
         btnPerform?.setOnClickListener {
 
@@ -369,6 +370,7 @@ class ViewFriendProfile : BaseActivity() {
 
     //My code: This is responsible for handling all the account states between users when sending friend requests
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun performAction(friendUserID: String?) {
         when (currentState) {
             /* Default state
@@ -518,7 +520,9 @@ class ViewFriendProfile : BaseActivity() {
 
 
                                             btnPerform?.setOnClickListener {
-                                                fetchCurrentUser(this)
+                                                GlobalScope.launch {
+                                                    fetchCurrentUser(getCurrentUserID())
+                                                }
                                                 // Sends the friend details to the Chat log activity
                                                 val intent =
                                                     Intent(this, ChatLogActivity::class.java)

@@ -3,126 +3,28 @@ package com.example.studentpal.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import com.example.studentpal.common.Constants
+import com.example.studentpal.model.entities.Event
+import com.example.studentpal.model.entities.Post
+import com.example.studentpal.model.entities.User
+import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.example.studentpal.view.MainActivity
-import com.example.studentpal.view.MyProfileActivity
 import com.example.studentpal.view.PostsActivity
 import com.example.studentpal.view.events.AssignFriendsActivity
 import com.example.studentpal.view.events.CreateBoardActivity
 import com.example.studentpal.view.events.EditEventActivity
 import com.example.studentpal.view.events.EventInfoActivity
-import com.example.studentpal.view.friends.FindFriends
 import com.example.studentpal.view.friends.FriendsActivity
 import com.example.studentpal.view.friends.ViewFriendProfile
-import com.example.studentpal.view.messages.ChatLogActivity
 import com.example.studentpal.view.messages.ChatLogActivity.Companion.TAG
-import com.example.studentpal.view.messages.LatestMessagesActivity
-import com.example.studentpal.view.registration.SignInActivity
-import com.example.studentpal.view.registration.SignUpActivity
-import com.example.studentpal.model.entities.Board
-import com.example.studentpal.model.entities.ImagePost
-import com.example.studentpal.model.entities.User
-import com.example.studentpal.common.Constants
-import com.example.studentpal.model.remote.UserDatabase.getCurrentUserId
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.*
-
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 class FirestoreClass {
 
-
     private val mFireStore = FirebaseFirestore.getInstance()
-
-    fun updateUserProfileData(activity: Activity, userHashMap: HashMap<String, Any>) {
-        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).update(userHashMap)
-            .addOnSuccessListener {
-                Log.i(activity.javaClass.simpleName, "Profile data updated successfully")
-                Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_LONG).show()
-                when (activity) {
-                    is MainActivity -> {
-                        activity.tokenUpdateSuccess()
-                    }
-                    is MyProfileActivity -> {
-                        activity.profileUpdateSuccess()
-                    }
-                }
-
-            }.addOnFailureListener {
-
-                when (activity) {
-                    is MainActivity -> {
-                        activity.hideProgressDialog()
-                    }
-                    is MyProfileActivity -> {
-                        activity.hideProgressDialog()
-                    }
-                }
-                Log.e(
-                    activity.javaClass.simpleName,
-                    "Error while creating a board.", it
-                )
-
-                Toast.makeText(activity, "Error updating profile", Toast.LENGTH_LONG).show()
-            }
-
-    }
-
-
-    /**
-     * This function retrieves the Firestore document of the current user by using getCurrentUserId().get()
-     * It loads the document information into the activity
-     * readBoardsList will only read and load the events for the current user stored in Firestore if the boolean is true
-     */
-    fun loadUserData(activity: Activity, readBoardsList: Boolean = false) {
-
-        val mFireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
-        mFireStore.collection(Constants.USERS)
-            // The document id is the current user's id
-            .document(getCurrentUserId()).get()
-
-            .addOnSuccessListener {
-                Log.i(activity.javaClass.simpleName, it.toString())
-                // Here we have received the document snapshot which is converted into the User Data model object.
-                val loggedInUser = it.toObject(User::class.java)
-
-                when (activity) {
-                    is SignInActivity -> {
-                        if (loggedInUser != null) {
-                            activity.signInSuccess(loggedInUser)
-                        }
-                    }
-                    is MainActivity -> {
-                        if (loggedInUser != null) {
-                            activity.updateNavigationUserDetails(loggedInUser, readBoardsList)
-                        }
-                    }
-                    is MyProfileActivity -> {
-                        if (loggedInUser != null) {
-                            activity.setUserDataInUI(loggedInUser)
-                        }
-                    }
-                    is PostsActivity -> {
-                        if (loggedInUser != null) {
-                            activity.setUserDataInUI(loggedInUser)
-                        }
-                    }
-                }
-            }
-            .addOnFailureListener {
-                when (activity) {
-                    is SignInActivity -> {
-                        activity.hideProgressDialog()
-                    }
-                    is MainActivity -> {
-                        activity.hideProgressDialog()
-                    }
-                    is MyProfileActivity -> {
-                        activity.hideProgressDialog()
-                    }
-                }
-                Log.e(activity.javaClass.simpleName, "Error while getting logged in users details")
-            }
-    }
-
 
 
     fun getFriendsList(activity: FriendsActivity) {
@@ -282,11 +184,11 @@ class FirestoreClass {
             .get()
             .addOnSuccessListener {
                 Log.i(activity.javaClass.simpleName, it.documents.toString())
-                val boardsList: ArrayList<Board> = ArrayList()
+                val boardsList: ArrayList<Event> = ArrayList()
                 //Adds every document queried to the boardsList arraylist
                 for (document in it.documents) {
-                    //converts all documents queried into a Board object
-                    val board = document.toObject(Board::class.java)!!
+                    //converts all documents queried into a Event object
+                    val board = document.toObject(Event::class.java)!!
                     board.documentID = document.id
                     boardsList.add(board)
                 }
@@ -300,21 +202,21 @@ class FirestoreClass {
 
 
     /*
- * This method creates a new board in cloud Firestore
- * A boards collection is created, which generates a single document for each board
- * The board document data is filled using the board parameter
+ * This method creates a new event in cloud Firestore
+ * A boards collection is created, which generates a single document for each event
+ * The event document data is filled using the event parameter
  */
-    fun createBoard(activity: CreateBoardActivity, board: Board) {
+    fun createBoard(activity: CreateBoardActivity, event: Event) {
         mFireStore.collection(Constants.BOARDS)
             .document()
-            .set(board, SetOptions.merge())
+            .set(event, SetOptions.merge())
             .addOnSuccessListener {
-                Log.d(activity.javaClass.simpleName, "Board created successfully")
-                Toast.makeText(activity, "Board created successfully", Toast.LENGTH_SHORT)
+                Log.d(activity.javaClass.simpleName, "Event created successfully")
+                Toast.makeText(activity, "Event created successfully", Toast.LENGTH_SHORT)
                     .show()
                 activity.boardCreatedSuccessfully()
             }.addOnFailureListener {
-                Log.e(activity.javaClass.simpleName, "Error while creating board")
+                Log.e(activity.javaClass.simpleName, "Error while creating event")
             }
 
     }
@@ -326,8 +228,8 @@ class FirestoreClass {
             .get()
             .addOnSuccessListener {
                 Log.i(activity.javaClass.simpleName, it.toString())
-                //converts the queried board document to a Board object and passes it to the boardDetails()
-                activity.boardDetails(it.toObject(Board::class.java)!!)
+                //converts the queried board document to a Event object and passes it to the boardDetails()
+                activity.boardDetails(it.toObject(Event::class.java)!!)
             }.addOnFailureListener {
                 activity.hideProgressDialog()
                 Log.e(activity.javaClass.simpleName, "error while getting events list")
@@ -390,13 +292,13 @@ class FirestoreClass {
             }
     }
 
-    fun assignMemberToEvent(activity: AssignFriendsActivity, board: Board, user: User) {
+    fun assignMemberToEvent(activity: AssignFriendsActivity, event: Event, user: User) {
         //hash map of assigned to field in Firestore (Event documents)
         val assignedToHashMap = HashMap<String, Any>()
-        assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo
+        assignedToHashMap[Constants.ASSIGNED_TO] = event.assignedTo
 
         mFireStore.collection(Constants.BOARDS)
-            .document(board.documentID)
+            .document(event.documentID)
             .update(assignedToHashMap)
             .addOnSuccessListener {
                 activity.friendAssignedSuccess(user)
@@ -406,9 +308,9 @@ class FirestoreClass {
             }
     }
 
-    fun deleteEvent(activity: EditEventActivity, board: Board) {
+    fun deleteEvent(activity: EditEventActivity, event: Event) {
         mFireStore.collection(Constants.BOARDS)
-            .document(board.documentID)
+            .document(event.documentID)
             .delete()
             .addOnSuccessListener {
                 activity.hideProgressDialog()
@@ -438,30 +340,13 @@ class FirestoreClass {
      *
      */
 
-    fun uploadPost(activity: PostsActivity, imagePost: ImagePost) {
-        mFireStore
-            .collection(Constants.POSTS)
-            .document(imagePost.docID)
-            .set(imagePost)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    activity.hideProgressDialog()
-                    Log.d("Post Uploaded", "$imagePost")
 
-                } else {
-                    activity.hideProgressDialog()
-                    Log.d("Post Upload failed", "$imagePost")
-
-                }
-            }
-
-    }
 
     fun getImagePostsList(activity: PostsActivity) {
         mFireStore.collection(Constants.POSTS)
             .whereEqualTo(Constants.ID, getCurrentUserId())
             .addSnapshotListener { snapshot, e ->
-                val postList = arrayListOf<ImagePost>()
+                val postList = arrayListOf<Post>()
                 if (e != null) {
                     Log.w(TAG, "Listen failed.", e)
                     return@addSnapshotListener
@@ -469,7 +354,7 @@ class FirestoreClass {
                 if (snapshot != null) {
                     for (dc: DocumentChange in snapshot.documentChanges) {
                         if (dc.type == DocumentChange.Type.ADDED) {
-                            val post = dc.document.toObject(ImagePost::class.java)
+                            val post = dc.document.toObject(Post::class.java)
                             postList.add(post)
                         }
                     }
@@ -479,17 +364,12 @@ class FirestoreClass {
 
     }
 
-    fun incrementLikeCount(post: ImagePost) {
-
-
-    }
-
     fun getFriendsPosts(activity: ViewFriendProfile, id: String?) {
         mFireStore
             .collection(Constants.POSTS)
             .whereEqualTo(Constants.ID, id)
             .addSnapshotListener { snapshot, e ->
-                val postList = arrayListOf<ImagePost>()
+                val postList = arrayListOf<Post>()
                 if (e != null) {
                     Log.w(TAG, "Listen failed.", e)
                     return@addSnapshotListener
@@ -497,11 +377,11 @@ class FirestoreClass {
                 if (snapshot != null) {
                     for (dc: DocumentChange in snapshot.documentChanges) {
                         if (dc.type == DocumentChange.Type.ADDED) {
-                            val post = dc.document.toObject(ImagePost::class.java)
+                            val post = dc.document.toObject(Post::class.java)
                             postList.add(post)
                         }
                         if (dc.type == DocumentChange.Type.REMOVED) {
-                            val post = dc.document.toObject(ImagePost::class.java)
+                            val post = dc.document.toObject(Post::class.java)
                             postList.remove(post)
                         }
                     }

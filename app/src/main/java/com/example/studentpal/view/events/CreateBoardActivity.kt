@@ -27,7 +27,7 @@ import com.example.studentpal.R
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.databinding.ActivityCreateBoardBinding
 import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.model.entities.Board
+import com.example.studentpal.model.entities.Event
 import com.example.studentpal.common.Constants
 import com.example.studentpal.common.utils.GetAddressFromLatLng
 import com.google.android.gms.location.*
@@ -201,7 +201,7 @@ class CreateBoardActivity : BaseActivity() {
 
         if (validateEditForm(etEventName, etEventLocation, etEventDate)) {
             //board information that will be stored in Firestore
-            val board = Board(
+            val board = Event(
                 binding?.etBoardName?.text.toString(),
                 mBoardImageUrl,
                 mUserName,
@@ -317,7 +317,7 @@ class CreateBoardActivity : BaseActivity() {
          * The download URL contains a download token which acts as a security measure to restrict access only to those who possess the token.
          */
             Log.i(
-                "Board Image URL",
+                "Event Image URL",
                 taskSnapshot.metadata!!.reference!!.downloadUrl.toString()
             )
             taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener {

@@ -9,7 +9,7 @@ import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.messages.ChatLogActivity
 import com.example.studentpal.databinding.ActivityEventInfoBinding
 import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.model.entities.Board
+import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
 import java.text.SimpleDateFormat
@@ -17,7 +17,7 @@ import java.util.*
 
 class EventInfoActivity : BaseActivity() {
     private var binding : ActivityEventInfoBinding? = null
-    private lateinit var board : Board
+    private lateinit var event : Event
     private lateinit var host: User
 
 
@@ -30,15 +30,15 @@ class EventInfoActivity : BaseActivity() {
 
         //catches the event document id sent from main activity
         if (intent.hasExtra(Constants.BOARD_DETAIL)){
-            board = intent.getParcelableExtra<Board>(Constants.BOARD_DETAIL)!!
+            event = intent.getParcelableExtra<Event>(Constants.BOARD_DETAIL)!!
         }
-        setupActionBar(board.name)
+        setupActionBar(event.name)
 
-        FirestoreClass().getEventHost(this, board.creatorID)
+        FirestoreClass().getEventHost(this, event.creatorID)
 
         binding?.ibEventLocation?.setOnClickListener {
             val intent = Intent(this, MapActivity::class.java)
-            intent.putExtra(Constants.BOARD_DETAIL, board)
+            intent.putExtra(Constants.BOARD_DETAIL, event)
             startActivity(intent)
         }
 
@@ -55,7 +55,7 @@ class EventInfoActivity : BaseActivity() {
             // Sets the event image
             Glide
                 .with(this)
-                .load(board.image)
+                .load(event.image)
                 .centerCrop()
                 .placeholder(R.drawable.add_screen_image_placeholder)
                 .into(it)
@@ -70,12 +70,12 @@ class EventInfoActivity : BaseActivity() {
                     .into(it!!)
 
         }
-        binding?.tvEventInfoTime?.text  = board.eventTime
-        binding?.tvEventInfoDate?.text = getCurrentDate(board.eventDate)
+        binding?.tvEventInfoTime?.text  = event.eventTime
+        binding?.tvEventInfoDate?.text = getCurrentDate(event.eventDate)
         binding?.tvHostName?.text = host.name
-        binding?.tvEventInfoName?.text = board.name
-        binding?.tvEventLocation?.text = board.eventLocation
-        binding?.tvEventDescription?.text = board.eventDescription
+        binding?.tvEventInfoName?.text = event.name
+        binding?.tvEventLocation?.text = event.eventLocation
+        binding?.tvEventDescription?.text = event.eventDescription
 
         //hide message button if host is the same as current user
         if (host.id == getCurrentUserID()) {
@@ -95,10 +95,10 @@ class EventInfoActivity : BaseActivity() {
         return formatter.format(long)
     }
 
-    fun boardDetails(board : Board) {
+    fun boardDetails(event : Event) {
         hideProgressDialog()
-        //called here so we can access the board information and set the Event name as the title
-        setupActionBar(board.name)
+        //called here so we can access the event information and set the Event name as the title
+        setupActionBar(event.name)
 
     }
 

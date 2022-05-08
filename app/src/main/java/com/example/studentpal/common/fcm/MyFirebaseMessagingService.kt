@@ -14,9 +14,8 @@ import androidx.core.app.NotificationCompat
 import com.example.studentpal.R
 import com.example.studentpal.view.MainActivity
 import com.example.studentpal.view.registration.SignInActivity
-import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.common.Constants
-import com.example.studentpal.model.remote.UserDatabase.getCurrentUserId
+import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlin.random.Random

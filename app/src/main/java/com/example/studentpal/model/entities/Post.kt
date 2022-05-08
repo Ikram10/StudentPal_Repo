@@ -1,6 +1,6 @@
 package com.example.studentpal.model.entities
 
-data class ImagePost(
+data class Post(
     var id: String,
     var image: String,
     var eventDate: String,

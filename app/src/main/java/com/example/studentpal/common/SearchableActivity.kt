@@ -1,11 +1,11 @@
-package com.example.studentpal
+package com.example.studentpal.common
 
 import android.app.SearchManager
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.example.studentpal.common.Constants
+import com.example.studentpal.R
 import com.google.firebase.firestore.FirebaseFirestore
 
 class SearchableActivity : AppCompatActivity(){

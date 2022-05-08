@@ -19,13 +19,13 @@ import com.example.studentpal.R
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.events.AssignFriendsActivity
 import com.example.studentpal.view.events.EditEventActivity
-import com.example.studentpal.model.entities.Board
+import com.example.studentpal.model.entities.Event
 import com.example.studentpal.common.Constants
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
 
-open class BoardItemsAdapter(private val context: Context, private var list: ArrayList<Board>) :
+open class BoardItemsAdapter(private val context: Context, private var list: ArrayList<Event>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
@@ -39,7 +39,7 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         /* list parameter contains an array list of Boards.
-         * position will provide a single Board object in the array
+         * position will provide a single Event object in the array
          */
         val model = list[position]
         if (holder is MyViewHolder) {
@@ -141,7 +141,7 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
         /* onClick function takes a position where a click was recieved
          * and a model that was clicked, which contains the position
          */
-        fun onClick(position: Int, model: Board)
+        fun onClick(position: Int, model: Event)
     }
 
     //on click listener when event cards are clicked

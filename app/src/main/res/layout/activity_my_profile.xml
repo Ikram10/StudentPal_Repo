@@ -1,9 +1,11 @@
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    tools:context=".view.MyProfileActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_one"
@@ -11,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@color/bg_color"
         android:orientation="vertical"
-        tools:context=".view.MyProfileActivity">
+       >
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"

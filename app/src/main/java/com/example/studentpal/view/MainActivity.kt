@@ -25,9 +25,11 @@ import com.example.studentpal.view.registration.IntroActivity
 import com.example.studentpal.view.adapter.BoardItemsAdapter
 import com.example.studentpal.databinding.ActivityMainBinding
 import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.model.entities.Board
+import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
+import com.example.studentpal.model.remote.UsersDatabase.loadUserData
+import com.example.studentpal.model.remote.UsersDatabase.updateUserProfileData
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -83,7 +85,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if (tokenUpdated) {
             showProgressDialog(resources.getString(R.string.please_wait))
             // Get the current logged in user details.
-            FirestoreClass().loadUserData(this, true)
+            loadUserData(this, true)
         } else {
             FirebaseMessaging
                 .getInstance()
@@ -101,7 +103,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         /* loads the currently logged in user's data into this activity, by retrieving their document from firebase
          * The events list for the current user is also loaded into this activity
          */
-        FirestoreClass().loadUserData(this, true)
+        loadUserData(this, true)
 
         //create board action button can be clicked
         binding?.appBarMain?.fabCreateBoard?.setOnClickListener {
@@ -123,7 +125,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     //method handles the displaying of event items in the main activity UI
-    fun populateBoardsListToUI(boardsList: ArrayList<Board>) {
+    fun populateBoardsListToUI(boardsList: ArrayList<Event>) {
         hideProgressDialog()
 
         /* if the boards list size is greater than 0 we can set the visibility of the recycler view to visible
@@ -140,7 +142,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             //handles the functionality when an event card is selected
             adapter.setOnClickListener(object : BoardItemsAdapter.OnClickListener {
                 // when an event card is selected this method will be triggered
-                override fun onClick(position: Int, model: Board) {
+                override fun onClick(position: Int, model: Event) {
                     //sends the user to the Event Information screen
                     val intent = Intent(this@MainActivity, EventInfoActivity::class.java)
                     //passes the selected event card's document id to the Edit Event activity
@@ -158,7 +160,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
-            FirestoreClass().loadUserData(this)
+            loadUserData(this)
         }
         //Updates the main activity when a new event is created
         else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_BOARD_REQUEST_CODE) {
@@ -319,7 +321,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         editor.putBoolean(Constants.FCM_TOKEN_UPDATED, true)
         editor.apply()
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().loadUserData(this, true)
+        loadUserData(this, true)
     }
 
     // A function to update the user's FCM token into the database.
@@ -328,7 +330,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         userHashMap[Constants.FCM_TOKEN] = token
         showProgressDialog(resources.getString(R.string.please_wait))
         // Update the data in the database.
-        FirestoreClass().updateUserProfileData(this, userHashMap)
+        updateUserProfileData(this, userHashMap)
 
 
     }

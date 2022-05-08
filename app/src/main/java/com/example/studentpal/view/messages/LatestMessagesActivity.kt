@@ -10,11 +10,10 @@ import com.example.studentpal.R
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.friends.FriendsActivity
 import com.example.studentpal.databinding.ActivityLatestMessagesBinding
-import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.model.entities.ChatMessage
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
-import com.example.studentpal.model.remote.UserDatabase.fetchCurrentUser
+import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -22,6 +21,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 //kotlinMessenger code
 class LatestMessagesActivity : BaseActivity() {
@@ -55,8 +56,10 @@ class LatestMessagesActivity : BaseActivity() {
         }
 
         listenForLatestMessages()
+        GlobalScope.launch {
+            fetchCurrentUser(getCurrentUserID())
+        }
 
-        fetchCurrentUser(this)
 
         setupActionBar()
     }

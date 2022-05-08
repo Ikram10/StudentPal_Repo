@@ -17,7 +17,7 @@ import com.example.studentpal.view.adapter.FriendsAssignedAdapter
 import com.example.studentpal.databinding.ActivityAssignFriendsBinding
 import com.example.studentpal.common.fcm.RetrofitInstance
 import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.model.entities.Board
+import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.NotificationData
 import com.example.studentpal.model.entities.PushNotification
 import com.example.studentpal.model.entities.User
@@ -31,7 +31,7 @@ import java.lang.Exception
 class AssignFriendsActivity : BaseActivity() {
 
     private var binding: ActivityAssignFriendsBinding? = null
-    private lateinit var mBoardDetails : Board
+    private lateinit var mEventDetails : Event
     private lateinit var mAssignedFriendsList : ArrayList<User>
 
     /* Notifies the app if any changes were made
@@ -47,9 +47,9 @@ class AssignFriendsActivity : BaseActivity() {
 
         //retrieves the Event details passed from the main activity
         if (intent.hasExtra(Constants.BOARD_DETAIL)) {
-            mBoardDetails = intent.getParcelableExtra<Board>(Constants.BOARD_DETAIL)!!
+            mEventDetails = intent.getParcelableExtra<Event>(Constants.BOARD_DETAIL)!!
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getAssignedFriendsListDetails(this, mBoardDetails.assignedTo)
+            FirestoreClass().getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
         }
 
         setupActionBar()
@@ -64,7 +64,7 @@ class AssignFriendsActivity : BaseActivity() {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_round_arrow_back_24)
-            actionBar.title = "Assign Friends: ${mBoardDetails.name}"
+            actionBar.title = "Assign Friends: ${mEventDetails.name}"
 
         }
         toolbar?.setNavigationOnClickListener {
@@ -85,8 +85,8 @@ class AssignFriendsActivity : BaseActivity() {
 
     fun friendDetails(user: User){
         //adds the friends user id to the assigned to array list
-        mBoardDetails.assignedTo.add(user.id)
-        FirestoreClass().assignMemberToEvent(this,mBoardDetails,user)
+        mEventDetails.assignedTo.add(user.id)
+        FirestoreClass().assignMemberToEvent(this,mEventDetails,user)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
