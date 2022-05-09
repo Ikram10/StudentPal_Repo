@@ -9,7 +9,7 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
-import com.example.studentpal.view.friends.ViewFriendProfile
+import com.example.studentpal.view.friends.FriendProfile
 import com.example.studentpal.databinding.ItemAssignFriendBinding
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
@@ -48,7 +48,7 @@ class UsersAdapter(var context: Context, var list: ArrayList<User>)
 
         holder.bindItem(model)
         holder.itemView.setOnClickListener {
-            val intent = Intent(it.context, ViewFriendProfile::class.java)
+            val intent = Intent(it.context, FriendProfile::class.java)
             intent.putExtra(Constants.USER_KEY, model)
             it.context.startActivity(intent)
         }

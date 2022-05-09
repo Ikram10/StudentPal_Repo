@@ -44,7 +44,7 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
         viewModel = ViewModelProvider(this)[MyProfileViewModel::class.java]
 
         // User Observer
-        viewModel.userProfile.observe(this) {
+        viewModel.currentUser.observe(this) {
             setUserDataInUI(it)
         }
 

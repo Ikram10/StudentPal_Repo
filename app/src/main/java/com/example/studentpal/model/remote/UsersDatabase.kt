@@ -8,6 +8,9 @@ import com.example.studentpal.model.entities.User
 import com.example.studentpal.view.MainActivity
 import com.example.studentpal.view.MyProfileActivity
 import com.example.studentpal.view.PostsActivity
+import com.example.studentpal.view.events.AssignFriendsActivity
+import com.example.studentpal.view.events.EditEventActivity
+import com.example.studentpal.view.events.EventInfoActivity
 import com.example.studentpal.view.friends.FindFriends
 import com.example.studentpal.view.registration.SignInActivity
 import com.example.studentpal.view.registration.SignUpActivity
@@ -179,6 +182,151 @@ object UsersDatabase {
 
     }
 
+    suspend fun fetchUsersById( userStringList: List<String>) : List<User> {
+        return try {
+            val userList = arrayListOf<User>()
+            for (item in userStringList) {
+                db
+                    .whereEqualTo(Constants.ID, item)
+                    .get()
+                    .await()
+                    .documents
+                    .mapNotNull {
+                        val user = it.toObject(User::class.java)
+                        userList.add(user!!)
+                    }
+            }
+             userList
+        } catch (e: Exception) {
+            Log.e(TAG, e.message.toString())
+            emptyList()
+        }
+    }
 
+    //My code
+    fun incrementFriendsCount(user: User, friend: User) {
+        db
+            .document(user.id)
+            .update(Constants.NUMBER_FRIENDS, FieldValue.increment(1))
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d("Increment Success", "${user.name} friend count = ${user.numFriends}")
+                } else {
+                    Log.d("Increment Failed", "${user.name} friend count = ${user.numFriends}")
+                }
+            }
+        db
+            .document(friend.id)
+            .update(Constants.NUMBER_FRIENDS, FieldValue.increment(1)).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d(
+                        "Increment Success",
+                        "${friend.name} friend count = ${friend.numFriends}"
+                    )
+                } else {
+                    Log.d(
+                        "Increment Failed",
+                        "${friend.name} friend count = ${friend.numFriends}"
+                    )
+                }
+            }
+    }
+
+    fun decrementFriendsCount(user: User?, friend: User?) {
+       db
+           .document(user!!.id)
+            .update(Constants.NUMBER_FRIENDS, FieldValue.increment(-1)).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d("Decrement Success", "${user.name} friend count = ${user.numFriends}")
+                } else {
+                    Log.d("Decrement Failed", "${user.name} friend count = ${user.numFriends}")
+                }
+            }
+
+        db
+            .document(friend!!.id)
+            .update(Constants.NUMBER_FRIENDS, FieldValue.increment(-1)).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d(
+                        "Decrement Success",
+                        "${friend.name} friend count = ${friend.numFriends}"
+                    )
+                } else {
+                    Log.d(
+                        "Decrement Failed",
+                        "${friend.name} friend count = ${friend.numFriends}"
+                    )
+                }
+            }
+    }
+
+    // Retrieves the event host from database
+    fun getEventHost(activity: EventInfoActivity, userId: String) {
+        db
+            .document(userId)
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()) {
+                    val user = it.toObject(User::class.java)
+                    activity.setHost(user!!)
+                }
+            }
+    }
+
+    //retrieves friend details by querying for their email in firestore
+    fun getFriendDetails(activity: AssignFriendsActivity, email: String) {
+        db
+            .whereEqualTo(Constants.EMAIL, email)
+            .get()
+            .addOnSuccessListener {
+                if (it.documents.size > 0) {
+                    /* Emails are unique
+                 * If an email exists in Firestore there can only be one (one email per user)
+                 */
+                    val user = it.documents[0].toObject(User::class.java)
+                    activity.friendDetails(user!!)
+                } else {
+                    activity.hideProgressDialog()
+                    activity.showErrorSnackBar("No friend found with the entered email")
+                }
+            }
+    }
+
+    fun getAssignedFriendsListDetails(activity: Activity, assignedTo: ArrayList<String>) {
+        db
+            .whereIn(Constants.ID, assignedTo)
+            .get()
+            .addOnSuccessListener {
+                Log.e(activity.javaClass.simpleName, it.documents.toString())
+                val usersList: ArrayList<User> = ArrayList()
+                // Convert all the document snapshots to the object using the user data model class.
+                for (doc in it.documents) {
+
+                    val user = doc.toObject(User::class.java)
+                    usersList.add(user!!)
+                }
+
+                if (activity is AssignFriendsActivity) {
+                    activity.setUpFriendsList(usersList)
+
+                } else
+                    if (activity is EditEventActivity)
+                        activity.setUpAssignedMembersList(usersList)
+
+            }.addOnFailureListener {
+                if (activity is AssignFriendsActivity) {
+                    activity.hideProgressDialog()
+                    Log.e(activity.javaClass.simpleName, "error while getting friends list", it)
+                } else
+                    if (activity is EditEventActivity) {
+                        activity.hideProgressDialog()
+                        Log.e(
+                            activity.javaClass.simpleName,
+                            "error while getting friends list",
+                            it
+                        )
+                    }
+            }
+    }
 
 }

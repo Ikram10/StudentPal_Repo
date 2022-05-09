@@ -7,11 +7,10 @@ import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 
 object Constants {
-    //user related Constants
+    // user related Constants
     const val USER_KEY = "USER_KEY"
     const val USERS : String = "Users"
     const val USERNAME: String = "username"
-    const val MESSAGES: String = "Messages"
     const val USER_MESSAGES: String = "User-Messages"
     const val IMAGE: String = "image"
     const val NAME: String = "name"
@@ -25,17 +24,15 @@ object Constants {
     const val POSTS: String = "posts"
     const val POST_DATE: String = "postDate"
 
-
-
-    // Friend Requests
+    // Friend Requests related Constants
     const val FRIENDSHIPS = "Friendships" // friendships collection
     const val FRIEND_REQUEST = "Friend-Requests"
 
-    //Event related Constants
-    const val BOARDS: String = "boards"
+    // Event related Constants
+    const val EVENTS: String = "events"
     const val ASSIGNED_TO: String = "assignedTo"
     const val DOCUMENT_ID : String = "documentId"
-    const val BOARD_DETAIL: String = "board_detail"
+    const val EVENT_DETAIL: String = "event_detail"
     const val CARD_COLOR: String = "cardColor"
     const val SELECT : String = "Select"
     const val UN_SELECT : String = "UnSelect"
@@ -43,7 +40,6 @@ object Constants {
     const val STUDENTPAL_PREFERENCES = "StudentPalPrefs"
     const val FCM_TOKEN_UPDATED = "fcmTokenUpdated"
     const val FCM_TOKEN = "fcmToken"
-
 
     // START
     const val FCM_BASE_URL:String = "https://fcm.googleapis.com"

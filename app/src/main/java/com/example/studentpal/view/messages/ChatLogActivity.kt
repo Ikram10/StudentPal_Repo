@@ -7,15 +7,15 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
-import com.example.studentpal.view.BaseActivity
+import com.example.studentpal.common.Constants
+import com.example.studentpal.model.fcm.RetrofitInstance
 import com.example.studentpal.databinding.ActivityChatLogBinding
-import com.example.studentpal.common.fcm.RetrofitInstance
 import com.example.studentpal.model.entities.ChatMessage
 import com.example.studentpal.model.entities.NotificationData
 import com.example.studentpal.model.entities.PushNotification
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.common.Constants
 import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
+import com.example.studentpal.view.BaseActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentChange
@@ -32,19 +32,16 @@ import java.util.*
 
 const val TOPIC = "/topics/myTopic"
 class ChatLogActivity : BaseActivity() {
-
-    companion object {
-        const val TAG = "ChatLog"
-        var currentUser: User? = null
-    }
-
+    private val TAG = "ChatLog"
     private var binding: ActivityChatLogBinding? = null
     private var toolbar: androidx.appcompat.widget.Toolbar? = null
-    //toUser = the user the currently signed in User wants to interact with
+
+    // Recipient User
     private var toUser: User? = null
+    // Logged in User
+    private var currentUser: User? = null
+
     private val adapter = GroupAdapter<GroupieViewHolder>()
-
-
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,13 +49,16 @@ class ChatLogActivity : BaseActivity() {
         binding = ActivityChatLogBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
+        // Initialise current user
+        GlobalScope.launch {
+            currentUser = fetchCurrentUser(getCurrentUserID())!!
+        }
+        // need to provide the USER_KEY to extract the User from intent
+        toUser = intent.getParcelableExtra(Constants.USER_KEY)
+
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
 
         binding?.recyclerviewChatLog?.adapter = adapter
-
-
-        // need to provide the USER_KEY to extract the User from intent
-        toUser = intent.getParcelableExtra(Constants.USER_KEY)
 
         setupActionBar()
 
@@ -69,25 +69,19 @@ class ChatLogActivity : BaseActivity() {
             performSendMessage()
 
         }
-        GlobalScope.launch {
-            fetchCurrentUser(getCurrentUserID())
-        }
-
         listenForMessages()
-
     }
 
-
     //My code:
+    @OptIn(DelicateCoroutinesApi::class)
     private fun listenForMessages() {
-        val fromId = FirebaseAuth.getInstance().uid
+        val fromId = getCurrentUserID()
         val toId = toUser?.id
         //User-Messages query, between two users
         val reference = FirebaseFirestore.getInstance()
             .collection(Constants.USER_MESSAGES)
-            .document(fromId!!)
+            .document(fromId)
             .collection(toId!!)
-
 
         reference.addSnapshotListener { snapshot, error ->
             if (error != null) {
@@ -99,16 +93,24 @@ class ChatLogActivity : BaseActivity() {
                 for (dc: DocumentChange in snapshot.documentChanges) {
                     when (dc.type) {
                         DocumentChange.Type.ADDED -> {
-
-
                             val chatMessage = dc.document.toObject(ChatMessage::class.java)
                             Log.d(TAG, chatMessage.text)
 
                             //conditional statement checks if message was sent by currently signed in user or from other user
                             if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
+                                /* Launches Coroutine in the IO dispatcher
+                                 * Because we are executing an IO operation (Firestore request)
+                                 */
+                                    GlobalScope.launch(Dispatchers.IO) {
+                                        currentUser =  fetchCurrentUser(getCurrentUserID())!!
+                                        // reverts back to the Main thread to interact with UI
+                                        withContext(Dispatchers.Main) {
+                                            adapter.add(ChatFromItem(chatMessage.text,
+                                                currentUser!!, chatMessage.timeStamp))
+                                        }
 
-                                //chat items have different layouts and is dependant on who sent the message
-                                adapter.add(ChatFromItem(chatMessage.text, currentUser!!, chatMessage.timeStamp))
+                                    }
+
                             } else {
                                 adapter.add(ChatToItem(chatMessage.text, toUser!!, chatMessage.timeStamp))
                             }
@@ -215,17 +217,14 @@ class ChatLogActivity : BaseActivity() {
                 .centerCrop()
                 .placeholder(R.drawable.ic_nav_user)
                 .into(targetImageView)
-
         }
-
         override fun getLayout(): Int {
             return R.layout.chat_from_row
         }
-
     }
 
     //this class is responsible for
-    inner class ChatToItem(val text: String, val user: User, val timeStamp: Long) : Item<GroupieViewHolder>() {
+    inner class ChatToItem(val text: String, val user: User, private val timeStamp: Long) : Item<GroupieViewHolder>() {
         override fun bind(viewHolder: GroupieViewHolder, position: Int) {
             //textview that shows the users message sent in the chat log
             val toMessageView = viewHolder.itemView.findViewById<TextView>(R.id.tv_message_to)

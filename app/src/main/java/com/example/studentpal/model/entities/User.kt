@@ -12,7 +12,7 @@ data class User (
     val email: String = "",
     val dateJoined: String = "",
     val image : String = "",
-    val status: String = "",
+    val status: String = "Available",
     val fcmToken : String = "",
     val coverImage : String = "",
     var numFriends : Int = 0,

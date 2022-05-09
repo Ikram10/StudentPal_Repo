@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.common.Constants
 import com.example.studentpal.databinding.ActivityPostsBinding
-import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.model.entities.Post
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.UsersDatabase.loadUserData
@@ -42,10 +41,15 @@ class PostsActivity : BaseActivity(), View.OnClickListener {
 
         // Initialise View Model
         viewModel = ViewModelProvider(this)[PostsViewModel::class.java]
+        // Observer to posts list
+        viewModel.posts.observe(this) {
+            // Populates the UI with the posts list
+            populatePostListToUI(it as ArrayList<Post>)
+        }
 
         setupActionBar()
 
-       loadUserData(this)
+        loadUserData(this)
         // Initialise clickable views
         addImagePost = binding?.ibPostImage
         uploadImagePost = binding?.ibUploadImage
@@ -54,7 +58,7 @@ class PostsActivity : BaseActivity(), View.OnClickListener {
         addImagePost?.setOnClickListener(this)
         uploadImagePost?.setOnClickListener(this)
 
-        FirestoreClass().getImagePostsList(this)
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -77,18 +81,16 @@ class PostsActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
-    fun populatePostListToUI(list: ArrayList<Post>) {
+    private fun populatePostListToUI(list: ArrayList<Post>) {
         hideProgressDialog()
-        viewModel.postsList = list
-
         // Show the recyclerview if a post exists
-        if (viewModel.postsList?.size!! > 0) {
+        if (list.size > 0) {
             binding?.rvPosts?.visibility = View.VISIBLE
             binding?.llNoPosts?.visibility = View.GONE
             binding?.rvPosts?.layoutManager = LinearLayoutManager(this)
             binding?.rvPosts?.setHasFixedSize(true)
 
-            postsAdapter = ImagePostsAdapter(this, viewModel.postsList!!)
+            postsAdapter = ImagePostsAdapter(this, list)
             binding?.rvPosts?.adapter = postsAdapter
 
         } else {

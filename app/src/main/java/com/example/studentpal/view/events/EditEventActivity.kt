@@ -13,15 +13,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.studentpal.R
-import com.example.studentpal.view.BaseActivity
-import com.example.studentpal.view.adapter.CardAttendeeItemAdapter
-import com.example.studentpal.databinding.ActivityEditEventBinding
+import com.example.studentpal.common.Constants
 import com.example.studentpal.common.dialogs.EventCardColorListDialog
-import com.example.studentpal.firebase.FirestoreClass
+import com.example.studentpal.databinding.ActivityEditEventBinding
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.common.Constants
-import com.google.firebase.auth.FirebaseAuth
+import com.example.studentpal.model.remote.EventDatabase
+import com.example.studentpal.model.remote.EventDatabase.updateBoardDetails
+import com.example.studentpal.model.remote.UsersDatabase.getAssignedFriendsListDetails
+import com.example.studentpal.view.BaseActivity
+import com.example.studentpal.view.adapter.CardAttendeeItemAdapter
 
 class EditEventActivity : BaseActivity() {
     private var binding: ActivityEditEventBinding? = null
@@ -41,11 +42,11 @@ class EditEventActivity : BaseActivity() {
         binding = ActivityEditEventBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
-        if (intent.hasExtra(Constants.BOARD_DETAIL)) {
-            mEventDetails = intent.getParcelableExtra<Event>(Constants.BOARD_DETAIL)!!
+        if (intent.hasExtra(Constants.EVENT_DETAIL)) {
+            mEventDetails = intent.getParcelableExtra(Constants.EVENT_DETAIL)!!
             mBoardDocumentId = mEventDetails.documentID
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
+            getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
 
         }
 
@@ -84,19 +85,9 @@ class EditEventActivity : BaseActivity() {
 
         if (resultCode == Activity.RESULT_OK && requestCode == MEMBERS_REQUEST_CODE) {
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
+            getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
         } else {
             Log.e("Cancelled", "Cancelled")
-        }
-    }
-
-    private fun friendsListDialog() {
-        var eventAssignedMembersList = mEventDetails.assignedTo
-
-        if(eventAssignedMembersList.size > 0){
-            for (i in eventAssignedMembersList){
-
-            }
         }
     }
 
@@ -168,7 +159,7 @@ class EditEventActivity : BaseActivity() {
         }
 
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().updateBoardDetails(this, eventHashMap, mEventDetails.documentID)
+        updateBoardDetails(this, eventHashMap, mEventDetails.documentID)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -187,7 +178,7 @@ class EditEventActivity : BaseActivity() {
 
     private fun deleteEvent() {
         //The event can only be deleted by the event creator
-        if (mEventDetails.creatorID == FirebaseAuth.getInstance().currentUser!!.uid) {
+        if (mEventDetails.creatorID == getCurrentUserID()) {
             alertDialogForDeleteEvent(mEventDetails.name)
         }
         else {
@@ -202,7 +193,7 @@ class EditEventActivity : BaseActivity() {
             .setCancelable(true)
             .setIcon(R.drawable.ic_round_warning_24)
             .setPositiveButton("Yes") { _, _ ->
-                FirestoreClass().deleteEvent(this, mEventDetails)
+                EventDatabase.deleteEvent(this, mEventDetails)
             }
             .setNegativeButton("No") { DialogInterface, _ ->
                 DialogInterface.cancel()
@@ -229,7 +220,7 @@ class EditEventActivity : BaseActivity() {
                 object : CardAttendeeItemAdapter.OnClickListener{
                     override fun onClick() {
                        val intent = Intent(this@EditEventActivity, AssignFriendsActivity::class.java)
-                        intent.putExtra(Constants.BOARD_DETAIL, mEventDetails )
+                        intent.putExtra(Constants.EVENT_DETAIL, mEventDetails )
                         startActivityForResult(intent, MEMBERS_REQUEST_CODE)
                     }
                 }

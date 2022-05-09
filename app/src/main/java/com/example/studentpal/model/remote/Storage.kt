@@ -9,53 +9,53 @@ import com.example.studentpal.view.PostsActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
 
 object Storage {
-  private val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
+    private val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
 
-  fun uploadToStorage(
-   activity: PostsActivity,
-   uri: Uri,
-   user: User,
-   imageCaption: String, ) {
-   val postRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-    "POST_IMAGES" +
-            System.currentTimeMillis() + "." + Constants.getFileExtension(
-     activity,
-     uri
-    )
-   )
-
-   postRef.child(user.id)
-    .putFile(uri)
-    .addOnCompleteListener {
-     if (it.isSuccessful) {
-      postRef.child(user.id).downloadUrl.addOnSuccessListener {
-       val date = Date()
-       val dateString = simpleDateFormat.format(date)
-       val postImageURL = it.toString()
-       val ref = FirebaseFirestore.getInstance().collection(Constants.POSTS)
-        .document()
-       val docID = ref.id
-       val imagePost = Post(
-        user.id,
-        postImageURL,
-        dateString,
-        imageCaption,
-        0,
-        docID
-       )
-       activity.hideProgressDialog()
-       PostsDatabase.uploadPost(activity, imagePost)
-      }
-     }
-
+    fun uploadToStorage(
+        activity: PostsActivity,
+        uri: Uri,
+        user: User,
+        imageCaption: String,
+    ) {
+        val postRef: StorageReference = FirebaseStorage.getInstance().reference.child(
+            "POST_IMAGES" +
+                    System.currentTimeMillis() + "." + Constants.getFileExtension(
+                activity,
+                uri
+            )
+        )
+        postRef.child(user.id)
+            .putFile(uri)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    postRef.child(user.id).downloadUrl.addOnSuccessListener {
+                        val date = Date()
+                        val dateString = simpleDateFormat.format(date)
+                        val postImageURL = it.toString()
+                        val ref = FirebaseFirestore.getInstance().collection(Constants.POSTS)
+                            .document()
+                        val docID = ref.id
+                        val imagePost = Post(
+                            user.id,
+                            postImageURL,
+                            dateString,
+                            imageCaption,
+                            0,
+                            docID
+                        )
+                        activity.hideProgressDialog()
+                        PostsDatabase.uploadPost(activity, imagePost)
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show()
+                activity.hideProgressDialog()
+            }
     }
-    .addOnFailureListener { exception ->
-     Toast.makeText(activity, exception.message, Toast.LENGTH_LONG).show()
-     activity.hideProgressDialog()
-    }
-  }
 }

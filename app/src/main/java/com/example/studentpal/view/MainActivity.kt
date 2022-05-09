@@ -24,10 +24,10 @@ import com.example.studentpal.view.messages.LatestMessagesActivity
 import com.example.studentpal.view.registration.IntroActivity
 import com.example.studentpal.view.adapter.BoardItemsAdapter
 import com.example.studentpal.databinding.ActivityMainBinding
-import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
+import com.example.studentpal.model.remote.EventDatabase.getBoardsList
 import com.example.studentpal.model.remote.UsersDatabase.loadUserData
 import com.example.studentpal.model.remote.UsersDatabase.updateUserProfileData
 import com.google.android.material.navigation.NavigationView
@@ -60,6 +60,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         const val CREATE_BOARD_REQUEST_CODE: Int = 12
     }
 
+    // This function is auto created by Android when the Activity Class is created.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -115,13 +116,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             intent.putExtra(Constants.NAME, mUserName)
             //handles updates to the main activity events when a new event is created
             startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
-
         }
-
         refreshLayout = binding?.appBarMain?.root?.findViewById(R.id.refresh_view_main)!!
         refreshLayout.setOnRefreshListener { updateMainUI() }
-
-
     }
 
     //method handles the displaying of event items in the main activity UI
@@ -146,7 +143,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     //sends the user to the Event Information screen
                     val intent = Intent(this@MainActivity, EventInfoActivity::class.java)
                     //passes the selected event card's document id to the Edit Event activity
-                    intent.putExtra(Constants.BOARD_DETAIL, model)
+                    intent.putExtra(Constants.EVENT_DETAIL, model)
                     startActivity(intent)
                 }
             })
@@ -164,7 +161,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
         //Updates the main activity when a new event is created
         else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_BOARD_REQUEST_CODE) {
-            FirestoreClass().getBoardsList(this)
+            getBoardsList(this)
 
         } else {
             Log.e("Cancelled", "Cancelled")
@@ -261,14 +258,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     }.addOnFailureListener {
                         Log.d("DeleteAccount", "User account delete failed.")
                     }
-
                 val intent = Intent(this, IntroActivity::class.java)
                 //close
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 
                 startActivity(intent)
                 finish()
-
             }
             .setNegativeButton("No") { DialogInterface, _ ->
                 DialogInterface.cancel()
@@ -283,7 +278,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     fun updateNavigationUserDetails(user: User, readBoardsList: Boolean) {
         hideProgressDialog()
         //sets the user's name
-        mUserName = user.name.toString()
+        mUserName = user.name
         //variable binds the Username Textview
         val tvUsername = binding?.navView?.findViewById<TextView>(R.id.tv_username)
 
@@ -301,7 +296,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //only retrieves the events list from Firestore if the readBoardsList is true
         if (readBoardsList) {
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getBoardsList(this)
+           getBoardsList(this)
         }
     }
 

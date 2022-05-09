@@ -87,7 +87,7 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
                             .setCancelable(true)
                             .setPositiveButton("Yes") { _, _ ->
                                 val db = FirebaseFirestore.getInstance()
-                                db.collection(Constants.BOARDS).document(model.documentID).delete()
+                                db.collection(Constants.EVENTS).document(model.documentID).delete()
                                     .addOnSuccessListener {
                                         //My code: Handles the deletion of events
                                         list.removeAt(position)
@@ -114,7 +114,7 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
             holder.itemView.findViewById<AppCompatImageButton>(R.id.ib_edit_event)
                 .setOnClickListener {
                     val intent = Intent(it.context, EditEventActivity::class.java)
-                    intent.putExtra(Constants.BOARD_DETAIL, model)
+                    intent.putExtra(Constants.EVENT_DETAIL, model)
                     it.context.startActivity(intent)
                 }
 
@@ -122,7 +122,7 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
                 .setOnClickListener {
                     //intent passes this event details to the friends activity
                     val intent = Intent(it.context, AssignFriendsActivity::class.java)
-                    intent.putExtra(Constants.BOARD_DETAIL, model)
+                    intent.putExtra(Constants.EVENT_DETAIL, model)
                     //TODO start activity for result
                     it.context.startActivity(intent)
 

@@ -1,4 +1,4 @@
-package com.example.studentpal.common.fcm
+package com.example.studentpal.model.fcm
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

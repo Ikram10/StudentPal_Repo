@@ -23,8 +23,8 @@ class MapActivity : BaseActivity(), OnMapReadyCallback {
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
-        if (intent.hasExtra(Constants.BOARD_DETAIL)) {
-            eventDetail = intent.getParcelableExtra(Constants.BOARD_DETAIL)
+        if (intent.hasExtra(Constants.EVENT_DETAIL)) {
+            eventDetail = intent.getParcelableExtra(Constants.EVENT_DETAIL)
         }
 
         if (eventDetail != null){

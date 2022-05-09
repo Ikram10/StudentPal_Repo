@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
-import com.example.studentpal.view.friends.ViewFriendProfile
+import com.example.studentpal.view.friends.FriendProfile
 import com.example.studentpal.view.messages.ChatLogActivity
 import com.example.studentpal.databinding.ItemProfileBinding
 import com.example.studentpal.model.entities.User
@@ -29,7 +29,7 @@ class FriendsListAdapter(var context: Context,  var list: ArrayList<User>)
                             .into(itemBinding.ivProfileImage)
 
                         itemBinding.btnViewProfile.setOnClickListener {
-                            val intent = Intent(it.context, ViewFriendProfile::class.java)
+                            val intent = Intent(it.context, FriendProfile::class.java)
                             intent.putExtra(Constants.USER_KEY, user)
                             it.context.startActivity(intent)
                         }

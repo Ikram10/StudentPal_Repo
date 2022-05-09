@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.view.BaseActivity
-import com.example.studentpal.view.friends.ViewFriendProfile
+import com.example.studentpal.view.friends.FriendProfile
 import com.example.studentpal.databinding.ActivityNewMessageBinding
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
@@ -145,7 +145,7 @@ class NewMessageActivity : BaseActivity() {
                 }
             }
             viewHolder.itemView.findViewById<AppCompatButton>(R.id.btn_view_profile).setOnClickListener {
-                val intent = Intent(it.context, ViewFriendProfile::class.java)
+                val intent = Intent(it.context, FriendProfile::class.java)
                 intent.putExtra(Constants.USER_KEY, user)
                 it.context.startActivity(intent)
             }

@@ -22,10 +22,10 @@ import kotlin.collections.set
 
 class MyProfileViewModel(application: Application) : AndroidViewModel(application) {
 
-    // User profile details
-    private val _userProfile = MutableLiveData<User>()
-    val userProfile: LiveData<User>
-    get() = _userProfile
+    // current user profile details
+    private val _currentUser = MutableLiveData<User>()
+    val currentUser: LiveData<User>
+    get() = _currentUser
 
     // Variables stores the selected image URI  value
     var mSelectedImageFileUri: Uri? = null
@@ -41,7 +41,7 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
          * from within a coroutine scope or another suspend function.
          */
         viewModelScope.launch {
-            _userProfile.value = fetchCurrentUser(getCurrentUserId())!!
+            _currentUser.value = fetchCurrentUser(getCurrentUserId())!!
         }
     }
 
@@ -68,7 +68,7 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
                     )
                     mProfileImageURL = it.toString()
 
-                    updateUserProfile(activity,  userProfile.value?.name.toString(), userProfile.value?.status.toString())
+                    updateUserProfile(activity,  currentUser.value?.name.toString(), currentUser.value?.status.toString())
                 }
             }.addOnFailureListener { exception ->
                 Toast.makeText(activity, exception.message, Toast.LENGTH_LONG).show()
@@ -94,7 +94,7 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
                     )
                     mProfileCoverImageURL = it.toString()
 
-                    updateUserProfile(activity, userProfile.value?.name.toString(), userProfile.value?.status.toString())
+                    updateUserProfile(activity, currentUser.value?.name.toString(), currentUser.value?.status.toString())
                 }
             }.addOnFailureListener {
                 Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show()
@@ -112,22 +112,22 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
         val userHashMap = HashMap<String, Any>()
         var anyChangesMade = false
 
-        if (mProfileImageURL.isNotEmpty() && mProfileImageURL != _userProfile.value?.image) {
+        if (mProfileImageURL.isNotEmpty() && mProfileImageURL != _currentUser.value?.image) {
             userHashMap[Constants.IMAGE] = mProfileImageURL
             anyChangesMade = true
         }
 
-        if (mProfileCoverImageURL.isNotEmpty() && mProfileCoverImageURL != _userProfile.value?.coverImage) {
+        if (mProfileCoverImageURL.isNotEmpty() && mProfileCoverImageURL != _currentUser.value?.coverImage) {
             userHashMap[Constants.COVER_IMAGE] = mProfileCoverImageURL
             anyChangesMade = true
         }
 
-        if (userName != _userProfile.value?.name) {
+        if (userName != _currentUser.value?.name) {
             userHashMap[Constants.NAME] = userName
             anyChangesMade = true
         }
 
-        if (userStatus != _userProfile.value?.status) {
+        if (userStatus != _currentUser.value?.status) {
             userHashMap[Constants.STATUS] = userStatus
             anyChangesMade = true
         }

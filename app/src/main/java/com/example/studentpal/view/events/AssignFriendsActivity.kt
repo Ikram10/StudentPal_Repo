@@ -12,16 +12,17 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studentpal.R
 import com.example.studentpal.view.BaseActivity
-import com.example.studentpal.view.messages.ChatLogActivity
 import com.example.studentpal.view.adapter.FriendsAssignedAdapter
 import com.example.studentpal.databinding.ActivityAssignFriendsBinding
-import com.example.studentpal.common.fcm.RetrofitInstance
-import com.example.studentpal.firebase.FirestoreClass
+import com.example.studentpal.model.fcm.RetrofitInstance
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.NotificationData
 import com.example.studentpal.model.entities.PushNotification
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
+import com.example.studentpal.model.remote.EventDatabase.assignMemberToEvent
+import com.example.studentpal.model.remote.UsersDatabase.getAssignedFriendsListDetails
+import com.example.studentpal.model.remote.UsersDatabase.getFriendDetails
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class AssignFriendsActivity : BaseActivity() {
-
+    private val TAG = "AssignFriendActivity"
     private var binding: ActivityAssignFriendsBinding? = null
     private lateinit var mEventDetails : Event
     private lateinit var mAssignedFriendsList : ArrayList<User>
@@ -46,10 +47,10 @@ class AssignFriendsActivity : BaseActivity() {
         setContentView(binding!!.root)
 
         //retrieves the Event details passed from the main activity
-        if (intent.hasExtra(Constants.BOARD_DETAIL)) {
-            mEventDetails = intent.getParcelableExtra<Event>(Constants.BOARD_DETAIL)!!
+        if (intent.hasExtra(Constants.EVENT_DETAIL)) {
+            mEventDetails = intent.getParcelableExtra(Constants.EVENT_DETAIL)!!
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
+            getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
         }
 
         setupActionBar()
@@ -86,7 +87,7 @@ class AssignFriendsActivity : BaseActivity() {
     fun friendDetails(user: User){
         //adds the friends user id to the assigned to array list
         mEventDetails.assignedTo.add(user.id)
-        FirestoreClass().assignMemberToEvent(this,mEventDetails,user)
+        assignMemberToEvent(this,mEventDetails,user)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -118,7 +119,7 @@ class AssignFriendsActivity : BaseActivity() {
             if (email.isNotEmpty()){
                 dialog.dismiss()
                 showProgressDialog(resources.getString(R.string.please_wait))
-                FirestoreClass().getFriendDetails(this, email)
+                getFriendDetails(this, email)
             } else {
                 Toast.makeText(this, "Please enter friends email address", Toast.LENGTH_LONG).show()
             }
@@ -139,8 +140,8 @@ class AssignFriendsActivity : BaseActivity() {
         //reloads the activity
         anyChangesMade = true
         setUpFriendsList(mAssignedFriendsList)
-        
-        val notification = NotificationData(
+
+        NotificationData(
             "Event Invite",
             "You have received an Event invite from ${mAssignedFriendsList[0].name}").also {
             sendNotification(PushNotification(it, user.fcmToken))
@@ -165,13 +166,13 @@ class AssignFriendsActivity : BaseActivity() {
             //network request: Post request
             val response = RetrofitInstance.api.postNotification(notification)
             if (response.isSuccessful) {
-                Log.d(ChatLogActivity.TAG, "Response: ${Gson().toJson(response)}")
+                Log.d(TAG, "Response: ${Gson().toJson(response)}")
             } else {
-                Log.e(ChatLogActivity.TAG, response.errorBody().toString())
+                Log.e(TAG, response.errorBody().toString())
             }
         } catch(e: Exception) {
 
-            Log.e(ChatLogActivity.TAG, e.toString())
+            Log.e(TAG, e.toString())
 
         }
     }

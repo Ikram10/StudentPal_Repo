@@ -24,12 +24,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
-import com.example.studentpal.view.BaseActivity
-import com.example.studentpal.databinding.ActivityCreateBoardBinding
-import com.example.studentpal.firebase.FirestoreClass
-import com.example.studentpal.model.entities.Event
 import com.example.studentpal.common.Constants
 import com.example.studentpal.common.utils.GetAddressFromLatLng
+import com.example.studentpal.databinding.ActivityCreateBoardBinding
+import com.example.studentpal.model.entities.Event
+import com.example.studentpal.model.remote.EventDatabase.storeEvent
+import com.example.studentpal.view.BaseActivity
 import com.google.android.gms.location.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -185,14 +185,14 @@ class CreateBoardActivity : BaseActivity() {
                 uploadBoardImage()
             } else {
                 showProgressDialog(resources.getString(R.string.please_wait))
-                createBoard()
+                creatEvent()
             }
         }
     }
 
 
     //method is responsible setting up the event details to be stored in cloud Firestore
-    private fun createBoard() {
+    private fun creatEvent() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(getCurrentUserID())
         val etEventName = binding?.etBoardName?.text.toString()
@@ -201,7 +201,7 @@ class CreateBoardActivity : BaseActivity() {
 
         if (validateEditForm(etEventName, etEventLocation, etEventDate)) {
             //board information that will be stored in Firestore
-            val board = Event(
+            val event = Event(
                 binding?.etBoardName?.text.toString(),
                 mBoardImageUrl,
                 mUserName,
@@ -216,7 +216,7 @@ class CreateBoardActivity : BaseActivity() {
             )
 
             //this function handles the creation of the board in cloud Firestore
-            FirestoreClass().createBoard(this, board)
+            storeEvent(this, event)
         } else {
             hideProgressDialog()
         }
@@ -259,7 +259,7 @@ class CreateBoardActivity : BaseActivity() {
 
     @SuppressLint("MissingPermission") // Suppressed because location permission has already been checked
     private fun requestNewLocationData() {
-        var mLocationRequest = LocationRequest()
+        val mLocationRequest = LocationRequest()
 
         mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         mLocationRequest.interval = 1000
@@ -327,7 +327,7 @@ class CreateBoardActivity : BaseActivity() {
                 //stores the image uri in this variable
                 mBoardImageUrl = it.toString()
                 //only successful storage of board image will call this createBoard() method
-                createBoard()
+                creatEvent()
             }
         }.addOnFailureListener {
             Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
@@ -429,10 +429,10 @@ class CreateBoardActivity : BaseActivity() {
         val month = c.get(Calendar.MONTH)
         val day = c.get(Calendar.DAY_OF_MONTH)
 
-        val dpd = DatePickerDialog(
+        DatePickerDialog(
             this,
             android.R.style.Theme_DeviceDefault_Light_Dialog,
-            DatePickerDialog.OnDateSetListener { datePicker, year, month, day ->
+            { datePicker, year, month, day ->
                 val sDayOfMonth = if (day < 10) "0$day" else "$day"
                 val sMonthOfYear = if ((month + 1) < 10) "0${month + 1}" else "${month + 1}"
 
@@ -457,12 +457,12 @@ class CreateBoardActivity : BaseActivity() {
         val tpd = TimePickerDialog(
             this,
             android.R.style.Theme_DeviceDefault_Light_Dialog,
-            TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
+            { timePicker, hour, minute ->
 
-                val sHour = if (hour  < 10) "0${hour}" else "$hour"
-                val sMinute = if (minute  < 10) "0${minute}" else "$minute"
+                val sHour = if (hour < 10) "0${hour}" else "$hour"
+                val sMinute = if (minute < 10) "0${minute}" else "$minute"
 
-                val selectedTime  = "$sHour:$sMinute"
+                val selectedTime = "$sHour:$sMinute"
                 binding?.etEventTime?.setText(selectedTime)
 
                 mSelectedTime = selectedTime

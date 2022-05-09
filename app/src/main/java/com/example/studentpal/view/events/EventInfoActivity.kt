@@ -8,10 +8,10 @@ import com.example.studentpal.R
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.messages.ChatLogActivity
 import com.example.studentpal.databinding.ActivityEventInfoBinding
-import com.example.studentpal.firebase.FirestoreClass
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
+import com.example.studentpal.model.remote.UsersDatabase.getEventHost
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,19 +26,17 @@ class EventInfoActivity : BaseActivity() {
         binding = ActivityEventInfoBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-
-
         //catches the event document id sent from main activity
-        if (intent.hasExtra(Constants.BOARD_DETAIL)){
-            event = intent.getParcelableExtra<Event>(Constants.BOARD_DETAIL)!!
+        if (intent.hasExtra(Constants.EVENT_DETAIL)){
+            event = intent.getParcelableExtra(Constants.EVENT_DETAIL)!!
         }
         setupActionBar(event.name)
 
-        FirestoreClass().getEventHost(this, event.creatorID)
+        getEventHost(this, event.creatorID)
 
         binding?.ibEventLocation?.setOnClickListener {
             val intent = Intent(this, MapActivity::class.java)
-            intent.putExtra(Constants.BOARD_DETAIL, event)
+            intent.putExtra(Constants.EVENT_DETAIL, event)
             startActivity(intent)
         }
 

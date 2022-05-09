@@ -1,4 +1,4 @@
-package com.example.studentpal.common.fcm
+package com.example.studentpal.model.fcm
 
 import com.example.studentpal.model.entities.PushNotification
 import com.example.studentpal.common.Constants
