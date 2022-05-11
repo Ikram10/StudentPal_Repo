@@ -1,4 +1,4 @@
-package com.example.studentpal.view
+package com.example.studentpal.view.profile
 
 import android.Manifest
 import android.app.Activity
@@ -19,6 +19,7 @@ import com.example.studentpal.common.Constants
 import com.example.studentpal.databinding.ActivityMyProfileBinding
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.UsersDatabase.loadUserData
+import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.viewmodel.MyProfileViewModel
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.IOException
@@ -206,10 +207,8 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
         Toast.makeText(this, "onBackPressed", Toast.LENGTH_SHORT).show()
     }
 
-
     fun setUserDataInUI(user: User) {
         binding?.let {
-
             // My profile image
             Glide
                 .with(this)
@@ -222,6 +221,7 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
             it.etEmail.setText(user.email)
             it.etStatus.setText(user.status)
             it.profileName.text = user.name
+            it.profileUsername.text = user.username
             it.civStatus.text = user.status
             it.dateNum.text = user.dateJoined //Sets the date joined text in user's profile card
             it.friendsNum.text = user.numFriends.toString()
@@ -232,7 +232,6 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                 .load(user.coverImage)
                 .centerCrop()
                 .into(it.ciMyProfile)
-
 
             //My code: Sets the text colour of users status depending on the Status
             when (user.status) {

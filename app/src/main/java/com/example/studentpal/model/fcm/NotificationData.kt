@@ -1,4 +1,4 @@
-package com.example.studentpal.model.entities
+package com.example.studentpal.model.fcm
 
 data class NotificationData(
     val title: String,

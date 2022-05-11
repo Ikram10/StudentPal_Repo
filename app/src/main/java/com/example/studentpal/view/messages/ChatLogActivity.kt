@@ -11,8 +11,8 @@ import com.example.studentpal.common.Constants
 import com.example.studentpal.model.fcm.RetrofitInstance
 import com.example.studentpal.databinding.ActivityChatLogBinding
 import com.example.studentpal.model.entities.ChatMessage
-import com.example.studentpal.model.entities.NotificationData
-import com.example.studentpal.model.entities.PushNotification
+import com.example.studentpal.model.fcm.NotificationData
+import com.example.studentpal.model.fcm.PushNotification
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
 import com.example.studentpal.view.BaseActivity
@@ -51,7 +51,7 @@ class ChatLogActivity : BaseActivity() {
 
         // Initialise current user
         GlobalScope.launch {
-            currentUser = fetchCurrentUser(getCurrentUserID())!!
+            currentUser = fetchCurrentUser()!!
         }
         // need to provide the USER_KEY to extract the User from intent
         toUser = intent.getParcelableExtra(Constants.USER_KEY)
@@ -88,7 +88,6 @@ class ChatLogActivity : BaseActivity() {
                 Log.w(TAG, "Listen Failed", error)
                 return@addSnapshotListener
             }
-
             if (snapshot != null) {
                 for (dc: DocumentChange in snapshot.documentChanges) {
                     when (dc.type) {
@@ -102,22 +101,18 @@ class ChatLogActivity : BaseActivity() {
                                  * Because we are executing an IO operation (Firestore request)
                                  */
                                     GlobalScope.launch(Dispatchers.IO) {
-                                        currentUser =  fetchCurrentUser(getCurrentUserID())!!
+                                        currentUser =  fetchCurrentUser()!!
                                         // reverts back to the Main thread to interact with UI
                                         withContext(Dispatchers.Main) {
                                             adapter.add(ChatFromItem(chatMessage.text,
                                                 currentUser!!, chatMessage.timeStamp))
                                         }
-
                                     }
-
                             } else {
                                 adapter.add(ChatToItem(chatMessage.text, toUser!!, chatMessage.timeStamp))
                             }
-
                             //scrolls to the bottom of the chat log, to always display latest message
                             binding?.recyclerviewChatLog?.scrollToPosition(adapter.itemCount - 1)
-
                         }
                         DocumentChange.Type.MODIFIED -> {
 
@@ -132,7 +127,7 @@ class ChatLogActivity : BaseActivity() {
     }
 
     private fun performSendMessage() {
-        //the text box the allows users to enter a message
+        //text box the allows users to enter a message
         val message = binding?.editTextChatLog?.text
 
         val fromId: String? = FirebaseAuth.getInstance().uid
@@ -150,6 +145,7 @@ class ChatLogActivity : BaseActivity() {
                 FirebaseFirestore.getInstance().collection(Constants.USER_MESSAGES).document(toId)
                     .collection(fromId)
 
+            // Creates a chat message object
             val chatMessage = ChatMessage(
                 reference.document().id,
                 fromId,
@@ -193,7 +189,6 @@ class ChatLogActivity : BaseActivity() {
                     .getReference("/latest-messages/$toId/$fromId")
 
             latestMessageToRef.setValue(chatMessage)
-
 
         } else {
             Toast.makeText(this, "Please enter a message", Toast.LENGTH_SHORT).show()
@@ -249,7 +244,6 @@ class ChatLogActivity : BaseActivity() {
         override fun getLayout(): Int {
             return R.layout.chat_to_row
         }
-
     }
 
     private fun setupActionBar() {
@@ -295,7 +289,6 @@ class ChatLogActivity : BaseActivity() {
     // Sends notification to firebase server
     private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
         try {
-
             //network request: Post request
             val response = RetrofitInstance.api.postNotification(notification)
             if (response.isSuccessful) {
@@ -304,9 +297,7 @@ class ChatLogActivity : BaseActivity() {
                 Log.e(TAG, response.errorBody().toString())
             }
         } catch(e: Exception) {
-
             Log.e(TAG, e.toString())
-
         }
     }
 

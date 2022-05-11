@@ -12,7 +12,7 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.studentpal.R
-import com.example.studentpal.view.MainActivity
+import com.example.studentpal.view.events.MainActivity
 import com.example.studentpal.view.registration.SignInActivity
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId

@@ -34,7 +34,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentPal">
         <activity
-            android:name=".view.PostsActivity"
+            android:name=".view.friends.RequestsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_requests"
+            android:theme="@style/Theme.StudentPal.NoActionBar" />
+        <activity
+            android:name=".view.profile.PostsActivity"
             android:exported="false" />
         <activity
             android:name=".view.friends.FriendsActivity"
@@ -56,7 +61,6 @@
             android:theme="@style/Theme.StudentPal" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
-
              To get one, follow the directions here:
 
                 https://developers.google.com/maps/documentation/android-sdk/get-api-key
@@ -89,7 +93,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".view.events.CreateBoardActivity"
+            android:name=".view.events.CreateEventActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
@@ -102,7 +106,7 @@
         <activity
             android:name=".view.messages.LatestMessagesActivity"
             android:exported="false"
-            android:parentActivityName=".view.MainActivity"
+            android:parentActivityName=".view.events.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
@@ -116,9 +120,9 @@
                 android:value=".SearchableActivity" />
         </activity>
         <activity
-            android:name=".view.MyProfileActivity"
+            android:name=".view.profile.MyProfileActivity"
             android:exported="false"
-            android:parentActivityName=".view.MainActivity"
+            android:parentActivityName=".view.events.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
@@ -151,13 +155,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
         <activity
-            android:name=".view.MainActivity"
+            android:name=".view.events.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.StudentPal" />
 
         <service
-            android:name="com.example.studentpal.model.fcm.MyFirebaseMessagingService"
+            android:name=".model.fcm.MyFirebaseMessagingService"
             android:exported="false"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>

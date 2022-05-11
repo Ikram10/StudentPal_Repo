@@ -16,8 +16,8 @@ import com.example.studentpal.view.adapter.FriendsAssignedAdapter
 import com.example.studentpal.databinding.ActivityAssignFriendsBinding
 import com.example.studentpal.model.fcm.RetrofitInstance
 import com.example.studentpal.model.entities.Event
-import com.example.studentpal.model.entities.NotificationData
-import com.example.studentpal.model.entities.PushNotification
+import com.example.studentpal.model.fcm.NotificationData
+import com.example.studentpal.model.fcm.PushNotification
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.remote.EventDatabase.assignMemberToEvent

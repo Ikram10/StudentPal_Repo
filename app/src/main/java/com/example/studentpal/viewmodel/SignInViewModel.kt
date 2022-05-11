@@ -7,7 +7,7 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
-import com.example.studentpal.view.MainActivity
+import com.example.studentpal.view.events.MainActivity
 import com.example.studentpal.view.registration.SignInActivity
 import com.google.firebase.auth.FirebaseAuth
 

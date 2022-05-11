@@ -9,9 +9,9 @@ import android.webkit.MimeTypeMap
 object Constants {
     // user related Constants
     const val USER_KEY = "USER_KEY"
-    const val USERS : String = "Users"
+    const val USERS : String = "users"
     const val USERNAME: String = "username"
-    const val USER_MESSAGES: String = "User-Messages"
+    const val USER_MESSAGES: String = "user-messages"
     const val IMAGE: String = "image"
     const val NAME: String = "name"
     const val STATUS: String = "status"
@@ -25,8 +25,8 @@ object Constants {
     const val POST_DATE: String = "postDate"
 
     // Friend Requests related Constants
-    const val FRIENDSHIPS = "Friendships" // friendships collection
-    const val FRIEND_REQUEST = "Friend-Requests"
+    const val FRIENDSHIPS = "friendships" // friendships collection
+    const val FRIEND_REQUEST = "friend-requests" // friend-requests collection
 
     // Event related Constants
     const val EVENTS: String = "events"
@@ -37,6 +37,7 @@ object Constants {
     const val SELECT : String = "Select"
     const val UN_SELECT : String = "UnSelect"
 
+    // Preferences
     const val STUDENTPAL_PREFERENCES = "StudentPalPrefs"
     const val FCM_TOKEN_UPDATED = "fcmTokenUpdated"
     const val FCM_TOKEN = "fcmToken"
@@ -60,14 +61,12 @@ object Constants {
      * The functions below are placed in the Constant file
        so they can be reused throughout the application within several activities
      */
-
     //allows app to open the users media storage to select an image
     //requires an activity as a parameter to know which activity to startActivityForResult
     fun showImageChooser (activity: Activity){
         val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         activity.startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST_CODE)
     }
-
     /* Converts the uri retrieved from image choose into a string
      * requires an activity as a parameter to know which activity to return the file extension to
      */

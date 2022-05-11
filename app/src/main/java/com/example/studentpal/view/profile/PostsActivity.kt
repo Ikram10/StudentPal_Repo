@@ -1,4 +1,4 @@
-package com.example.studentpal.view
+package com.example.studentpal.view.profile
 
 import android.Manifest
 import android.content.Intent
@@ -19,6 +19,7 @@ import com.example.studentpal.databinding.ActivityPostsBinding
 import com.example.studentpal.model.entities.Post
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.UsersDatabase.loadUserData
+import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.adapter.ImagePostsAdapter
 import com.example.studentpal.viewmodel.PostsViewModel
 import java.io.IOException

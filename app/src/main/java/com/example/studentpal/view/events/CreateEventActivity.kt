@@ -47,7 +47,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CreateBoardActivity : BaseActivity() {
+class CreateEventActivity : BaseActivity() {
     // GLOBAL VARIABLES
     var binding: ActivityCreateBoardBinding? = null
     private var mSelectedImageFileUri: Uri? = null
@@ -283,7 +283,7 @@ class CreateBoardActivity : BaseActivity() {
             Log.i("Current Longitude", "$eventLongitude")
 
             val addressTask = GetAddressFromLatLng(
-                this@CreateBoardActivity,
+                this@CreateEventActivity,
                 eventLatitude!!, eventLongitude!!
             )
             addressTask.setAddressListener(object : GetAddressFromLatLng.AddressListener {

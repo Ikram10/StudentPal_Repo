@@ -9,6 +9,7 @@ import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivitySignUpBinding
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.viewmodel.SignUpViewModel
+import kotlinx.coroutines.*
 
 
 class SignUpActivity : BaseActivity() {
@@ -16,6 +17,7 @@ class SignUpActivity : BaseActivity() {
     private var binding: ActivitySignUpBinding? = null
     lateinit var viewModel: SignUpViewModel
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
@@ -26,12 +28,17 @@ class SignUpActivity : BaseActivity() {
         setupActionBar()
 
         binding?.btnSignUp?.setOnClickListener {
-            //removes spaces from input
+            // Removes spaces from input
             val name: String = binding?.etName?.text.toString().trim { it <= ' ' }
             val email: String = binding?.etEmail?.text.toString().trim { it <= ' ' }
             val password: String = binding?.etPassword?.text.toString().trim { it <= ' ' }
             val username: String = binding?.etUsername?.text.toString().trim { it <= ' ' }
-            viewModel.authenticateUser(this, name, email, password, username)
+
+            // Coroutine executed in IO thread because a network request is being made
+            GlobalScope.launch(Dispatchers.IO) {
+                // Method ensures information entered in validation form is valid
+                viewModel.authenticateUser(this@SignUpActivity, name, email, password, username)
+            }
         }
 
         binding?.existingAccount?.setOnClickListener {

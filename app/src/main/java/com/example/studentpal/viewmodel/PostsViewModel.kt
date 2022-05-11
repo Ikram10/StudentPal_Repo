@@ -12,7 +12,8 @@ import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.PostsDatabase
 import com.example.studentpal.model.remote.Storage.uploadToStorage
 import com.example.studentpal.model.remote.UsersDatabase
-import com.example.studentpal.view.PostsActivity
+import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
+import com.example.studentpal.view.profile.PostsActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -29,7 +30,7 @@ class PostsViewModel: ViewModel() {
     init {
         // Initialises the user and posts list in a Coroutine
         viewModelScope.launch {
-            mUserDetails = UsersDatabase.fetchCurrentUser(UsersDatabase.getCurrentUserId())!!
+            mUserDetails = fetchCurrentUser()!!
             _postsList.value = PostsDatabase.getPosts()
         }
     }

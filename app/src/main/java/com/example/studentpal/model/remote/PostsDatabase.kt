@@ -5,12 +5,10 @@ import android.widget.Toast
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.entities.Post
 import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
-import com.example.studentpal.view.PostsActivity
+import com.example.studentpal.view.profile.PostsActivity
 import com.example.studentpal.view.friends.FriendProfile
-import com.example.studentpal.view.messages.ChatLogActivity
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 
 object PostsDatabase {

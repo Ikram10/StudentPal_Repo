@@ -1,18 +1,18 @@
 package com.example.studentpal.model.remote
 
+import android.app.Activity
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import com.example.studentpal.common.Constants
-import com.example.studentpal.model.entities.NotificationData
-import com.example.studentpal.model.entities.PushNotification
+import com.example.studentpal.model.entities.FriendRequest
+import com.example.studentpal.model.fcm.NotificationData
+import com.example.studentpal.model.fcm.PushNotification
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.UsersDatabase.fetchUsersById
 import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.example.studentpal.model.remote.UsersDatabase.incrementFriendsCount
 import com.example.studentpal.view.friends.FriendProfile
-import com.example.studentpal.view.messages.ChatLogActivity
 import com.example.studentpal.viewmodel.FriendsProfileViewModel
 import com.example.studentpal.viewmodel.FriendsProfileViewModel.Companion.FRIEND
 import com.example.studentpal.viewmodel.FriendsProfileViewModel.Companion.currentState
@@ -30,6 +30,21 @@ object FriendshipsDatabase {
     // Friend-Request firestore collection
     private val requestDB = FirebaseFirestore.getInstance().collection(Constants.FRIEND_REQUEST)
 
+    //my code
+    suspend fun getRequests(): List<User> {
+        val requestsList  =
+            requestDB
+                .whereEqualTo(Constants.RECEIVER, getCurrentUserId())
+                .get()
+                .await()
+                .documents
+                .mapNotNull {
+                    it.data?.get(Constants.SENDER) as String
+                }
+        return fetchUsersById(requestsList)
+    }
+
+    //my code
     suspend fun getFriendsList(): List<User> {
         //First query for friendShip documents where current user is receiver
         val recieverStringList = db
@@ -54,7 +69,7 @@ object FriendshipsDatabase {
 
     fun storeFriendRequest(
         activity: FriendProfile,
-        friendRequestData: HashMap<String, Any>,
+        friendRequestData: FriendRequest,
         friendDetails: LiveData<User>,
         currentUser: LiveData<User>
     ) {
@@ -121,7 +136,7 @@ object FriendshipsDatabase {
     }
 
     // Deletes the Friend request document from firestore when current user is the receiver
-    fun deleteReceiverFriendRequest(activity: FriendProfile, friendUser: User?) {
+    fun deleteReceiverFriendRequest(activity: Activity, friendUser: User?) {
         requestDB.whereEqualTo(Constants.SENDER, friendUser!!.id)
             .whereEqualTo(Constants.RECEIVER, getCurrentUserId())
             .get()
@@ -150,14 +165,17 @@ object FriendshipsDatabase {
             }
     }
 
-    fun createFriendship(activity: FriendProfile, friend: User, currentUser: User) {
+    fun createFriendship(activity: Activity, friend: User, currentUser: User) {
         requestDB
             .whereEqualTo(Constants.SENDER, friend.id)
             .whereEqualTo(Constants.RECEIVER, getCurrentUserId()).get()
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     for (doc in it.result.documents) {
-                        doc.reference.delete().addOnSuccessListener {
+                        doc
+                            .reference
+                            .delete()
+                            .addOnSuccessListener {
                             // Create HASHMAP to that stores the Friendship information
                             val hashMap = HashMap<String, Any>()
                             hashMap[Constants.STATUS] = FRIEND

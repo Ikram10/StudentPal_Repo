@@ -15,12 +15,11 @@ import com.example.studentpal.common.Constants
 
 class FriendsListAdapter(var context: Context,  var list: ArrayList<User>)
     : RecyclerView.Adapter<FriendsListAdapter.FriendsViewHolder>() {
-
         inner class FriendsViewHolder(private val itemBinding : ItemProfileBinding):
                 RecyclerView.ViewHolder(itemBinding.root) {
                     fun bindItem(user: User){
-                        itemBinding.cvUsername.text = user.name
-                        itemBinding.cvEmail.text = user.email
+                        itemBinding.cvName.text = user.name
+                        itemBinding.cvUsername.text = user.username
                         Glide
                             .with(context)
                             .load(user.image)

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".view.MyProfileActivity">
+    tools:context=".view.profile.MyProfileActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_one"
@@ -35,7 +35,7 @@
         <FrameLayout
             android:id="@+id/frame"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="200dp"
             android:layout_margin="2dp"
             android:background="@drawable/cover_image_bg"
             android:elevation="5dp"
@@ -85,10 +85,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/name"
-
                     android:textColor="#0A629D"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/profile_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="@string/username"
+                    android:textColor="@color/secondary_text_color"
+                    android:textSize="14sp"
+                    android:layout_marginTop="2dp"/>
 
                 <View
 
@@ -108,7 +116,7 @@
                     android:text="@string/status"
                     android:textAlignment="center"
                     android:textColor="@color/secondary_text_color"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:textStyle="normal" />
 
                 <View

@@ -1,6 +1,5 @@
 package com.example.studentpal.model.fcm
 
-import com.example.studentpal.model.entities.PushNotification
 import com.example.studentpal.common.Constants
 import okhttp3.ResponseBody
 import retrofit2.Response

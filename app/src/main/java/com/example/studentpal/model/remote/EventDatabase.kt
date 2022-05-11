@@ -5,9 +5,9 @@ import android.widget.Toast
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.view.MainActivity
+import com.example.studentpal.view.events.MainActivity
 import com.example.studentpal.view.events.AssignFriendsActivity
-import com.example.studentpal.view.events.CreateBoardActivity
+import com.example.studentpal.view.events.CreateEventActivity
 import com.example.studentpal.view.events.EditEventActivity
 import com.example.studentpal.view.events.EventInfoActivity
 import com.google.firebase.firestore.FirebaseFirestore
@@ -102,7 +102,7 @@ object EventDatabase {
  * A boards collection is created, which generates a single document for each event
  * The event document data is filled using the event parameter
  */
-    fun storeEvent(activity: CreateBoardActivity, event: Event) {
+    fun storeEvent(activity: CreateEventActivity, event: Event) {
         db
             .document()
             .set(event, SetOptions.merge())

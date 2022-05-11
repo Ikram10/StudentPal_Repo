@@ -115,8 +115,7 @@ class NewMessageActivity : BaseActivity() {
     class UserItem(val user: User) : Item<GroupieViewHolder>() {
         override fun bind(viewHolder: GroupieViewHolder, position: Int) {
             viewHolder.itemView.findViewById<TextView>(R.id.cv_username).text = user.name
-
-            viewHolder.itemView.findViewById<TextView>(R.id.cv_email).text = user.email
+            viewHolder.itemView.findViewById<TextView>(R.id.cv_username).text = user.username
             viewHolder.itemView.findViewById<TextView>(R.id.civ_status).text = user.status
 
             Glide

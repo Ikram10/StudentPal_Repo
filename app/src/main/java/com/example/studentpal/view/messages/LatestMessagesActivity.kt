@@ -56,9 +56,7 @@ class LatestMessagesActivity : BaseActivity() {
         }
 
         listenForLatestMessages()
-        GlobalScope.launch {
-            fetchCurrentUser(getCurrentUserID())
-        }
+
 
 
         setupActionBar()

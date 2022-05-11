@@ -25,7 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
 
-open class BoardItemsAdapter(private val context: Context, private var list: ArrayList<Event>) :
+open class EventItemsAdapter(private val context: Context, private var list: ArrayList<Event>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 

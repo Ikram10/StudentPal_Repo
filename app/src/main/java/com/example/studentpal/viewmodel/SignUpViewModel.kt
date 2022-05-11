@@ -6,10 +6,13 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.example.studentpal.model.entities.User
+import com.example.studentpal.model.remote.UsersDatabase.isUsernameUnique
 import com.example.studentpal.model.remote.UsersDatabase.registerUser
 import com.example.studentpal.view.registration.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,32 +26,38 @@ class SignUpViewModel : ViewModel(){
         return formatter.format(date)
     }
 
-    //method responsible for authenticating users and sending verification email
-    fun authenticateUser(activity: SignUpActivity, name: String, email: String, password: String, username: String) {
+    // method responsible for authenticating users and ensuring validation form is entered correctly
+    suspend fun authenticateUser(activity: SignUpActivity, name: String, email: String, password: String, username: String) {
         val mAuth = FirebaseAuth.getInstance()
         if (validateForm(activity,name, email, password, username)) {
-            activity.showProgressDialog("Please Wait")
-            mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        val firebaseUser: FirebaseUser = it.result!!.user!!
-                        val registeredEmail = firebaseUser.email!!
-                        val dateJoined = getCurrentDate()
-                        //User object constructed to be stored in Firestore
-                        val user = User(firebaseUser.uid, name, registeredEmail, dateJoined, username = username)
-                        //Verification email will be sent to the sign up email
-                        sendVerificationEmail(activity,firebaseUser, user)
-                    } else {
-                        //if a user with the same credentials already exists, registration will fail
-                        Toast.makeText(activity, "Registration failed", Toast.LENGTH_LONG).show()
-                        activity.hideProgressDialog()
+            // shifting execution of the block
+            withContext(Dispatchers.Main) {
+                activity.showProgressDialog("Please Wait")
+            }
+                mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            val firebaseUser: FirebaseUser = it.result!!.user!!
+                            val registeredEmail = firebaseUser.email!!
+                            val dateJoined = getCurrentDate()
+                            //User object constructed to be stored in Firestore
+                            val user = User(firebaseUser.uid, name, registeredEmail, dateJoined, username = username)
+                            //Verification email will be sent to the sign up email
+                            sendVerificationEmail(activity,firebaseUser, user)
+                        } else {
+                            //if a user with the same credentials already exists, registration will fail
+                            Toast.makeText(activity, "Registration failed", Toast.LENGTH_LONG).show()
+                            activity.hideProgressDialog()
+                        }
                     }
-                }
-        }
+
+            }
+
     }
 
     //method responsible for sending verification email to the FirebaseUser trying to sign up
-    private fun sendVerificationEmail(activity: SignUpActivity,fUser: FirebaseUser, user: User) {
+    private fun sendVerificationEmail(
+        activity: SignUpActivity,fUser: FirebaseUser, user: User) {
         fUser.sendEmailVerification().addOnSuccessListener {
             Toast.makeText(activity,
                 "Email verification link sent to ${fUser.email}",
@@ -60,10 +69,9 @@ class SignUpViewModel : ViewModel(){
             Log.e(javaClass.simpleName, "error sending verification link")
             Toast.makeText(activity, "Could not send email verification link", Toast.LENGTH_LONG).show()
         }
-
     }
 
-    private fun validateForm(activity: SignUpActivity,name: String, email: String, password: String, username: String): Boolean {
+    private suspend fun validateForm(activity: SignUpActivity, name: String, email: String, password: String, username: String): Boolean {
         return when {
             TextUtils.isEmpty(name) -> {
                 activity.showErrorSnackBar("Please enter a name")
@@ -85,16 +93,30 @@ class SignUpViewModel : ViewModel(){
         }
     }
 
-    private fun invalidUsername(activity: SignUpActivity,username: String): Boolean {
+    /**
+     * This method checks if the entered username is invalid
+     *
+     * @return True if no username is entered or if username is not unique
+     */
+    private suspend fun invalidUsername(
+        activity: SignUpActivity,
+        username: String): Boolean {
         if (username.isEmpty()) {
             activity.showErrorSnackBar("Please enter a Username")
             return true
         }
-
+        /* Makes a call to the Users database
+         * Ensures username is unique and does not exist
+         */
+        if (!isUsernameUnique(username)) {
+            activity.showErrorSnackBar("Username already taken")
+            return true
+        }
         return false
     }
 
-    private fun invalidPassword(activity: SignUpActivity,password: String): Boolean {
+    private fun invalidPassword(
+        activity: SignUpActivity, password: String): Boolean {
         if (password.isEmpty()) {
             activity.showErrorSnackBar(
                 "Please enter a password"

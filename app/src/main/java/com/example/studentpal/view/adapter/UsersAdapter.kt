@@ -25,15 +25,13 @@ class UsersAdapter(var context: Context, var list: ArrayList<User>)
         RecyclerView.ViewHolder(itemBinding.root) {
             fun bindItem(user: User){
                 itemBinding.tvMemberName.text = user.name
-                itemBinding.tvMemberEmail.text = user.email
+                itemBinding.tvMemberUsername.text = user.username
                 Glide
                     .with(context)
                     .load(user.image)
                     .centerCrop()
                     .placeholder(R.drawable.ic_user_place_holder)
                     .into(itemBinding.ivFriendImage)
-
-
             }
     }
 
@@ -61,9 +59,6 @@ class UsersAdapter(var context: Context, var list: ArrayList<User>)
     }
 
 
-
-
-
     override fun getFilter(): Filter {
         return filters
     }
@@ -77,13 +72,13 @@ class UsersAdapter(var context: Context, var list: ArrayList<User>)
             } else {
                 for (user: User in listAll ) {
                     // Add users to the filtered list matching the search query
-                    if (user.email.lowercase()
+                    if (user.username.lowercase()
                             .contains(charSequence.toString().lowercase())){
                         filteredList.add(user)
                     }
                 }
             }
-            val filteredResults: FilterResults = FilterResults()
+            val filteredResults = FilterResults()
             filteredResults.values = filteredList
 
             return filteredResults

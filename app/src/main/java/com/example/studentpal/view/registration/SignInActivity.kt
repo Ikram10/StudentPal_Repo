@@ -8,7 +8,7 @@ import com.example.studentpal.R
 import com.example.studentpal.databinding.ActivitySignInBinding
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.view.BaseActivity
-import com.example.studentpal.view.MainActivity
+import com.example.studentpal.view.events.MainActivity
 import com.example.studentpal.viewmodel.SignInViewModel
 
 class SignInActivity : BaseActivity() {
@@ -25,7 +25,6 @@ class SignInActivity : BaseActivity() {
 
         viewModel = ViewModelProvider(this)[SignInViewModel::class.java]
 
-
         setupActionBar()
 
         binding?.btnSignIn?.setOnClickListener {
@@ -39,9 +38,6 @@ class SignInActivity : BaseActivity() {
         }
 
     }
-
-
-
 
 
     //activates the back button and implements its functionality

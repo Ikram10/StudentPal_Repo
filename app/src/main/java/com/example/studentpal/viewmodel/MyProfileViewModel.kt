@@ -13,7 +13,7 @@ import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
 import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.example.studentpal.model.remote.UsersDatabase.updateUserProfileData
-import com.example.studentpal.view.MyProfileActivity
+import com.example.studentpal.view.profile.MyProfileActivity
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
@@ -41,7 +41,7 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
          * from within a coroutine scope or another suspend function.
          */
         viewModelScope.launch {
-            _currentUser.value = fetchCurrentUser(getCurrentUserId())!!
+            _currentUser.value = fetchCurrentUser()!!
         }
     }
 
@@ -131,10 +131,10 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
             userHashMap[Constants.STATUS] = userStatus
             anyChangesMade = true
         }
-
         if (anyChangesMade) {
             updateUserProfileData(activity, userHashMap)
-        } else {
+        }
+        else {
             activity.hideProgressDialog()
         }
     }

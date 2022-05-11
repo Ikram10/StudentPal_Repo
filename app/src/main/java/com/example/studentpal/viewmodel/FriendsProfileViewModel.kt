@@ -6,12 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.studentpal.common.Constants
-import com.example.studentpal.common.Constants.RECEIVER
-import com.example.studentpal.common.Constants.SENDER
+import com.example.studentpal.model.entities.FriendRequest
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.FriendshipsDatabase
 import com.example.studentpal.model.remote.FriendshipsDatabase.deleteReceiverFriendRequest
 import com.example.studentpal.model.remote.FriendshipsDatabase.deleteSenderFriendRequest
+import com.example.studentpal.model.remote.FriendshipsDatabase.storeFriendRequest
 import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
 import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.example.studentpal.view.friends.FriendProfile
@@ -52,7 +52,7 @@ class FriendsProfileViewModel : ViewModel() {
     // Initialise current user
     init {
         viewModelScope.launch {
-            _currentUser.value = fetchCurrentUser(getCurrentUserId())!!
+            _currentUser.value = fetchCurrentUser()!!
         }
     }
 
@@ -63,14 +63,17 @@ class FriendsProfileViewModel : ViewModel() {
              * No friend request is pending
              */
             AccountStates.DEFAULT -> {
-                val friendRequestData = HashMap<String, Any>()
-                friendRequestData[STATUS] = PENDING
-                friendRequestData[SENDER] = getCurrentUserId()
-                friendRequestData[RECEIVER] = friendDetails.value?.id!!
 
-                FriendshipsDatabase.storeFriendRequest(
+                val friendRequest =
+                    FriendRequest(
+                        PENDING,
+                        getCurrentUserId(),
+                        friendDetails.value?.id!!
+                    )
+
+                storeFriendRequest(
                     activity,
-                    friendRequestData,
+                    friendRequest,
                     friendDetails,
                     currentUser
                 )

@@ -11,7 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.studentpal.R
-import com.example.studentpal.view.MainActivity
+import com.example.studentpal.view.events.MainActivity
 import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.google.firebase.auth.FirebaseAuth
 

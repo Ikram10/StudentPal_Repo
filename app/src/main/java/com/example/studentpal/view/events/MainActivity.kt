@@ -1,4 +1,4 @@
-package com.example.studentpal.view
+package com.example.studentpal.view.events
 
 import android.app.Activity
 import android.content.Context
@@ -16,13 +16,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
-import com.example.studentpal.view.events.CreateBoardActivity
-import com.example.studentpal.view.events.EventInfoActivity
 import com.example.studentpal.view.friends.FindFriends
 import com.example.studentpal.view.friends.FriendsActivity
 import com.example.studentpal.view.messages.LatestMessagesActivity
 import com.example.studentpal.view.registration.IntroActivity
-import com.example.studentpal.view.adapter.BoardItemsAdapter
+import com.example.studentpal.view.adapter.EventItemsAdapter
 import com.example.studentpal.databinding.ActivityMainBinding
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
@@ -30,6 +28,10 @@ import com.example.studentpal.common.Constants
 import com.example.studentpal.model.remote.EventDatabase.getBoardsList
 import com.example.studentpal.model.remote.UsersDatabase.loadUserData
 import com.example.studentpal.model.remote.UsersDatabase.updateUserProfileData
+import com.example.studentpal.view.BaseActivity
+import com.example.studentpal.view.friends.RequestsActivity
+import com.example.studentpal.view.profile.MyProfileActivity
+import com.example.studentpal.view.profile.PostsActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -109,7 +111,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //create board action button can be clicked
         binding?.appBarMain?.fabCreateBoard?.setOnClickListener {
             //creates an intent that sends user to the Create board activity
-            val intent = Intent(this, CreateBoardActivity::class.java)
+            val intent = Intent(this, CreateEventActivity::class.java)
             /* sends the users name with an intent via a HashMap format
                which can be retrieved using the name key
              */
@@ -133,11 +135,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             mainRecyclerView?.layoutManager = LinearLayoutManager(this)
             mainRecyclerView?.setHasFixedSize(true)
 
-            val adapter = BoardItemsAdapter(this, boardsList)
+            val adapter = EventItemsAdapter(this, boardsList)
             mainRecyclerView?.adapter = adapter
 
             //handles the functionality when an event card is selected
-            adapter.setOnClickListener(object : BoardItemsAdapter.OnClickListener {
+            adapter.setOnClickListener(object : EventItemsAdapter.OnClickListener {
                 // when an event card is selected this method will be triggered
                 override fun onClick(position: Int, model: Event) {
                     //sends the user to the Event Information screen
@@ -213,6 +215,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
             R.id.nav_friends -> {
                 startActivity(Intent(this, FriendsActivity::class.java))
+            }
+            R.id.nav_requests -> {
+                startActivity(Intent(this, RequestsActivity::class.java))
 
             }
             R.id.nav_messages -> {
@@ -234,7 +239,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     //my code
     private fun deleteAccount() {
         builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
-
         builder.setTitle("Alert")
             .setMessage("Do you want to delete account?")
             .setCancelable(true)

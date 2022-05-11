@@ -5,9 +5,9 @@ import android.util.Log
 import android.widget.Toast
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.view.MainActivity
-import com.example.studentpal.view.MyProfileActivity
-import com.example.studentpal.view.PostsActivity
+import com.example.studentpal.view.events.MainActivity
+import com.example.studentpal.view.profile.MyProfileActivity
+import com.example.studentpal.view.profile.PostsActivity
 import com.example.studentpal.view.events.AssignFriendsActivity
 import com.example.studentpal.view.events.EditEventActivity
 import com.example.studentpal.view.events.EventInfoActivity
@@ -82,9 +82,26 @@ object UsersDatabase {
             }
     }
 
-    suspend fun fetchCurrentUser(id: String): User? {
+    // Checks database to see if Username is already taken
+    suspend fun isUsernameUnique(username: String) : Boolean {
+        return try {
+            // return true if there are no user documents with same username
+            db
+                .whereEqualTo(Constants.USERNAME, username)
+                .get()
+                .await()
+                .documents
+                .size == 0
+        } catch (e : Exception) {
+            Log.e(TAG, e.message, e)
+            false
+        }
+    }
+
+    // Retrieves the current user document and converts it to to a User object
+    suspend fun  fetchCurrentUser(): User? {
             //A reference to currently signed in user in Firestore document
-            val docRef = db.document(id)
+            val docRef = db.document(getCurrentUserId())
             return try {
 
             docRef.get().await().toObject(User::class.java)
@@ -110,7 +127,6 @@ object UsersDatabase {
                         if (dc.type == DocumentChange.Type.ADDED) {
                             val user = dc.document.toObject(User::class.java)
                             userList.add(user)
-
                         }
                     }
                     activity.setUpUsersList(userList)
@@ -182,7 +198,7 @@ object UsersDatabase {
 
     }
 
-    suspend fun fetchUsersById( userStringList: List<String>) : List<User> {
+    suspend fun fetchUsersById(userStringList: List<String>) : List<User> {
         return try {
             val userList = arrayListOf<User>()
             for (item in userStringList) {

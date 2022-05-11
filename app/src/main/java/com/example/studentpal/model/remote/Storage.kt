@@ -5,11 +5,10 @@ import android.widget.Toast
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.entities.Post
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.view.PostsActivity
+import com.example.studentpal.view.profile.PostsActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
 
