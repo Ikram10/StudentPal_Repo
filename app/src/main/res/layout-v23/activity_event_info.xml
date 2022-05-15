@@ -33,7 +33,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_event_info"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="280dp"
             android:background="@drawable/cover_image_bg"
             android:padding="1.5dp"
             android:src="@drawable/add_screen_image_placeholder"

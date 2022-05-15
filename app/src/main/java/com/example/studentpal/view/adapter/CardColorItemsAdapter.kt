@@ -40,7 +40,7 @@ class CardColorItemsAdapter(
             holder.itemView.setOnClickListener{
 
                 if (onItemClickListener != null) {
-                    onItemClickListener!!.OnClick(position, item)
+                    onItemClickListener!!.onClick(position, item)
                 }
             }
 
@@ -54,6 +54,6 @@ class CardColorItemsAdapter(
     private class MyViewHolder(view: View): RecyclerView.ViewHolder(view)
 
     interface OnItemClickListener {
-        fun OnClick(position: Int, Color: String)
+        fun onClick(position: Int, Color: String)
     }
 }

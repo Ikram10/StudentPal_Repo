@@ -24,28 +24,47 @@ import com.example.studentpal.viewmodel.MyProfileViewModel
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.IOException
 
-//My code
+/**
+ * This activity is responsible for displaying and modifying the users profile
+ *
+ * The code displayed was adapted from Denis Panjuta's Trello clone (see references file)
+ * However, the author significantly evolved the code produced by Panjuta to accommodate the project requirements.
+ *
+ * For instance, this project integrated the MVVM design pattern, resulting in structural differences and code additions.
+ *
+ * All code that was created by the author will be labelled [My Code].
+ *
+ * Reused code that has been adapted by the author is labeled [Adapted ].
+ *
+ * @see[com.example.studentpal.common.References]
+ * @see viewModel
+ */
+
+@Suppress("DEPRECATION")
 class MyProfileActivity : BaseActivity(), View.OnClickListener {
 
     private var binding: ActivityMyProfileBinding? = null
     private val toolbar = binding?.toolbarMyProfile
+
     // Buttons
     private var ivProfileImage: CircleImageView? = null
     private var btnAddCoverImage: AppCompatImageButton? = null
     private var btnUpdate: AppCompatButton? = null
+
     // ViewModel
-    private lateinit var viewModel : MyProfileViewModel
+    private lateinit var viewModel: MyProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMyProfileBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        // Initialise ViewModel
+        // My Code: Initialise ViewModel
         viewModel = ViewModelProvider(this)[MyProfileViewModel::class.java]
 
-        // User Observer
+        // My Code: observes changes made to current users profile
         viewModel.currentUser.observe(this) {
+            //This method is executed whenever the user profile changes
             setUserDataInUI(it)
         }
 
@@ -63,17 +82,28 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
 
         loadUserData(this)
     }
-    //My code:
+
+    /**
+     * [My Code]: The is method handles all the functionalities that occur
+     * when a user clicks a view.
+     *
+     * A separate method was created, because the code was verbose and
+     * the author wanted to minimise the logic displayed in the [onCreate]
+     */
     override fun onClick(v: View) {
         when (v) {
+            // Profile image is selectable
             ivProfileImage -> {
+                //My Code: Distinguishes between the buttons that are selected.
+                //If the profile image is selected, this variable is set to true.
                 viewModel.profileImgSelected = true
-                //The user will be prompted to grant permission to read files from devices media storage in order to upload a profile image
+                //The user will be prompted to grant permission to read files from devices media storage
                 if (ContextCompat.checkSelfPermission(
                         this,
                         Manifest.permission.READ_EXTERNAL_STORAGE
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
+                    // Displays users image gallery
                     Constants.showImageChooser(this)
                 } else {
                     ActivityCompat.requestPermissions(
@@ -82,19 +112,23 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                     )
                 }
             }
-            //My Code: Enables users to add a cover image
+            //My Code: Reused the same functionality produced by Panjuta to add a cover image
             btnAddCoverImage -> {
-                // when button clicked set this to true
+
+                //My Code: Distinguishes between the buttons that are selected.
+                //If the cover image is selected, this variable is set to true.
                 viewModel.profileCoverImgSelected = true
-                //The user will be prompted to grant permission to read files from devices media storage in order to upload a cover image image
+
+                //The user will be prompted to grant permission to read files from devices media storage
                 if (ContextCompat.checkSelfPermission(
                         this,
                         Manifest.permission.READ_EXTERNAL_STORAGE
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
-                    // if granted permission, show image chooser
+                    // if permission granted, show image chooser
                     Constants.showImageChooser(this)
                 } else {
+
                     // prompt user to grant permission to media storage
                     ActivityCompat.requestPermissions(
                         this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
@@ -119,21 +153,29 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                     viewModel.uploadToStorage(this)
                 } else {
                     showProgressDialog("Please Wait")
-                    viewModel.updateUserProfile(this,name, status)
+                    viewModel.updateUserProfile(this, name, status)
                 }
 
             }
         }
     }
 
+    /**
+     * This method retrieves the data from the image chooser
+     * and populates the view with the image.
+     */
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
+
+            //My Code: If statement added to know where to load the image data
             if (viewModel.profileImgSelected) {
+
                 viewModel.mSelectedImageFileUri = data.data
+
                 try {
+                    //If profile image is selected, loads image into the profile image
                     binding?.ivProfileUserImage?.let {
                         Glide
                             .with(this)
@@ -145,11 +187,18 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
+                // reset to default after loading
                 !viewModel.profileImgSelected
             }
+
+            //My Code: If statement added to know where to load the image data
             if (viewModel.profileCoverImgSelected) {
+
                 viewModel.mSelectedCoverImageFileUri = data.data
+
                 try {
+
+                    //If cover image is selected, loads image into the cover image
                     binding?.ciMyProfile?.let {
                         Glide
                             .with(this)
@@ -162,11 +211,21 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
+                // reset to default after loading
                 !viewModel.profileCoverImgSelected
             }
         }
     }
-    //Checks for the specified request code permissions
+
+    /**
+     * This method will identify the result of runtime permission after the user allows or denies permission
+     * based on the unique code
+     *
+     * @param requestCode predefined codes allowing the system to distinguish between requests. See [Constants] file
+     * @param permissions array list of defined permissions needed
+     * @param grantResults result of permission request
+     */
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -185,6 +244,76 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
             ).show()
 
         }
+    }
+    /**
+     * [Adapted ]: A method to set the existing users details in UI.
+     *
+     * This method is called whenever the users data is changed to
+     * update UI and display the changes
+     *
+     * @param user the current user's information
+     *
+     * @see [MyProfileViewModel.currentUser]
+     */
+    fun setUserDataInUI(user: User) {
+        binding?.let {
+            // Uses Glide library to load an image into users profile image
+            Glide
+                .with(this)
+                .load(user.image)
+                .circleCrop()
+                .placeholder(R.drawable.ic_nav_user)
+                .into(it.ivProfileUserImage)
+
+            //My Code: Sets each view with the appropriate user data
+            it.etName.setText(user.name)
+            it.etEmail.setText(user.email)
+            it.etStatus.setText(user.status)
+            it.profileName.text = user.name
+            it.profileUsername.text = user.username
+            it.civStatus.text = user.status
+            it.dateNum.text = user.dateJoined
+            it.friendsNum.text = user.numFriends.toString()
+
+            // My Code: Reused the Glide library to load an image into users cover image
+            Glide
+                .with(this)
+                .load(user.coverImage)
+                .centerCrop()
+                .into(it.ciMyProfile)
+
+            //My code: Sets the text colour of users status depending on the Status
+            when (user.status) {
+                "Available" -> {
+                    // Change colour green when status message is Available
+                    binding!!.civStatus.setTextColor(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.available
+                        )
+                    )
+                }
+                // Change colour red when status message is Available
+                "Unavailable" -> {
+                    binding!!.civStatus.setTextColor(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.unavailable
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    /**
+     * A method to notify the user profile is updated successfully
+     */
+    fun profileUpdateSuccess() {
+        hideProgressDialog()
+        setResult(Activity.RESULT_OK)
+        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_LONG).show()
+        finish()
     }
 
     private fun setupActionBar() {
@@ -206,62 +335,8 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
         Log.d("MyProfileActivity", "onBackPressed")
         Toast.makeText(this, "onBackPressed", Toast.LENGTH_SHORT).show()
     }
-
-    fun setUserDataInUI(user: User) {
-        binding?.let {
-            // My profile image
-            Glide
-                .with(this)
-                .load(user.image)
-                .circleCrop()
-                .placeholder(R.drawable.ic_nav_user)
-                .into(it.ivProfileUserImage)
-
-            it.etName.setText(user.name)
-            it.etEmail.setText(user.email)
-            it.etStatus.setText(user.status)
-            it.profileName.text = user.name
-            it.profileUsername.text = user.username
-            it.civStatus.text = user.status
-            it.dateNum.text = user.dateJoined //Sets the date joined text in user's profile card
-            it.friendsNum.text = user.numFriends.toString()
-
-            // My profile Cover image
-            Glide
-                .with(this)
-                .load(user.coverImage)
-                .centerCrop()
-                .into(it.ciMyProfile)
-
-            //My code: Sets the text colour of users status depending on the Status
-            when (user.status) {
-                "Available" -> {
-                    binding!!.civStatus.setTextColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.available
-                        )
-                    )
-                }
-                "Unavailable" -> {
-                    binding!!.civStatus.setTextColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.unavailable
-                        )
-                    )
-                }
-            }
-        }
-
-    }
-
-    fun profileUpdateSuccess() {
-        setResult(Activity.RESULT_OK)
-        hideProgressDialog()
-        finish()
-    }
 }
+
 
 
 

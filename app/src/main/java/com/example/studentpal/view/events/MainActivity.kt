@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.studentpal.view.events
 
 import android.app.Activity
@@ -25,7 +27,7 @@ import com.example.studentpal.databinding.ActivityMainBinding
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
-import com.example.studentpal.model.remote.EventDatabase.getBoardsList
+import com.example.studentpal.model.remote.EventDatabase.getEventsList
 import com.example.studentpal.model.remote.UsersDatabase.loadUserData
 import com.example.studentpal.model.remote.UsersDatabase.updateUserProfileData
 import com.example.studentpal.view.BaseActivity
@@ -59,7 +61,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     //Constant values
     companion object {
         const val MY_PROFILE_REQUEST_CODE: Int = 11
-        const val CREATE_BOARD_REQUEST_CODE: Int = 12
+        const val CREATE_EVENT_REQUEST_CODE: Int = 12
+        const val EDIT_EVENT_REQUEST_CODE: Int = 13
     }
 
     // This function is auto created by Android when the Activity Class is created.
@@ -117,7 +120,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
              */
             intent.putExtra(Constants.NAME, mUserName)
             //handles updates to the main activity events when a new event is created
-            startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
+            startActivityForResult(intent, CREATE_EVENT_REQUEST_CODE)
         }
         refreshLayout = binding?.appBarMain?.root?.findViewById(R.id.refresh_view_main)!!
         refreshLayout.setOnRefreshListener { updateMainUI() }
@@ -131,7 +134,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
          * and set the no events textview to gone
          */
         if (boardsList.size > 0) {
-            eventTextView?.text = "All Events"
+            eventTextView?.setText(R.string.all_events)
             mainRecyclerView?.layoutManager = LinearLayoutManager(this)
             mainRecyclerView?.setHasFixedSize(true)
 
@@ -151,19 +154,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             })
         } else
         //if no events are listed "No Event" will be displayed
-            eventTextView?.text = "No Events"
+            eventTextView?.setText(R.string.no_events)
 
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
             loadUserData(this)
         }
         //Updates the main activity when a new event is created
-        else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_BOARD_REQUEST_CODE) {
-            getBoardsList(this)
+        else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_EVENT_REQUEST_CODE) {
+            getEventsList(this)
 
         } else {
             Log.e("Cancelled", "Cancelled")
@@ -286,7 +290,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //variable binds the Username Textview
         val tvUsername = binding?.navView?.findViewById<TextView>(R.id.tv_username)
 
-        //Third party resource, helps with TODO
+        //Third party resource, helps with image loading
         Glide
             .with(this)
             .load(user.image)
@@ -300,14 +304,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //only retrieves the events list from Firestore if the readBoardsList is true
         if (readBoardsList) {
             showProgressDialog(resources.getString(R.string.please_wait))
-           getBoardsList(this)
+           getEventsList(this)
         }
     }
 
     //Method responsible for refreshing the Main activity when an event item has been deleted/edited
     private fun updateMainUI() {
         val intent = Intent(this, MainActivity::class.java)
-        startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
+        startActivityForResult(intent, CREATE_EVENT_REQUEST_CODE)
         refreshLayout.isRefreshing = false
     }
 

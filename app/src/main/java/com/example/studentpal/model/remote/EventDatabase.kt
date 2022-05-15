@@ -5,16 +5,15 @@ import android.widget.Toast
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.view.events.MainActivity
 import com.example.studentpal.view.events.AssignFriendsActivity
 import com.example.studentpal.view.events.CreateEventActivity
 import com.example.studentpal.view.events.EditEventActivity
-import com.example.studentpal.view.events.EventInfoActivity
+import com.example.studentpal.view.events.MainActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 
 object EventDatabase {
-    val db = FirebaseFirestore.getInstance().collection(Constants.EVENTS)
+    private val db = FirebaseFirestore.getInstance().collection(Constants.EVENTS)
 
     fun assignMemberToEvent(activity: AssignFriendsActivity, event: Event, user: User) {
         //hash map of assigned to field in Firestore (Event documents)
@@ -45,22 +44,22 @@ object EventDatabase {
             }
     }
 
-    fun updateBoardDetails(
+    fun updateEventDetails(
         activity: EditEventActivity,
-        boardHashMap: HashMap<String, Any>,
-        boardDocumentId: String
+        eventHashMap: HashMap<String, Any>,
+        eventDocumentId: String
     ) {
        db
-            .document(boardDocumentId)
-            .update(boardHashMap)
+            .document(eventDocumentId)
+            .update(eventHashMap)
             .addOnSuccessListener {
-                activity.hideProgressDialog()
                 Log.d("UpdateEvent: ", "Event Updated successfully")
                 Toast.makeText(
                     activity,
                     "You have successfully updated your event",
                     Toast.LENGTH_LONG
                 ).show()
+                activity.eventModifiedSuccessfully()
 
             }.addOnFailureListener {
                 activity.hideProgressDialog()
@@ -73,7 +72,7 @@ object EventDatabase {
  * A user is assigned an event when they create it or if someone else has assigned them to it,
  * This method gets all the events the user has been assigned to
  */
-    fun getBoardsList(activity: MainActivity) {
+    fun getEventsList(activity: MainActivity) {
         //this statement queries the boards collection where the assignedTo array contains the current user id
        db
             .whereArrayContains(Constants.ASSIGNED_TO, UsersDatabase.getCurrentUserId())
@@ -110,26 +109,11 @@ object EventDatabase {
                 Log.d(activity.javaClass.simpleName, "Event created successfully")
                 Toast.makeText(activity, "Event created successfully", Toast.LENGTH_SHORT)
                     .show()
-                activity.boardCreatedSuccessfully()
+                activity.eventCreatedSuccessfully()
             }.addOnFailureListener {
                 Log.e(activity.javaClass.simpleName, "Error while creating event")
             }
 
-    }
-
-    //retrieves the board in Firestore by querying its Document id
-    fun getBoardDetails(activity: EventInfoActivity, boardDocumentId: String) {
-        db
-            .document(boardDocumentId)
-            .get()
-            .addOnSuccessListener {
-                Log.i(activity.javaClass.simpleName, it.toString())
-                //converts the queried board document to a Event object and passes it to the boardDetails()
-                activity.boardDetails(it.toObject(Event::class.java)!!)
-            }.addOnFailureListener {
-                activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName, "error while getting events list")
-            }
     }
 
 

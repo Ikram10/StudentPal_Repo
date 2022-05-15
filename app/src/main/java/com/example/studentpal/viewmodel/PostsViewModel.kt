@@ -11,20 +11,32 @@ import com.example.studentpal.model.entities.Post
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.PostsDatabase
 import com.example.studentpal.model.remote.Storage.uploadToStorage
-import com.example.studentpal.model.remote.UsersDatabase
 import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
+import com.example.studentpal.view.profile.MyProfileActivity
 import com.example.studentpal.view.profile.PostsActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+/**
+ * This class is responsible for executing [MyProfileActivity] business logic
+ *
+ *  Kotlin Coroutines were embedded to allow the author to write asynchronous code and
+ * structural changes were made to implement the MVVM design pattern
+ * which required architectural principles to be implemented.
+ *
+ * The entire code in this class belongs to the author.
+ *
+ */
 
 class PostsViewModel: ViewModel() {
 
-    val TAG = "PostsViewModel"
     lateinit var mUserDetails: User
-    private val _postsList = MutableLiveData<List<Post>>() // Posts List
-    var posts: LiveData<List<Post>> = _postsList // Posts list getter
+    // Posts List
+    private val _postsList = MutableLiveData<List<Post>>()
+    // Public Posts list getter
+    var posts: LiveData<List<Post>> = _postsList
 
     var addImageBtnSelected: Boolean = false
+
     var mSelectedImagePostFileUri: Uri? = null
 
     init {
@@ -35,28 +47,38 @@ class PostsViewModel: ViewModel() {
         }
     }
 
-    /* Checks if an image has been added
-     * Checks if a caption has been added before uploading to storage
+    /**
+     * Method checks if an image and caption has been added before uploading to storage
+     *
+     * @param etCaption the caption edit text field
+     *
+     * @see com.example.studentpal.model.remote.Storage
      */
     fun addPost(activity: PostsActivity, etCaption: AppCompatEditText) {
-        // Image caption for post
         val imageCaption: String = etCaption.text.toString()
+
         when {
             imageCaption.isEmpty() -> {
                 etCaption.error = "Please enter a caption for your post"
             }
+            // No image has been selected, resulting in the uri field to be null
             mSelectedImagePostFileUri == null -> {
                 activity.showErrorSnackBar("Please select an image to post")
             }
             else -> {
                 activity.showProgressDialog("Please Wait")
+
                 viewModelScope.launch {
                     uploadToStorage(activity, mSelectedImagePostFileUri!!, mUserDetails, imageCaption)
-                    delay(1200)
-                    _postsList.value = PostsDatabase.getPosts()
+                    delay(1500) // delay to allow storage upload to execute first
+                    _postsList.value = PostsDatabase.getPosts() // set post lists with new post list
                     Log.d(TAG, "Number of posts = ${_postsList.value?.size}")
                 }
             }
         }
+    }
+
+    companion object {
+        const val TAG = "PostsViewModel"
     }
 }

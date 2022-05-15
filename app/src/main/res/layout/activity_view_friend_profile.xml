@@ -100,6 +100,20 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/civ_friend_image" />
 
+                <TextView
+                    android:id="@+id/friend_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text = "Ikram10"
+                    android:textSize="16sp"
+                    android:textColor="@color/secondary_text_color"
+                    android:textStyle="italic"
+                    android:layout_marginTop="4dp"
+                    />
+
+
+
+
                 <View
                     android:layout_width="320dp"
                     android:layout_height="1dp"

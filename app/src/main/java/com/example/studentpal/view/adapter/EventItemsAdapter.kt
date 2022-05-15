@@ -1,5 +1,6 @@
 package com.example.studentpal.view.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -21,6 +23,7 @@ import com.example.studentpal.view.events.AssignFriendsActivity
 import com.example.studentpal.view.events.EditEventActivity
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.common.Constants
+import com.example.studentpal.view.events.MainActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,6 +40,7 @@ open class EventItemsAdapter(private val context: Context, private var list: Arr
         )
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         /* list parameter contains an array list of Boards.
          * position will provide a single Event object in the array
@@ -49,6 +53,7 @@ open class EventItemsAdapter(private val context: Context, private var list: Arr
                 .centerCrop()
                 .placeholder(R.drawable.add_screen_image_placeholder)
                 .into(holder.itemView.findViewById(R.id.iv_board_image))
+
 
             val card: CardView = holder.itemView.findViewById(R.id.cv_event)
             if (model.cardColor.isNotEmpty()) {
@@ -138,7 +143,7 @@ open class EventItemsAdapter(private val context: Context, private var list: Arr
     }
 
     interface OnClickListener {
-        /* onClick function takes a position where a click was recieved
+        /* onClick function takes a position where a click was received
          * and a model that was clicked, which contains the position
          */
         fun onClick(position: Int, model: Event)

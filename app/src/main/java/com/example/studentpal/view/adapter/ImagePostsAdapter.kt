@@ -30,10 +30,7 @@ class ImagePostsAdapter(var context: Context, var list: ArrayList<Post>)
             itemBinding.tvPostCaption.text = post.caption
             itemBinding.tvLikeCount.text = post.likes.toString()
             itemBinding.ibLike.setOnClickListener {
-                if (onClickListener != null) {
-                    onClickListener!!.onClick(position, post)
 
-                }
 
             }
             // Loads post image into the image view
@@ -111,7 +108,7 @@ class ImagePostsAdapter(var context: Context, var list: ArrayList<Post>)
     }
 
     interface OnClickListener {
-        /* onClick function takes a position where a click was recieved
+        /* onClick function takes a position where a click was received
          * and a model that was clicked, which contains the position
          */
         fun onClick(position: Int, model: Post)

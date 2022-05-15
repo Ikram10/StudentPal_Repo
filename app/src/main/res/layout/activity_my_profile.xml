@@ -96,6 +96,7 @@
                     tools:text="@string/username"
                     android:textColor="@color/secondary_text_color"
                     android:textSize="14sp"
+                    android:textStyle="italic"
                     android:layout_marginTop="2dp"/>
 
                 <View

@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.studentpal.R
 import com.example.studentpal.view.events.MainActivity
@@ -42,6 +43,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         editor.apply()
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
@@ -62,6 +64,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun sendNotification(title: String, message: String) {
         // User sent to MainActivity if logged in when clicking notification
         val intent = if (getCurrentUserId().isNotEmpty()) {

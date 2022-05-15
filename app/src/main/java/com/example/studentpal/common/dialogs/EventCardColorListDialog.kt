@@ -1,11 +1,13 @@
 package com.example.studentpal.common.dialogs
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studentpal.R
@@ -21,17 +23,20 @@ abstract class EventCardColorListDialog(
 
     private var adapter: CardColorItemsAdapter? = null
 
+    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val view = LayoutInflater.from(context)
-            .inflate(R.layout.dialog_list, null)
-
-        setContentView(view)
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_list, null).apply {
+            setContentView(this)
+        }
         //context.setTheme(R.style.MyDialogTheme)
         setCanceledOnTouchOutside(true)
         setUpRecyclerView(view)
-        view.setBackgroundColor(context.resources.getColor(R.color.white))
+        view.setBackgroundColor(
+            ContextCompat
+                .getColor(context, R.color.white)
+        )
 
 
     }
@@ -45,10 +50,10 @@ abstract class EventCardColorListDialog(
 
         adapter!!.onItemClickListener =
             object : CardColorItemsAdapter.OnItemClickListener {
-            override fun OnClick(position: Int, color: String) {
+            override fun onClick(position: Int, Color: String) {
                 dismiss() // dismisses this dialog
                 //when a color is clicked, a color will be passes as an argument which can be used here
-                onItemSelected(color)
+                onItemSelected(Color)
             }
 
         }

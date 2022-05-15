@@ -22,7 +22,6 @@ object Constants {
     const val SENDER: String = "sender"
     const val RECEIVER: String = "receiver"
     const val POSTS: String = "posts"
-    const val POST_DATE: String = "postDate"
 
     // Friend Requests related Constants
     const val FRIENDSHIPS = "friendships" // friendships collection
@@ -31,11 +30,11 @@ object Constants {
     // Event related Constants
     const val EVENTS: String = "events"
     const val ASSIGNED_TO: String = "assignedTo"
-    const val DOCUMENT_ID : String = "documentId"
     const val EVENT_DETAIL: String = "event_detail"
     const val CARD_COLOR: String = "cardColor"
     const val SELECT : String = "Select"
     const val UN_SELECT : String = "UnSelect"
+    const val EVENT_DATE : String = "eventDate"
 
     // Preferences
     const val STUDENTPAL_PREFERENCES = "StudentPalPrefs"
@@ -44,14 +43,10 @@ object Constants {
 
     // START
     const val FCM_BASE_URL:String = "https://fcm.googleapis.com"
-    const val FCM_AUTHORIZATION:String = "authorization"
     const val CONTENT_TYPE = "application/json"
-    const val FCM_KEY:String = "key"
     const val FCM_SERVER_KEY:String = "AAAA5KLpOgc:APA91bEriQauq41gnZxAUt42ZxVU7c_cGzegCqd74Krc0038V2bLd9OJnmpSF0FhIc7DXTYEyZ1db_FKimnpspwNr3gA1Mj3ENbiQqP00X_UrCFUHppCoS8Eskh_gASSx9zjEWR2h0cX"
     const val FCM_KEY_TITLE:String = "title"
     const val FCM_KEY_MESSAGE:String = "message"
-    const val FCM_KEY_DATA:String = "data"
-    const val FCM_KEY_TO:String = "to"
     // END
 
     const val READ_STORAGE_PERMISSION_CODE = 1

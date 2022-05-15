@@ -1,5 +1,6 @@
 package com.example.studentpal.view.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -84,6 +85,8 @@ class UsersAdapter(var context: Context, var list: ArrayList<User>)
             return filteredResults
         }
 
+        @SuppressLint("NotifyDataSetChanged")
+        @Suppress("UNCHECKED_CAST")
         override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults?) {
             list.clear()
             if (filterResults != null) {

@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class AssignFriendsActivity : BaseActivity() {
-    private val TAG = "AssignFriendActivity"
     private var binding: ActivityAssignFriendsBinding? = null
     private lateinit var mEventDetails : Event
     private lateinit var mAssignedFriendsList : ArrayList<User>
@@ -129,7 +128,6 @@ class AssignFriendsActivity : BaseActivity() {
         }
         dialog.show()
     }
-
     /* ensures the user(friend) is assigned to the assigned array list
      * Only called when a new friend has been assigned to the event
      */
@@ -140,13 +138,11 @@ class AssignFriendsActivity : BaseActivity() {
         //reloads the activity
         anyChangesMade = true
         setUpFriendsList(mAssignedFriendsList)
-
         NotificationData(
             "Event Invite",
             "You have received an Event invite from ${mAssignedFriendsList[0].name}").also {
             sendNotification(PushNotification(it, user.fcmToken))
         }
-
 
     }
 
@@ -175,6 +171,10 @@ class AssignFriendsActivity : BaseActivity() {
             Log.e(TAG, e.toString())
 
         }
+    }
+
+    companion object {
+        private const val TAG = "AssignFriendActivity"
     }
 
 }

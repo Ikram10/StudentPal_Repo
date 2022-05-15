@@ -31,8 +31,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 const val TOPIC = "/topics/myTopic"
+@Suppress("OPT_IN_IS_NOT_ENABLED")
 class ChatLogActivity : BaseActivity() {
-    private val TAG = "ChatLog"
     private var binding: ActivityChatLogBinding? = null
     private var toolbar: androidx.appcompat.widget.Toolbar? = null
 
@@ -299,6 +299,10 @@ class ChatLogActivity : BaseActivity() {
         } catch(e: Exception) {
             Log.e(TAG, e.toString())
         }
+    }
+
+    companion object {
+        private const val TAG = "ChatLog"
     }
 
 }

@@ -1,23 +1,20 @@
 package com.example.studentpal.view.friends
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.common.Constants
 import com.example.studentpal.databinding.ActivityViewFriendProfileBinding
-import com.example.studentpal.model.entities.Post
 import com.example.studentpal.model.fcm.PushNotification
 import com.example.studentpal.model.fcm.RetrofitInstance
 import com.example.studentpal.model.remote.PostsDatabase.getFriendsPosts
-import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
 import com.example.studentpal.view.BaseActivity
-import com.example.studentpal.view.adapter.ImagePostsAdapter
 import com.example.studentpal.view.messages.ChatLogActivity
 import com.example.studentpal.viewmodel.FriendsProfileViewModel
 import com.example.studentpal.viewmodel.FriendsProfileViewModel.Companion.currentState
@@ -26,7 +23,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-//My code
+/**
+ * This activity is responsible for displaying a friends profile.
+ *
+ * When a users selects a specific friend, they will be navigated to this activity
+ *
+ * The entire code in this activity belongs to the author.
+ */
 class FriendProfile : BaseActivity() {
 
     companion object {
@@ -34,14 +37,9 @@ class FriendProfile : BaseActivity() {
     }
 
     var binding: ActivityViewFriendProfileBinding? = null
-
     // Buttons
     private var btnPerform: AppCompatButton? = null
     private var btnDeclineFriendRequest: AppCompatButton? = null
-
-    private var postsList: ArrayList<Post>? = null
-    private var postsAdapter: ImagePostsAdapter? = null
-
     // View Model
     private lateinit var viewModel: FriendsProfileViewModel
 
@@ -57,17 +55,18 @@ class FriendProfile : BaseActivity() {
         viewModel.currentUser.observe(this) {
             // TODO
         }
-        /* Observer for profile current state
-         * Calls updateButtons() function whenever current State changes
-         */
+
+
+        // Observer the changes made to the current state of the account
         currentState.observe(this) {
+            // This function is called whenever the current state changes
             updateButtons(it)
         }
 
         // Retrieves friend details from intent
         if (intent.hasExtra(Constants.USER_KEY)) {
-            viewModel._friendDetails.value = intent.getParcelableExtra(Constants.USER_KEY)!!
-            getFriendsPosts(this, viewModel.friendDetails.value?.id)
+            viewModel.friendDetails.value = intent.getParcelableExtra(Constants.USER_KEY)!!
+            getFriendsPosts(viewModel.friendDetails.value?.id)
         }
 
         setupActionBar()
@@ -82,54 +81,61 @@ class FriendProfile : BaseActivity() {
         btnPerform?.setOnClickListener {
             viewModel.performAction(this)
         }
-        viewModel.checkUserExists()
+
+        viewModel.checkFriendshipExists()
 
         btnDeclineFriendRequest?.setOnClickListener {
-            viewModel.unFriend(this)
+            viewModel.performDecline(this)
         }
     }
 
-    // My code: Responsible for modifying the buttons displayed based on the current state of the profile
-    private fun updateButtons(it: FriendsProfileViewModel.AccountStates) {
-        when (it) {
+    /**
+     * This method is responsible for modifying the button's text,
+     * colour and functionality based on the current state of the account.
+     *
+     * The state defines the relationship between two users, for example if they are friends or not.
+     *
+     * @param state defines the current state of the account
+     */
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun updateButtons(state: FriendsProfileViewModel.AccountStates) {
+        when (state) {
             FriendsProfileViewModel.AccountStates.SENT_REQUEST -> {
                 btnDeclineFriendRequest?.visibility = View.GONE
-                btnPerform?.text = "Cancel Friend Request"
+                btnPerform?.setText(R.string.cancelFriendRequest)
                 btnPerform?.background =
                     resources.getDrawable(R.drawable.btn_decline_request, theme)
             }
             FriendsProfileViewModel.AccountStates.DECLINED_REQUEST -> {
-                //change state back to default
+                //change current state back to default
                 currentState.value = FriendsProfileViewModel.AccountStates.DEFAULT
                 btnPerform?.text = resources.getString(R.string.send_friend_request)
                 btnPerform?.background = resources.getDrawable(R.drawable.btn_send_request, theme)
                 btnDeclineFriendRequest?.visibility = View.GONE
             }
+
             FriendsProfileViewModel.AccountStates.RECEIVED_REQUEST -> {
-                btnPerform?.text = "Accept Friend Request"
+                btnPerform?.setText(R.string.acceptFriendRequest)
                 btnPerform?.background = resources.getDrawable(R.drawable.btn_send_request, theme)
-                btnDeclineFriendRequest?.text = "Decline Friend Request"
+                btnDeclineFriendRequest?.setText(R.string.declineFriendRequest)
                 btnDeclineFriendRequest?.background =
                     resources.getDrawable(R.drawable.btn_decline_request, theme)
                 btnDeclineFriendRequest?.visibility = View.VISIBLE
             }
             FriendsProfileViewModel.AccountStates.FRIEND -> {
-                btnPerform?.text = "Message"
+                btnPerform?.setText(R.string.message)
                 btnPerform?.background =
                     resources
                         .getDrawable(
                             R.drawable.shape_button_rounded,
                             theme
                         )
-                btnDeclineFriendRequest?.text = "Unfriend"
+                btnDeclineFriendRequest?.setText(R.string.unfriend)
                 btnDeclineFriendRequest?.background =
                     resources.getDrawable(R.drawable.btn_decline_request, theme)
                 btnDeclineFriendRequest?.visibility = View.VISIBLE
 
                 btnPerform?.setOnClickListener {
-                    lifecycleScope.launch {
-                        fetchCurrentUser()
-                    }
                     // Sends the friend details to the Chat log activity
                     val intent =
                         Intent(this, ChatLogActivity::class.java)
@@ -148,9 +154,16 @@ class FriendProfile : BaseActivity() {
         }
     }
 
-    // MY code: Loads the users data into the activity
+    /**
+     * A method to set the friend's details in the UI.
+     *
+     * This method is called whenever the users data is changed to
+     * update the UI and display the changes
+     *
+     * @see [FriendsProfileViewModel.friendDetails]
+     */
     private fun loadFriendData() {
-        //Users profile image loaded
+        //Users profile image loaded using Glide
         binding?.civFriendImage?.let {
             Glide
                 .with(this)
@@ -172,7 +185,27 @@ class FriendProfile : BaseActivity() {
         binding?.cvFriendStatus?.text = viewModel.friendDetails.value?.status
         binding?.dateNum?.text = viewModel.friendDetails.value?.dateJoined
         binding?.friendsNum?.text = viewModel.friendDetails.value?.numFriends.toString()
+        binding?.friendUsername?.text  = viewModel.friendDetails.value?.username.toString()
 
+    }
+
+    /**
+     * This method is responsible for sending the notification to the Firebase server
+     * This method starts a coroutine to execute the code in the IO thread
+     * @see [com.example.studentpal.model.fcm.RetrofitInstance]
+     */
+    fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            //network request: Posts notification to the firebase server
+            val response = RetrofitInstance.api.postNotification(notification)
+            if (response.isSuccessful) {
+                Log.d(TAG, "Response: ${Gson().toJson(response)}")
+            } else {
+                Log.e(TAG, response.errorBody().toString())
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, e.toString())
+        }
     }
 
     private fun setupActionBar() {
@@ -187,22 +220,5 @@ class FriendProfile : BaseActivity() {
         binding?.toolbarFriendProfile?.setNavigationOnClickListener {
             onBackPressed()
         }
-
     }
-
-    fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
-        try {
-            //network request: Post request
-            val response = RetrofitInstance.api.postNotification(notification)
-            if (response.isSuccessful) {
-                Log.d(Companion.TAG, "Response: ${Gson().toJson(response)}")
-            } else {
-                Log.e(Companion.TAG, response.errorBody().toString())
-            }
-        } catch (e: Exception) {
-            Log.e(Companion.TAG, e.toString())
-        }
-    }
-
-
 }

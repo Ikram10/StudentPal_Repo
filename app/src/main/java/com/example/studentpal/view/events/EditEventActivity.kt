@@ -1,6 +1,9 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.studentpal.view.events
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -19,10 +22,14 @@ import com.example.studentpal.databinding.ActivityEditEventBinding
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.EventDatabase
-import com.example.studentpal.model.remote.EventDatabase.updateBoardDetails
+import com.example.studentpal.model.remote.EventDatabase.updateEventDetails
 import com.example.studentpal.model.remote.UsersDatabase.getAssignedFriendsListDetails
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.adapter.CardAttendeeItemAdapter
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class EditEventActivity : BaseActivity() {
     private var binding: ActivityEditEventBinding? = null
@@ -31,11 +38,12 @@ class EditEventActivity : BaseActivity() {
     private lateinit var etEventName: AppCompatEditText
     private var mSelectedColor = ""
     private lateinit var mAssignedMemberDetailList: ArrayList<User>
+    private var mSelectedDueDateMilliSeconds: Long = 0 // Event date
+
 
     companion object {
         const val MEMBERS_REQUEST_CODE: Int = 13
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,16 +55,13 @@ class EditEventActivity : BaseActivity() {
             mBoardDocumentId = mEventDetails.documentID
             showProgressDialog(resources.getString(R.string.please_wait))
             getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
-
         }
-
 
         etEventName = binding?.etNameEventDetails!!
         //sets the editable text to the event name
         etEventName.setText(mEventDetails.name)
         //when clicked the focus will be set to the end of the text string
         etEventName.setSelection(etEventName.text.toString().length)
-
 
         setupActionBar()
 
@@ -71,18 +76,20 @@ class EditEventActivity : BaseActivity() {
             } else {
                 Toast.makeText(this, "Please Enter an Event name", Toast.LENGTH_LONG).show()
             }
-
         }
         binding?.tvSelectLabelColor?.setOnClickListener {
             eventCardColorListDialog()
         }
 
+        binding?.tvSelectEventDate?.setOnClickListener {
+            showDatePicker()
+        }
 
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == Activity.RESULT_OK && requestCode == MEMBERS_REQUEST_CODE) {
             showProgressDialog(resources.getString(R.string.please_wait))
             getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
@@ -131,7 +138,6 @@ class EditEventActivity : BaseActivity() {
         return colorsList
     }
 
-
     private fun setupActionBar() {
         val toolbar = binding?.toolbarEditEventActivity
         setSupportActionBar(toolbar)
@@ -158,8 +164,12 @@ class EditEventActivity : BaseActivity() {
             eventHashMap[Constants.CARD_COLOR] = mSelectedColor
         }
 
+        if(mEventDetails.eventDate != mSelectedDueDateMilliSeconds) {
+            eventHashMap[Constants.EVENT_DATE] = mSelectedDueDateMilliSeconds
+        }
+
         showProgressDialog(resources.getString(R.string.please_wait))
-        updateBoardDetails(this, eventHashMap, mEventDetails.documentID)
+        updateEventDetails(this, eventHashMap, mEventDetails.documentID)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -215,7 +225,6 @@ class EditEventActivity : BaseActivity() {
 
             binding?.rvSelectedMembersList?.adapter = adapter
 
-            //
             adapter.setOnClickListener(
                 object : CardAttendeeItemAdapter.OnClickListener{
                     override fun onClick() {
@@ -229,6 +238,39 @@ class EditEventActivity : BaseActivity() {
             binding?.tvSelectMembers?.visibility = View.VISIBLE
             binding?.rvSelectedMembersList?.visibility = View.GONE
         }
+    }
+
+    private fun showDatePicker() {
+        val c = Calendar.getInstance()
+        val calYear = c.get(Calendar.YEAR) // Returns the value of the given calendar year
+        val calMonth = c.get(Calendar.MONTH) // Returns the value of the given calendar month
+        val calDay = c.get(Calendar.DAY_OF_MONTH) // Returns the value of the given calendar day
+
+        DatePickerDialog(
+            this,
+            android.R.style.Theme_DeviceDefault_Light_Dialog,
+            { _, year, month, day ->
+                val sDayOfMonth = if (day < 10) "0$day" else "$day"
+                val sMonthOfYear = if ((month + 1) < 10) "0${month + 1}" else "${month + 1}"
+
+                val selectedDate = "$sDayOfMonth/$sMonthOfYear/$year"
+                binding?.tvSelectEventDate?.text = selectedDate
+
+                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val theDate = sdf.parse(selectedDate)
+                mSelectedDueDateMilliSeconds = theDate!!.time
+            },
+            calYear,
+            calMonth,
+            calDay
+        ).show()
+    }
+
+    //this function is called when the event has been modified successfully
+    fun eventModifiedSuccessfully() {
+        hideProgressDialog()
+        setResult(Activity.RESULT_OK)
+        finish()
     }
 
 

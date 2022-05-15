@@ -7,13 +7,4 @@ data class ChatMessage (
     val text : String,
     val timeStamp: Long,
     val status: String = "unseen"
-    ) {
-
-    constructor():
-            this("",
-                "",
-                "",
-                "",
-                -1,
-            "unseen")
-}
+    )

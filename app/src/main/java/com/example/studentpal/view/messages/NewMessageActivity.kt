@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.SearchView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.AppCompatButton
@@ -15,21 +14,21 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
-import com.example.studentpal.view.BaseActivity
-import com.example.studentpal.view.friends.FriendProfile
+import com.example.studentpal.common.Constants
 import com.example.studentpal.databinding.ActivityNewMessageBinding
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.common.Constants
+import com.example.studentpal.view.BaseActivity
+import com.example.studentpal.view.friends.FriendProfile
 import com.google.firebase.firestore.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 
+@Suppress("DEPRECATION")
 class NewMessageActivity : BaseActivity() {
     private var binding: ActivityNewMessageBinding? = null
 
     private var actionBar: ActionBar? = null
-    private var toolbar: androidx.appcompat.widget.Toolbar? = null
 
     private var db: FirebaseFirestore? = null
     private var recyclerView: RecyclerView? = null
@@ -71,7 +70,6 @@ class NewMessageActivity : BaseActivity() {
         searchView.queryHint = "Search Username or Email"
         actionBar = supportActionBar
         actionBar?.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.logo_text_color)))
-        val queryListener: SearchView.OnQueryTextListener
 
         return super.onCreateOptionsMenu(menu)
     }
@@ -97,7 +95,7 @@ class NewMessageActivity : BaseActivity() {
                         }
                     }
 
-                    adapter.setOnItemClickListener { item, view ->
+                    adapter.setOnItemClickListener { item, _ ->
 
                         val userItem = item as UserItem
                         val intent = Intent(this@NewMessageActivity, ChatLogActivity::class.java)

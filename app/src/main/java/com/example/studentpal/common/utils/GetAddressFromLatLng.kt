@@ -18,6 +18,7 @@ class GetAddressFromLatLng(
     private val geoCoder: Geocoder = Geocoder(context, Locale.getDefault())
     private lateinit var mAddressListener: AddressListener
 
+    @Deprecated("Deprecated in Java")
     override fun doInBackground(vararg p0: Void?): String {
 
         try {
@@ -41,6 +42,7 @@ class GetAddressFromLatLng(
         return ""
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onPostExecute(resultString: String?) {
        if (resultString == null){
            mAddressListener.onError()

@@ -30,8 +30,8 @@ object Storage {
         )
         postRef.child(user.id)
             .putFile(uri)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
                     postRef.child(user.id).downloadUrl.addOnSuccessListener {
                         val date = Date()
                         val dateString = simpleDateFormat.format(date)

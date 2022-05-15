@@ -7,13 +7,12 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.example.studentpal.R
-import com.example.studentpal.view.BaseActivity
-import com.example.studentpal.view.friends.FriendsActivity
+import com.example.studentpal.common.Constants
 import com.example.studentpal.databinding.ActivityLatestMessagesBinding
 import com.example.studentpal.model.entities.ChatMessage
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.common.Constants
-import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
+import com.example.studentpal.view.BaseActivity
+import com.example.studentpal.view.friends.FriendsActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -21,8 +20,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 //kotlinMessenger code
 class LatestMessagesActivity : BaseActivity() {
@@ -46,7 +43,7 @@ class LatestMessagesActivity : BaseActivity() {
         binding!!.recyclerViewLatestMessages.adapter = adapter
 
         //sends user to the chat log with selected latest message
-        adapter.setOnItemClickListener{ item, view ->
+        adapter.setOnItemClickListener{ item, _ ->
             Log.d(TAG, "Latest message item clicked")
             val intent = Intent(this, ChatLogActivity::class.java)
             val row = item as LatestMessageRow

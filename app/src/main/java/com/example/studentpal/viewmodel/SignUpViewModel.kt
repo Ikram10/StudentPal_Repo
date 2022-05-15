@@ -16,21 +16,49 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SignUpViewModel : ViewModel(){
+/**
+ * This class is responsible for executing [SignUpActivity] business logic
+ *
+ * The code displayed was adapted from Denis Panjuta's Trello clone (see references file).
+ * However alterations were made to the code to suit the project's requirements.
+ *
+ * For instance, Kotlin Coroutines were embedded to allow the author to write asynchronous code and
+ * structural changes were made to implement the MVVM design pattern
+ * which required architectural principles to be implemented.
+ *
+ * An email verification feature was also implemented with the help of the Firebase documentation.
+ * [Firebase Documentation](https://firebase.google.com/docs/auth/admin/email-action-links)
+ *
+ * All code that was created by the author is labeled with [My Code].
+ *
+ * @see[com.example.studentpal.common.References]
+ * @see[authenticateUser]
+ * @see [sendVerificationEmail]
+ */
 
-    // My Code: This code will retrieve the current date and get the date the user first sign up to StudentPal
+class SignUpViewModel : ViewModel(){
+    /**
+     * Method retrieves the current date
+     */
     private fun getCurrentDate(): String {
         val date = Calendar.getInstance().time
         val formatter = SimpleDateFormat.getDateInstance()
-
         return formatter.format(date)
     }
 
-    // method responsible for authenticating users and ensuring validation form is entered correctly
+    /**
+     * Method ensures Sign-Up form details are valid before authenticating users.
+     *
+     * The author revised this method by adding a unique username field
+     * @see isUsernameUnique
+     * @see invalidUsername
+     *
+     */
     suspend fun authenticateUser(activity: SignUpActivity, name: String, email: String, password: String, username: String) {
         val mAuth = FirebaseAuth.getInstance()
+
         if (validateForm(activity,name, email, password, username)) {
-            // shifting execution of the block
+            // Shifting execution of the code to the main thread
             withContext(Dispatchers.Main) {
                 activity.showProgressDialog("Please Wait")
             }
@@ -40,30 +68,30 @@ class SignUpViewModel : ViewModel(){
                             val firebaseUser: FirebaseUser = it.result!!.user!!
                             val registeredEmail = firebaseUser.email!!
                             val dateJoined = getCurrentDate()
-                            //User object constructed to be stored in Firestore
+                            // User object constructed to be stored in Firestore
                             val user = User(firebaseUser.uid, name, registeredEmail, dateJoined, username = username)
-                            //Verification email will be sent to the sign up email
+                            // Verification email sent to the provided Sign Up email
                             sendVerificationEmail(activity,firebaseUser, user)
                         } else {
-                            //if a user with the same credentials already exists, registration will fail
+                            // If a user with the same credentials already exists, registration will fail
                             Toast.makeText(activity, "Registration failed", Toast.LENGTH_LONG).show()
                             activity.hideProgressDialog()
                         }
                     }
-
             }
-
     }
 
-    //method responsible for sending verification email to the FirebaseUser trying to sign up
+    /**
+     * Method responsible for sending verification email to the FirebaseUser
+     */
     private fun sendVerificationEmail(
-        activity: SignUpActivity,fUser: FirebaseUser, user: User) {
+        activity: SignUpActivity, fUser: FirebaseUser, user: User) {
         fUser.sendEmailVerification().addOnSuccessListener {
             Toast.makeText(activity,
                 "Email verification link sent to ${fUser.email}",
                 Toast.LENGTH_LONG
             ).show()
-            //creates a document in Firestore populating the fields with user details
+            // Creates a document in Firestore populating the fields with user details
             registerUser(activity, user)
         }.addOnFailureListener {
             Log.e(javaClass.simpleName, "error sending verification link")
@@ -71,6 +99,10 @@ class SignUpViewModel : ViewModel(){
         }
     }
 
+    /**
+     * Method ensures Sign-Up form information provided is valid
+     *
+     */
     private suspend fun validateForm(activity: SignUpActivity, name: String, email: String, password: String, username: String): Boolean {
         return when {
             TextUtils.isEmpty(name) -> {
@@ -94,7 +126,8 @@ class SignUpViewModel : ViewModel(){
     }
 
     /**
-     * This method checks if the entered username is invalid
+     * This method checks if the entered username is invalid.
+     * A call to the database is made to determine if username is unique
      *
      * @return True if no username is entered or if username is not unique
      */
@@ -105,9 +138,6 @@ class SignUpViewModel : ViewModel(){
             activity.showErrorSnackBar("Please enter a Username")
             return true
         }
-        /* Makes a call to the Users database
-         * Ensures username is unique and does not exist
-         */
         if (!isUsernameUnique(username)) {
             activity.showErrorSnackBar("Username already taken")
             return true
@@ -115,6 +145,11 @@ class SignUpViewModel : ViewModel(){
         return false
     }
 
+    /**
+     * This method checks if the entered password is invalid.
+     *
+     * @return True if no password is entered or if password is less than 6 characters
+     */
     private fun invalidPassword(
         activity: SignUpActivity, password: String): Boolean {
         if (password.isEmpty()) {
@@ -132,6 +167,11 @@ class SignUpViewModel : ViewModel(){
         return false
     }
 
+    /**
+     * This method checks if the entered email is invalid.
+     *
+     * @return True if no email is entered or if email is in the wrong format
+     * */
     private fun invalidEmail(activity: SignUpActivity,email: String): Boolean {
         if (email.isEmpty()) {
             activity.showErrorSnackBar("Please enter an email")
@@ -144,7 +184,9 @@ class SignUpViewModel : ViewModel(){
         return false
     }
 
-    //checks if email is in the correct format
+    /**
+     * Method checks if email is in the correct format
+     */
     private fun isEmailFormatValid(email: CharSequence?): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email!!).matches()
     }

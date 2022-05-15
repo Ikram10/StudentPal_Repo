@@ -17,6 +17,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+@Suppress("OPT_IN_IS_NOT_ENABLED")
 class RequestsAdapter(var context: Context, var list: ArrayList<User>)
     : RecyclerView.Adapter<RequestsAdapter.RequestsViewHolder>() {
 

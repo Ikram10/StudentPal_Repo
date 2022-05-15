@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">StudentPal</string>
     <string name="sign_in">SIGN IN</string>
     <string name="sign_up">SIGN UP</string>
@@ -47,7 +47,7 @@
     <string name="select_color">Select Color</string>
     <string name="select_members">Select Members</string>
     <string name="due_date">Due Date</string>
-    <string name="select_due_date">Select Due Date</string>
+    <string name="change_event_date">Change Event Date</string>
     <string name="delete_card">Delete Card</string>
     <string name="alert">Alert</string>
     <string name="confirmation_message_to_delete_card">Are you sure you want to delete card \'%1$s\'?</string>
@@ -72,7 +72,7 @@
     <string name="update_profile_card">You can modify your Profile card by updating your details below</string>
     <string name="search">Search</string>
     <string name="image_contentDescription">Select an image to be displayed as the event image</string>
-    <string name="no_events_are_available">No events are available</string>
+    <string name="no_events">No events</string>
     <string name="event_description">Event Description</string>
     <string name="all_events">All Events</string>
     <string name="hello">Hello</string>
@@ -91,8 +91,7 @@
     <string name="add_friend">Add Friend</string>
     <string name="event_name">Event Name</string>
     <string name="card_color">Card Color</string>
-    <string name="event_date">Event Date</string>
-    <string name="google_maps_api_key">AIzaSyB1Gr1nQyk0wegekififdc3W8pXI-O6dLU</string>
+    <string name="google_maps_api_key" tools:ignore="Typos">AIzaSyB1Gr1nQyk0wegekififdc3W8pXI-O6dLU</string>
     <string name="use_current_location">Use Current Location</string>
     <string name="default_notification_channel_id">studentpal_notification_channel_id</string>
     <string name="send_friend_request">Send Friend Request</string>
@@ -115,7 +114,7 @@
         "technologically advanced and open to imagination and magic.\n"
         "Surfaces and edges of the material provide visual cues that are grounded in reality. The "
         "use of familiar tactile attributes helps users quickly understand affordances. Yet the "
-        "flexibility of the material creates new affordances that supercede those in the physical "
+        "flexibility of the material creates new affordances that supersede those in the physical "
         "world, without breaking the rules of physics.\n"
         "The fundamentals of light, surface, and movement are key to conveying how objects move, "
         "interact, and exist in space and in relation to each other. Realistic lighting shows "
@@ -138,7 +137,7 @@
         "All action takes place in a single environment. Objects are presented to the user without "
         "breaking the continuity of experience even as they transform and reorganize.\n"
         "Motion is meaningful and appropriate, serving to focus attention and maintain continuity. "
-        "Feedback is subtle yet clear. Transitions are efﬁcient yet coherent.\n\n"
+        "Feedback is subtle yet clear. Transitions are efficient yet coherent.\n\n"
 
         "3D world.\n\n"
 
@@ -191,13 +190,18 @@
         "whether on a per component basis or using the entire app layout.\n"
         "On a component level, components can move or be removed before they cause interference. "
         "For example, a floating action button (FAB) can disappear or move off screen before a "
-        "user picks up a card, or it can move if a snackbar appears.\n"
+        "user picks up a card, or it can move if a snack appears.\n"
         "On the layout level, design your app layout to minimize opportunities for interference. "
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
     <string name="friend_requests">Friend Requests</string>
+    <string name="cancelFriendRequest">Cancel Friend Request</string>
+    <string name="acceptFriendRequest">Accept Friend Request</string>
+    <string name="declineFriendRequest">Decline Friend Request</string>
+    <string name="unfriend">Unfriend</string>
+    <string name="event_date">Event Date</string>
 
 
 </resources>

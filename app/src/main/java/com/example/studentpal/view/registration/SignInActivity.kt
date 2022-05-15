@@ -10,12 +10,24 @@ import com.example.studentpal.model.entities.User
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.events.MainActivity
 import com.example.studentpal.viewmodel.SignInViewModel
+/**
+ * This activity is responsible for displaying the Sign In views
+ *
+ * The code displayed was adapted from Denis Panjuta's Trello clone (see references file)
+ *
+ * All code that was created by the author is labeled with [My Code].
+ * The code was adapted as the author implemented the MVVM design pattern
+ * which required architectural principles to be implemented.
+ * @see[com.example.studentpal.common.References]
+ * @see viewModel
+ *
+ *
+ */
 
 class SignInActivity : BaseActivity() {
 
-
-
     private var binding: ActivitySignInBinding? = null
+
     private lateinit var viewModel: SignInViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,8 +40,10 @@ class SignInActivity : BaseActivity() {
         setupActionBar()
 
         binding?.btnSignIn?.setOnClickListener {
+            // Retrieves email and password text input
             val email: String = binding?.etEmailSignIn?.text.toString().trim { it <= ' ' }
             val password: String = binding?.etPasswordSignIn?.text.toString().trim { it <= ' ' }
+
             viewModel.signInRegisteredUser(this,email, password)
         }
 
@@ -39,8 +53,9 @@ class SignInActivity : BaseActivity() {
 
     }
 
-
-    //activates the back button and implements its functionality
+    /**
+     * Activates back button in the toolbar
+     */
     private fun setupActionBar() {
         setSupportActionBar(binding?.toolbarSignInActivity)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_round_arrow_back_24)
@@ -48,11 +63,16 @@ class SignInActivity : BaseActivity() {
         if (supportActionBar != null) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
+
         binding?.toolbarSignInActivity?.setNavigationOnClickListener {
+            // Sends user back to the previous activity
             onBackPressed()
         }
     }
 
+    /**
+     * A method that ensures email is verified before signing user in
+     */
     fun signInSuccess(user: User) {
         hideProgressDialog()
         if (viewModel.auth.currentUser?.isEmailVerified == true) {

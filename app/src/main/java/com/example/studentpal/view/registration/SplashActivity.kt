@@ -15,7 +15,19 @@ import com.example.studentpal.view.events.MainActivity
 import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.google.firebase.auth.FirebaseAuth
 
-
+/**
+ * This activity is responsible for displaying the splash screen
+ * and handling the auto login feature.
+ *
+ * The code displayed was adapted from Denis Panjuta's Trello clone (see references file).
+ * However minute changes were made to accommodate to the project requirements. For instance, autologin
+ * only if the user has verified their email and is currently logged in.
+ *
+ * All code that was created by the author is labeled with [My Code].
+ *
+ * @see[com.example.studentpal.common.References]
+ * @see[isEmailV]
+ */
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,23 +39,19 @@ class SplashActivity : AppCompatActivity() {
         logoImage.layoutParams.width = 1000
         logoImage.layoutParams.height = 1000
 
-        /**Handler delays the intent to Intro Activity by 2 seconds
-         * Handler also handles auto login feature
+        /**
+         * Handler delays the intent to Intro Activity by 2 seconds
          * If user is logged and has verified email they will be directed to the main activity,
-        otherwise the Intro activity where they will be asked to sign in or sign up.
          */
         Handler(Looper.myLooper()!!).postDelayed({
 
             val currentUserID = getCurrentUserId()
             val fUser = FirebaseAuth.getInstance().currentUser
 
-            /* Checks if there is a currently signed in User
-             * If not send user to the Intro activity to sign in or sign up
-             */
+
+            // Checks if there is a user currently logged in
             if (fUser != null) {
-                /* checks if there is a current user first
-                 * Then checks if email is verified before sending user to the main activity
-                 */
+                // My Code: Checks if email is verified before autologin
                 if (currentUserID.isNotEmpty() && fUser.isEmailVerified) {
                     startActivity(Intent(this, MainActivity::class.java))
                 } else {
@@ -55,11 +63,11 @@ class SplashActivity : AppCompatActivity() {
             finish()
         }, 2000)
 
-        hideSystemBars()
 
+        //hideSystemBars()
     }
 
-    private fun hideSystemBars() {
+        private fun hideSystemBars() {
         val windowInsetsController =
             ViewCompat.getWindowInsetsController(window.decorView) ?: return
         // Configure the behavior of the hidden system bars

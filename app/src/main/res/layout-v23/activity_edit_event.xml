@@ -135,8 +135,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/card_details_value_marginTop"
                     android:padding="@dimen/card_details_value_padding"
-                    android:text="@string/select_due_date"
-                    android:textColor="@color/primary_text_color" />
+                    android:text="@string/change_event_date"
+                    android:textColor="@color/primary_text_color"
+                    />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_update_event_details"

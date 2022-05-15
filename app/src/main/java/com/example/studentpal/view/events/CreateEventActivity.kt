@@ -47,6 +47,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Suppress("DEPRECATION")
 class CreateEventActivity : BaseActivity() {
     // GLOBAL VARIABLES
     var binding: ActivityCreateBoardBinding? = null
@@ -113,8 +114,6 @@ class CreateEventActivity : BaseActivity() {
 
             }
         }
-
-
 
         binding?.etEventLocation?.setOnClickListener {
             try {
@@ -185,24 +184,24 @@ class CreateEventActivity : BaseActivity() {
                 uploadBoardImage()
             } else {
                 showProgressDialog(resources.getString(R.string.please_wait))
-                creatEvent()
+                createEvent()
             }
         }
     }
 
 
     //method is responsible setting up the event details to be stored in cloud Firestore
-    private fun creatEvent() {
+    private fun createEvent() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(getCurrentUserID())
-        val etEventName = binding?.etBoardName?.text.toString()
+        val etEventName = binding?.etEventName?.text.toString()
         val etEventLocation = binding?.etEventLocation?.text.toString()
         val etEventDate = binding?.etEventDate?.text.toString()
 
         if (validateEditForm(etEventName, etEventLocation, etEventDate)) {
             //board information that will be stored in Firestore
             val event = Event(
-                binding?.etBoardName?.text.toString(),
+                binding?.etEventName?.text.toString(),
                 mBoardImageUrl,
                 mUserName,
                 assignedUsersArrayList,
@@ -220,7 +219,6 @@ class CreateEventActivity : BaseActivity() {
         } else {
             hideProgressDialog()
         }
-
 
     }
 
@@ -303,7 +301,7 @@ class CreateEventActivity : BaseActivity() {
     private fun uploadBoardImage() {
         showProgressDialog(resources.getString(R.string.please_wait))
         //reference to firebase storage
-        val sref: StorageReference = FirebaseStorage.getInstance().reference.child(
+        val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child(
             "BOARD_IMAGE" +
                     System.currentTimeMillis() + "." + Constants.getFileExtension(
                 this,
@@ -311,7 +309,7 @@ class CreateEventActivity : BaseActivity() {
             )
         )
         //places the image file into Firebase storage
-        sref.putFile(mSelectedImageFileUri!!).addOnSuccessListener { taskSnapshot ->
+        storageRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener { taskSnapshot ->
             /* logs the task snapshot to display where the image file is stored.
          * download URL is a publicly accessible URL that is used to access a file from Cloud Storage.
          * The download URL contains a download token which acts as a security measure to restrict access only to those who possess the token.
@@ -327,7 +325,7 @@ class CreateEventActivity : BaseActivity() {
                 //stores the image uri in this variable
                 mBoardImageUrl = it.toString()
                 //only successful storage of board image will call this createBoard() method
-                creatEvent()
+                createEvent()
             }
         }.addOnFailureListener {
             Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
@@ -336,8 +334,8 @@ class CreateEventActivity : BaseActivity() {
     }
 
 
-    //this function is called if the board is created and stored successfully in Firestore
-    fun boardCreatedSuccessfully() {
+    //this function is called if the event is created and stored successfully in Firestore
+    fun eventCreatedSuccessfully() {
         hideProgressDialog()
         setResult(Activity.RESULT_OK)
         finish()
@@ -358,12 +356,12 @@ class CreateEventActivity : BaseActivity() {
 
     }
 
+
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
             mSelectedImageFileUri = data.data
-
             try {
                 binding?.ivBoardImage?.let {
                     Glide
@@ -425,14 +423,14 @@ class CreateEventActivity : BaseActivity() {
 
     private fun showDatePicker() {
         val c = Calendar.getInstance()
-        val year = c.get(Calendar.YEAR) // Returns the value of the given calendar year
-        val month = c.get(Calendar.MONTH)
-        val day = c.get(Calendar.DAY_OF_MONTH)
+        val yearSelected = c.get(Calendar.YEAR) // Returns the value of the given calendar year
+        val monthSelected = c.get(Calendar.MONTH)
+        val daySelected = c.get(Calendar.DAY_OF_MONTH)
 
         DatePickerDialog(
             this,
             android.R.style.Theme_DeviceDefault_Light_Dialog,
-            { datePicker, year, month, day ->
+            { _, year, month, day ->
                 val sDayOfMonth = if (day < 10) "0$day" else "$day"
                 val sMonthOfYear = if ((month + 1) < 10) "0${month + 1}" else "${month + 1}"
 
@@ -443,22 +441,20 @@ class CreateEventActivity : BaseActivity() {
                 val theDate = sdf.parse(selectedDate)
                 mSelectedDueDateMilliSeconds = theDate!!.time
             },
-            year,
-            month,
-            day
+            yearSelected,
+            monthSelected,
+            daySelected
         ).show()
     }
 
     private fun showTimePicker() {
         val t = Calendar.getInstance()
         val hourOfDay = t.get(Calendar.HOUR_OF_DAY)
-        val minute = t.get(Calendar.MINUTE)
+        val minuteSelected= t.get(Calendar.MINUTE)
 
-        val tpd = TimePickerDialog(
+        TimePickerDialog(
             this,
-            android.R.style.Theme_DeviceDefault_Light_Dialog,
-            { timePicker, hour, minute ->
-
+            android.R.style.Theme_DeviceDefault_Light_Dialog, { _, hour, minute ->
                 val sHour = if (hour < 10) "0${hour}" else "$hour"
                 val sMinute = if (minute < 10) "0${minute}" else "$minute"
 
@@ -468,7 +464,7 @@ class CreateEventActivity : BaseActivity() {
                 mSelectedTime = selectedTime
             },
             hourOfDay,
-            minute,
+            minuteSelected,
             true
         )
             .show()

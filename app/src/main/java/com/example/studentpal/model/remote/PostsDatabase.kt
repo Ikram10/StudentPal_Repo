@@ -6,7 +6,6 @@ import com.example.studentpal.common.Constants
 import com.example.studentpal.model.entities.Post
 import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.example.studentpal.view.profile.PostsActivity
-import com.example.studentpal.view.friends.FriendProfile
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -56,7 +55,7 @@ object PostsDatabase {
          }
     }
 
-    fun getFriendsPosts(activity: FriendProfile, id: String?) {
+    fun getFriendsPosts(id: String?) {
         db
             .whereEqualTo(Constants.ID, id)
             .addSnapshotListener { snapshot, e ->

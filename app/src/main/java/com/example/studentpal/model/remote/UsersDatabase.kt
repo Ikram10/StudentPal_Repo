@@ -5,34 +5,44 @@ import android.util.Log
 import android.widget.Toast
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.view.events.MainActivity
-import com.example.studentpal.view.profile.MyProfileActivity
-import com.example.studentpal.view.profile.PostsActivity
 import com.example.studentpal.view.events.AssignFriendsActivity
 import com.example.studentpal.view.events.EditEventActivity
-import com.example.studentpal.view.events.EventInfoActivity
+import com.example.studentpal.view.events.MainActivity
 import com.example.studentpal.view.friends.FindFriends
+import com.example.studentpal.view.profile.MyProfileActivity
 import com.example.studentpal.view.registration.SignInActivity
 import com.example.studentpal.view.registration.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import kotlinx.coroutines.tasks.await
 
-
-/** For hosting the Database code, Kotlin object is used.
- *  This makes our Firebase service a singleton, making only a single instance of this service available.
- *  This provides easy access to functions defined here from anywhere in our code.
+/**
+ * This object contains all the functionalities responsible for retrieving and storing data
+ * in the users collection in Firestore.
+ *
+ * The author implemented an object to create a singleton of the database, that can be accessed
+ * anywhere in the code
+ *
+ * [Adapted ]: Parts of this code in this object was adapted from Denis Panjuta's code as it taught
+ * the author how to integrate firestore and store and retrieve data into collections
+ *
+ * @see com.example.studentpal.common.References
  */
+
 object UsersDatabase {
     private const val TAG = "UsersDatabase"
+
+    // users collection in firestore
     private val db = FirebaseFirestore.getInstance().collection(Constants.USERS)
 
     /**
-     * This function retrieves the Firestore document of the current user by using getCurrentUserId().get()
-     * It loads the document information into the activity
-     * readBoardsList will only read and load the events for the current user stored in Firestore if the boolean is true
+     * Method retrieves the Firestore document of the current user and
+     * loads the document information into the activity
+     *
+     * @param loadEventsList will only load the events list for the current user
+     * if the boolean is true
      */
-    fun loadUserData(activity: Activity, readBoardsList: Boolean = false) {
+    fun loadUserData(activity: Activity, loadEventsList: Boolean = false) {
         val mFireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
         mFireStore.collection(Constants.USERS)
             // The document id is the current user's id
@@ -51,15 +61,10 @@ object UsersDatabase {
                     }
                     is MainActivity -> {
                         if (loggedInUser != null) {
-                            activity.updateNavigationUserDetails(loggedInUser, readBoardsList)
+                            activity.updateNavigationUserDetails(loggedInUser, loadEventsList)
                         }
                     }
                     is MyProfileActivity -> {
-                        if (loggedInUser != null) {
-                            activity.setUserDataInUI(loggedInUser)
-                        }
-                    }
-                    is PostsActivity -> {
                         if (loggedInUser != null) {
                             activity.setUserDataInUI(loggedInUser)
                         }
@@ -82,10 +87,13 @@ object UsersDatabase {
             }
     }
 
-    // Checks database to see if Username is already taken
+    /**
+     * [My Code]: Method checks users collection in firestore to see if Username is already taken
+     *
+     * @return True if no user exists with the same username
+     */
     suspend fun isUsernameUnique(username: String) : Boolean {
         return try {
-            // return true if there are no user documents with same username
             db
                 .whereEqualTo(Constants.USERNAME, username)
                 .get()
@@ -135,13 +143,13 @@ object UsersDatabase {
     }
 
     /**
-     * This method registers a new user into the cloud Firestore
-     * A Users collection is created, which generates a single document for each registered user
-     * The users document data is filled using the userInfo parameter
-     * Only one user document per registered will be permitted
+     * Creates a new user entry in cloud Firestore.
+     * Only one user document per registered user id will be permitted
+     *
+     * @param userInfo contains the user details that will be stored in Database
      */
     fun registerUser(activity: SignUpActivity, userInfo: User) {
-        // SetOptions.merge() ensures only one user account is created in Firestore for each User id
+        // Ensures only one user account is created in Firestore for each User id
         db.document(getCurrentUserId()).set(
             userInfo,
             SetOptions.merge()
@@ -152,6 +160,7 @@ object UsersDatabase {
                 Log.e(activity.javaClass.simpleName, "Error registering user")
             }
     }
+
 
     fun getCurrentUserId(): String {
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -168,7 +177,6 @@ object UsersDatabase {
         db.document(getCurrentUserId()).update(userHashMap)
             .addOnSuccessListener {
                 Log.i(activity.javaClass.simpleName, "Profile data updated successfully")
-                Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_LONG).show()
                 when (activity) {
                     is MainActivity -> {
                         activity.tokenUpdateSuccess()
@@ -277,16 +285,17 @@ object UsersDatabase {
     }
 
     // Retrieves the event host from database
-    fun getEventHost(activity: EventInfoActivity, userId: String) {
-        db
-            .document(userId)
-            .get()
-            .addOnSuccessListener {
-                if (it.exists()) {
-                    val user = it.toObject(User::class.java)
-                    activity.setHost(user!!)
-                }
-            }
+   suspend fun getEventHost(userId: String) : User? {
+        return try {
+            db
+                .document(userId)
+                .get()
+                .await()
+                .toObject(User::class.java)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting host details", e)
+            null
+        }
     }
 
     //retrieves friend details by querying for their email in firestore

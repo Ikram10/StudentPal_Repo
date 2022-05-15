@@ -42,8 +42,6 @@ data class Event (
         parcel.readDouble(),
         parcel.readString()!!
     )
-    {
-    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
         parcel.writeString(name)

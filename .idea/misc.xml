@@ -67,6 +67,7 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/ab_chat_log.xml" value="0.40017101325352716" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/actionbar_layout.xml" value="0.4875" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_active_users.xml" value="0.4673913043478261" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_assign_friends.xml" value="0.14450619923044036" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_base.xml" value="0.4302536231884058" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_chat_log.xml" value="0.3333333333333333" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_create_board.xml" value="0.5" />
@@ -90,7 +91,7 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_sign_up.xml" value="0.5" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_splash.xml" value="0.3" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_verify_email.xml" value="0.5" />
-        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_view_friend_profile.xml" value="0.22" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/activity_view_friend_profile.xml" value="0.5" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/app_bar_main.xml" value="0.29438405797101447" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/app_bar_name.xml" value="0.4875" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/chat_from_row.xml" value="0.5" />

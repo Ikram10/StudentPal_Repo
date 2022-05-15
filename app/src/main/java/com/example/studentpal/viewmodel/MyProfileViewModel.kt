@@ -11,23 +11,36 @@ import androidx.lifecycle.viewModelScope
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
-import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.example.studentpal.model.remote.UsersDatabase.updateUserProfileData
 import com.example.studentpal.view.profile.MyProfileActivity
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
-import kotlin.collections.HashMap
 import kotlin.collections.set
+
+/**
+ * This class is responsible for executing [MyProfileActivity] business logic
+ *
+ * The methods displayed was adapted from Denis Panjuta's Trello clone (see references file).
+ * However alterations were made to the code to suit the project's requirements.
+ *
+ * For instance, Kotlin Coroutines were embedded to allow the author to write asynchronous code and
+ * structural changes were made to implement the MVVM design pattern
+ * which required architectural principles to be implemented.
+ *
+ * All code that was created by the author is labeled with [My Code].
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 
 class MyProfileViewModel(application: Application) : AndroidViewModel(application) {
 
     // current user profile details
     private val _currentUser = MutableLiveData<User>()
     val currentUser: LiveData<User>
-    get() = _currentUser
+    get() = _currentUser // public getter
 
-    // Variables stores the selected image URI  value
+    // Variables store the selected image URI values
     var mSelectedImageFileUri: Uri? = null
     var mSelectedCoverImageFileUri: Uri? = null
     private var mProfileImageURL: String = ""
@@ -35,34 +48,38 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
     var profileImgSelected: Boolean = false
     var profileCoverImgSelected: Boolean = false
 
+    /**
+     *  [My Code]: Initialise currentUser whenenver this ViewModel class is created
+     */
     init {
-        /*special CoroutineScope provided by Android
-         * Firebase functions are defined as suspend functions, therefore can only be called
-         * from within a coroutine scope or another suspend function.
-         */
         viewModelScope.launch {
+            // Retrieves current user information from the database
             _currentUser.value = fetchCurrentUser()!!
         }
     }
 
-
+    /**
+     * [Adapted ]: Uploads the selected loaded image to Firebase cloud storage
+     *
+     * This method was adapted from Panjuta's code, to implement Cover image upload.
+     * It reuses the same implementation for uploading a profile image
+     */
     fun uploadToStorage(activity: MyProfileActivity) {
         activity.showProgressDialog("Please Wait")
         if (mSelectedImageFileUri != null) {
-            val sref: StorageReference = FirebaseStorage.getInstance().reference.child(
+            val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child(
                 "USER_IMAGE" +
                         System.currentTimeMillis() + "." + Constants.getFileExtension(
                     activity,
                     mSelectedImageFileUri
                 )
             )
-
-            sref.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
+            storageRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener { task ->
                 Log.i(
                     "Firebase Image URL",
-                    it.metadata!!.reference!!.downloadUrl.toString()
+                    task.metadata!!.reference!!.downloadUrl.toString()
                 )
-                it.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
+                task.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
                     Log.i(
                         "Downloadable Image URL", it.toString()
                     )
@@ -76,19 +93,19 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
         if (mSelectedCoverImageFileUri != null) {
-            val sref: StorageReference = FirebaseStorage.getInstance().reference.child(
+            val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child(
                 "COVER_IMAGE" +
                         System.currentTimeMillis() + "." + Constants.getFileExtension(
                     activity,
                     mSelectedCoverImageFileUri
                 )
             )
-            sref.putFile(mSelectedCoverImageFileUri!!).addOnSuccessListener {
+            storageRef.putFile(mSelectedCoverImageFileUri!!).addOnSuccessListener { task ->
                 Log.i(
                     "Firebase Cover Img URL",
-                    it.metadata!!.reference!!.downloadUrl.toString()
+                    task.metadata!!.reference!!.downloadUrl.toString()
                 )
-                it.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
+                task.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
                     Log.i(
                         "Downloadable Image URL", it.toString()
                     )
@@ -106,10 +123,18 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
 
     }
 
-
+    /**
+     * [Adapted ]: A method to update user profile details in the database
+     *
+     * This method was adapted from Panjuta's to code add the update cover image feature
+     *
+     * @param userName the modifed name entered in the Name edit text field
+     * @param userStatus the modifed status entered in the Status edit text field
+     */
     fun updateUserProfile(activity: MyProfileActivity, userName: String, userStatus : String) {
 
         val userHashMap = HashMap<String, Any>()
+
         var anyChangesMade = false
 
         if (mProfileImageURL.isNotEmpty() && mProfileImageURL != _currentUser.value?.image) {
