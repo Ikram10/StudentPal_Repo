@@ -32,7 +32,7 @@
         android:layout_margin= "@dimen/fab_margin">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_create_board"
+            android:id="@+id/fab_create_event"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

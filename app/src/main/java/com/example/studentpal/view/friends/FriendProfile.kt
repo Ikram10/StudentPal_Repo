@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
@@ -50,12 +51,6 @@ class FriendProfile : BaseActivity() {
 
         // Initialise View Model
         viewModel = ViewModelProvider(this)[FriendsProfileViewModel::class.java]
-
-        // Observer for current user
-        viewModel.currentUser.observe(this) {
-            // TODO
-        }
-
 
         // Observer the changes made to the current state of the account
         currentState.observe(this) {
@@ -186,6 +181,28 @@ class FriendProfile : BaseActivity() {
         binding?.dateNum?.text = viewModel.friendDetails.value?.dateJoined
         binding?.friendsNum?.text = viewModel.friendDetails.value?.numFriends.toString()
         binding?.friendUsername?.text  = viewModel.friendDetails.value?.username.toString()
+
+        //My code: Sets the text colour of users status depending on the Status
+        when (viewModel.friendDetails.value?.status) {
+            "Available" -> {
+                // Change colour green when status message is Available
+                binding!!.cvFriendStatus.setTextColor(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.available
+                    )
+                )
+            }
+            // Change colour red when status message is Available
+            "Unavailable" -> {
+                binding!!.cvFriendStatus.setTextColor(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.unavailable
+                    )
+                )
+            }
+        }
 
     }
 

@@ -44,13 +44,14 @@
                 android:gravity="center_vertical">
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/et_search_friend_email"
+                    android:id="@+id/et_search_friend_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_baseline_email_24"
+                    android:drawableLeft="@drawable/ic_nav_user"
                     android:drawablePadding="10dp"
+                    android:drawableTint="#0D6BA4"
                     android:gravity="center_vertical"
-                    android:hint="@string/prompt_email"
+                    android:hint="@string/username"
                     android:inputType="text"
                     android:textColor="@color/black"
                     android:textSize="@dimen/et_text_size" />

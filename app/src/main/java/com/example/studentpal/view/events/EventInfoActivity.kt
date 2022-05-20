@@ -13,7 +13,6 @@ import com.example.studentpal.databinding.ActivityEventInfoBinding
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.messages.ChatLogActivity
 import com.example.studentpal.viewmodel.EventInfoViewModel
-import com.example.studentpal.viewmodel.MyProfileViewModel
 
 /**
  * This activity is responsible for displaying the events information
@@ -107,7 +106,7 @@ class EventInfoActivity : BaseActivity() {
                 .into(it!!)
 
         }
-        // populates the views with events informations
+        // populates the views with events information
         binding?.tvEventInfoTime?.text = viewModel.event?.eventTime
         binding?.tvEventInfoDate?.text = viewModel.event?.let { viewModel.getCurrentDate(it.eventDate) }
         binding?.tvHostName?.text = viewModel.host.value?.name
@@ -121,6 +120,9 @@ class EventInfoActivity : BaseActivity() {
         }
     }
 
+    /**
+     * Sets up the action bar
+     */
     private fun setupActionBar(title: String) {
         setSupportActionBar(binding?.toolbarEventInfoActivity)
 

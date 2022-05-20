@@ -8,19 +8,18 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.common.Constants
-import com.example.studentpal.model.fcm.RetrofitInstance
 import com.example.studentpal.databinding.ActivityChatLogBinding
 import com.example.studentpal.model.entities.ChatMessage
+import com.example.studentpal.model.entities.User
 import com.example.studentpal.model.fcm.NotificationData
 import com.example.studentpal.model.fcm.PushNotification
-import com.example.studentpal.model.entities.User
+import com.example.studentpal.model.fcm.RetrofitInstance
 import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
 import com.example.studentpal.view.BaseActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -30,14 +29,29 @@ import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-const val TOPIC = "/topics/myTopic"
+/**
+ * This activity is responsible for displaying the chat log between two
+ * users and handles the sending of messages.
+ *
+ * The code displayed was adapted from Brian Voong's "Kotlin Firebase Messenger" Tutorial (see references file)
+ * However, the author significantly evolved the code produced by Voong to accommodate the Server implementation.
+ * For instance, the tutorial implemented the Realtime database as a database solution to store messages, but StudentPal
+ * used Cloud Firestore. The
+ *
+ * All code that was adapted by the author will be labelled [My Code].
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 @Suppress("OPT_IN_IS_NOT_ENABLED")
 class ChatLogActivity : BaseActivity() {
+
     private var binding: ActivityChatLogBinding? = null
+
     private var toolbar: androidx.appcompat.widget.Toolbar? = null
 
     // Recipient User
     private var toUser: User? = null
+
     // Logged in User
     private var currentUser: User? = null
 
@@ -53,10 +67,9 @@ class ChatLogActivity : BaseActivity() {
         GlobalScope.launch {
             currentUser = fetchCurrentUser()!!
         }
+
         // need to provide the USER_KEY to extract the User from intent
         toUser = intent.getParcelableExtra(Constants.USER_KEY)
-
-        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
 
         binding?.recyclerviewChatLog?.adapter = adapter
 
@@ -69,15 +82,19 @@ class ChatLogActivity : BaseActivity() {
             performSendMessage()
 
         }
+
         listenForMessages()
     }
 
-    //My code:
+    /**[Adapted ]: Method listens for new messages being sent and displays it in the chat log with
+     * the appropriate layout structure.
+     *
+     */
     @OptIn(DelicateCoroutinesApi::class)
     private fun listenForMessages() {
         val fromId = getCurrentUserID()
         val toId = toUser?.id
-        //User-Messages query, between two users
+        //[Adapted]: user-Messages firestore query, between the two users
         val reference = FirebaseFirestore.getInstance()
             .collection(Constants.USER_MESSAGES)
             .document(fromId)
@@ -91,25 +108,37 @@ class ChatLogActivity : BaseActivity() {
             if (snapshot != null) {
                 for (dc: DocumentChange in snapshot.documentChanges) {
                     when (dc.type) {
+                        //when new message is added
                         DocumentChange.Type.ADDED -> {
                             val chatMessage = dc.document.toObject(ChatMessage::class.java)
                             Log.d(TAG, chatMessage.text)
-
-                            //conditional statement checks if message was sent by currently signed in user or from other user
+                            // checks if message was sent by currently signed in user or from other user
                             if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
                                 /* Launches Coroutine in the IO dispatcher
                                  * Because we are executing an IO operation (Firestore request)
                                  */
-                                    GlobalScope.launch(Dispatchers.IO) {
-                                        currentUser =  fetchCurrentUser()!!
-                                        // reverts back to the Main thread to interact with UI
-                                        withContext(Dispatchers.Main) {
-                                            adapter.add(ChatFromItem(chatMessage.text,
-                                                currentUser!!, chatMessage.timeStamp))
-                                        }
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    currentUser = fetchCurrentUser()!!
+                                    // reverts back to the Main thread to interact with UI
+                                    withContext(Dispatchers.Main) {
+                                        adapter.add(
+                                            ChatFromItem(
+                                                chatMessage.text,
+                                                currentUser!!, chatMessage.timeStamp
+                                            )
+                                        )
                                     }
-                            } else {
-                                adapter.add(ChatToItem(chatMessage.text, toUser!!, chatMessage.timeStamp))
+                                }
+                            }
+                            // message sender is the other user
+                            else {
+                                adapter.add(
+                                    ChatToItem(
+                                        chatMessage.text,
+                                        toUser!!,
+                                        chatMessage.timeStamp
+                                    )
+                                )
                             }
                             //scrolls to the bottom of the chat log, to always display latest message
                             binding?.recyclerviewChatLog?.scrollToPosition(adapter.itemCount - 1)
@@ -126,18 +155,24 @@ class ChatLogActivity : BaseActivity() {
         }
     }
 
+    /**
+     * [Adapted ]: Method handles the functionality when a user sends a message.
+     * This was adapted to accommodate Cloud firestore and implement push notifications
+     */
     private fun performSendMessage() {
-        //text box the allows users to enter a message
+        // text box the allows users to enter a message
         val message = binding?.editTextChatLog?.text
 
-        val fromId: String? = FirebaseAuth.getInstance().uid
+        // Current user id
+        val fromId: String = getCurrentUserID()
 
+        // Recipient user id
         val toId = toUser?.id
 
-        if (message!!.isNotEmpty()){
+        if (message!!.isNotEmpty()) {
             // reference points to the User-Message collection in Firestore which includes a sub-collection of the receiving user.
             val reference =
-                FirebaseFirestore.getInstance().collection(Constants.USER_MESSAGES).document(fromId!!)
+                FirebaseFirestore.getInstance().collection(Constants.USER_MESSAGES).document(fromId)
                     .collection(toId!!)
 
             //a reference to the user the currently signed in user is sending a message to
@@ -145,7 +180,7 @@ class ChatLogActivity : BaseActivity() {
                 FirebaseFirestore.getInstance().collection(Constants.USER_MESSAGES).document(toId)
                     .collection(fromId)
 
-            // Creates a chat message object
+            // chat message object
             val chatMessage = ChatMessage(
                 reference.document().id,
                 fromId,
@@ -153,21 +188,25 @@ class ChatLogActivity : BaseActivity() {
                 message.toString(),
                 System.currentTimeMillis()
             )
+
             Log.d("long time", "Time is: ${convertLongToTime(chatMessage.timeStamp)}")
+
+            // Stores message data in Firestore
             reference.document().set(chatMessage).addOnSuccessListener {
                 Log.d(TAG, "Saved chat message: ${reference.id}")
 
-                Log.d("userFCM","${toUser?.fcmToken}")
+                Log.d("userFCM", "${toUser?.fcmToken}")
 
-                    PushNotification(
-                        NotificationData("Message", message.toString()),
-                        toUser!!.fcmToken
-                    ).also {
-                        sendNotification(it)
-                    }
+                // [Adapted ]: prepares push notification with recipients fcm token
+                PushNotification(
+                    NotificationData("Message", message.toString()),
+                    toUser!!.fcmToken
+                ).also {
+                    sendNotification(it)
+                }
 
 
-                //clears the edit text when the user hits the send button
+                // clears the edit text when the user hits the send button
                 message.clear()
 
                 //when user hits the send button recycler view scrolls to the last message sent position
@@ -175,6 +214,7 @@ class ChatLogActivity : BaseActivity() {
                 Log.d("ChatLogTest", "Message sent by: $fromId to $toId")
 
             }
+
             toReference.document().set(chatMessage)
 
             //A realtime database is used here because it provides the necessary functionalities to display the latest messages
@@ -197,11 +237,21 @@ class ChatLogActivity : BaseActivity() {
 
     }
 
-    inner class ChatFromItem(val text: String, val user: User, private val timeSent: Long) : Item<GroupieViewHolder>() {
+    /**
+     * Constructs the message received layout
+     *
+     * This was copied from Voong's tutorial
+     * @see[com.example.studentpal.common.References]
+     */
+    inner class ChatFromItem(val text: String, val user: User, private val timeSent: Long) :
+        Item<GroupieViewHolder>() {
         override fun bind(viewHolder: GroupieViewHolder, position: Int) {
+            //text view that shows the users message received in the chat log
             viewHolder.itemView.findViewById<TextView>(R.id.tv_message_from).text = text
-            viewHolder.itemView.findViewById<TextView>(R.id.tv_time_sent_from).text = convertLongToTime(timeSent)
-
+            // Message time sent loaded
+            viewHolder.itemView.findViewById<TextView>(R.id.tv_time_sent_from).text =
+                convertLongToTime(timeSent)
+            // user profile image
             val targetImageView =
                 viewHolder.itemView.findViewById<ImageView>(R.id.iv_profile_image_from)
 
@@ -213,20 +263,30 @@ class ChatLogActivity : BaseActivity() {
                 .placeholder(R.drawable.ic_nav_user)
                 .into(targetImageView)
         }
+        // sets the layout
         override fun getLayout(): Int {
             return R.layout.chat_from_row
         }
     }
 
-    //this class is responsible for
-    inner class ChatToItem(val text: String, val user: User, private val timeStamp: Long) : Item<GroupieViewHolder>() {
+    /**
+     * Constructs the message sent layout
+     *
+     * This was copied from Voong's tutorial
+     * @see[com.example.studentpal.common.References]
+     */
+    inner class ChatToItem(val text: String, val user: User, private val timeStamp: Long) :
+        Item<GroupieViewHolder>() {
         override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-            //textview that shows the users message sent in the chat log
+            //text view that shows the users message sent in the chat log
             val toMessageView = viewHolder.itemView.findViewById<TextView>(R.id.tv_message_to)
             toMessageView.text = text
-            viewHolder.itemView.findViewById<TextView>(R.id.tv_time_sent_to).text = convertLongToTime(timeStamp)
 
-            //The imageview that holds the users image in the xml file
+            // Message time received loaded
+            viewHolder.itemView.findViewById<TextView>(R.id.tv_time_sent_to).text =
+                convertLongToTime(timeStamp)
+
+            //The imageview that holds the users image
             val targetImageView =
                 viewHolder.itemView.findViewById<ImageView>(R.id.iv_profile_image_to)
 
@@ -237,15 +297,16 @@ class ChatLogActivity : BaseActivity() {
                 .centerCrop()
                 .placeholder(R.drawable.ic_nav_user)
                 .into(targetImageView)
-
-
         }
-
         override fun getLayout(): Int {
             return R.layout.chat_to_row
         }
     }
 
+    /**
+     * [Adapted ]: Sets up the Action bar to contain the recipients name
+     * profile image and status.
+     */
     private fun setupActionBar() {
         toolbar = binding?.include?.tbChatlog
         setSupportActionBar(toolbar)
@@ -259,20 +320,18 @@ class ChatLogActivity : BaseActivity() {
 
         // Sets the profile image in Action bar
         toolbar?.findViewById<CircleImageView>(R.id.tb_profile_image).let {
-                Glide
-                    .with(this)
-                    .load(toUser?.image)
-                    .circleCrop()
-                    .placeholder(R.drawable.ic_user_place_holder)
-                    .into(it!!)
+            Glide
+                .with(this)
+                .load(toUser?.image)
+                .circleCrop()
+                .placeholder(R.drawable.ic_user_place_holder)
+                .into(it!!)
 
         }
-        // Sets the User name in Toolbar
+        // Sets the User name in Action bar
         toolbar?.findViewById<TextView>(R.id.tb_profile_name)?.text = toUser?.name
-        // Sets user status in Toolbar
-        toolbar?.findViewById<TextView>(R.id.tb_online)?.text  = toUser?.status
-
-
+        // Sets user status in Action bar
+        toolbar?.findViewById<TextView>(R.id.tb_online)?.text = toUser?.status
 
 
         toolbar?.setNavigationOnClickListener {
@@ -280,6 +339,12 @@ class ChatLogActivity : BaseActivity() {
         }
     }
 
+    /**
+     * Method converts the time in long stored in Firestore a readable string
+     * Reused from Stack Overflow
+     * @see [com.example.studentpal.common.References]
+     *
+     */
     fun convertLongToTime(time: Long): String {
         val date = Date(time)
         val format = SimpleDateFormat("HH:mm", Locale.ENGLISH)
@@ -287,19 +352,20 @@ class ChatLogActivity : BaseActivity() {
     }
 
     // Sends notification to firebase server
-    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
-        try {
-            //network request: Post request
-            val response = RetrofitInstance.api.postNotification(notification)
-            if (response.isSuccessful) {
-                Log.d(TAG, "Response: ${Gson().toJson(response)}")
-            } else {
-                Log.e(TAG, response.errorBody().toString())
+    private fun sendNotification(notification: PushNotification) =
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //network request: Post request
+                val response = RetrofitInstance.api.postNotification(notification)
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Response: ${Gson().toJson(response)}")
+                } else {
+                    Log.e(TAG, response.errorBody().toString())
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, e.toString())
             }
-        } catch(e: Exception) {
-            Log.e(TAG, e.toString())
         }
-    }
 
     companion object {
         private const val TAG = "ChatLog"

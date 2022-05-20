@@ -52,7 +52,8 @@ class SplashActivity : AppCompatActivity() {
             // Checks if there is a user currently logged in
             if (fUser != null) {
                 // My Code: Checks if email is verified before autologin
-                if (currentUserID.isNotEmpty() && fUser.isEmailVerified) {
+                if (currentUserID.isNotEmpty()
+                    && fUser.isEmailVerified) {
                     startActivity(Intent(this, MainActivity::class.java))
                 } else {
                     startActivity(Intent(this, IntroActivity::class.java))

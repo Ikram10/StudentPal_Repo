@@ -14,10 +14,25 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 
+/**
+ * This activity is responsible for displaying each latest message item. Implements the
+ * GroupieViewHolder to simplify adapter implementation.
+ *
+ * The code adapted from Brian Voong's "Kotlin Firebase Messenger" Tutorial (see references file)
+ * However, the author  evolved the code produced by Voong to accommodate the Server implementation.
+ * For instance, the tutorial implemented the Realtime database as a database solution to store messages, but StudentPal
+ * used Cloud Firestore.
+ *
+ * All code that was adapted by the author will be labelled [My Code].
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 class LatestMessageRow(private val chatMessage: ChatMessage) : Item<GroupieViewHolder>() {
+
     var chatPartnerUser: User? = null
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
+        // the latest message text
         viewHolder.itemView.findViewById<TextView>(R.id.latest_message_tv).text =
             chatMessage.text
 
@@ -37,11 +52,13 @@ class LatestMessageRow(private val chatMessage: ChatMessage) : Item<GroupieViewH
             }
             for (dc: DocumentChange in value!!.documentChanges) {
                 when (dc.type) {
+                    //
                     DocumentChange.Type.MODIFIED -> {
-                        //converts the modified user document into a User object so we can access its properties
+                        // converts the modified user document into a User object so we can access its properties
                         chatPartnerUser = dc.document.toObject(User::class.java)
+                        // Chat partner's name loaded
                         viewHolder.itemView.findViewById<TextView>(R.id.name_tv).text = chatPartnerUser!!.name
-
+                        // Load chat partner's profile image
                         Glide
                             .with(viewHolder.itemView.context)
                             .load(chatPartnerUser!!.image)

@@ -102,27 +102,21 @@ open class BaseActivity : AppCompatActivity() {
      */
     protected fun signOutUser() {
         builder = AlertDialog.Builder(this)
-
         builder.setTitle("Alert")
             .setMessage("Do you want to sign out?")
             .setCancelable(true)
             .setPositiveButton("Yes") { _, _ ->
-
                 FirebaseAuth.getInstance().signOut()
-
                 val intent = Intent(this, IntroActivity::class.java)
                 // Closes all opened activities
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-
                 startActivity(intent)
                 finish()
-
             }
             .setNegativeButton("No") { DialogInterface, _ ->
                 DialogInterface.cancel()
             }
             .show()
-
     }
 
     override fun onDestroy() {

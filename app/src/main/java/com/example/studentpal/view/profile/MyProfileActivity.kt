@@ -45,12 +45,10 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
 
     private var binding: ActivityMyProfileBinding? = null
     private val toolbar = binding?.toolbarMyProfile
-
     // Buttons
     private var ivProfileImage: CircleImageView? = null
     private var btnAddCoverImage: AppCompatImageButton? = null
     private var btnUpdate: AppCompatButton? = null
-
     // ViewModel
     private lateinit var viewModel: MyProfileViewModel
 

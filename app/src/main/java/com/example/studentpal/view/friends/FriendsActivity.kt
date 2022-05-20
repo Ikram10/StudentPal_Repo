@@ -9,7 +9,6 @@ import com.example.studentpal.model.entities.User
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.adapter.FriendsListAdapter
 import com.example.studentpal.viewmodel.FriendsViewModel
-
 /**
  * This activity is responsible for displaying all the users friends in a grid layout.
  *

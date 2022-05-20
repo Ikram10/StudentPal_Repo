@@ -35,6 +35,7 @@ object Constants {
     const val SELECT : String = "Select"
     const val UN_SELECT : String = "UnSelect"
     const val EVENT_DATE : String = "eventDate"
+    const val CREATOR_ID : String = "creatorID"
 
     // Preferences
     const val STUDENTPAL_PREFERENCES = "StudentPalPrefs"

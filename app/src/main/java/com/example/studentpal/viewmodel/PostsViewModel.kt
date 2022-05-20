@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 
 class PostsViewModel: ViewModel() {
 
-    lateinit var mUserDetails: User
+    private lateinit var mUserDetails: User
     // Posts List
     private val _postsList = MutableLiveData<List<Post>>()
     // Public Posts list getter

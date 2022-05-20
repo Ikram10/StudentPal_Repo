@@ -46,26 +46,37 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-
+/**
+ * This activity is responsible for creating an event by entering its information.
+ * Makes use of the [Places API](https://developers.google.com/maps/documentation/places/web-service/overview)
+ * and [Fused Location Provider](https://developers.google.com/maps/documentation/places/web-service/overview)
+ *
+ * The code displayed was adapted from Denis Panjuta's Trello clone (see references file)
+ * However, the author significantly evolved the code produced by Panjuta to accommodate the project requirements.
+ *
+ * All code that was created by the author will be labelled [My Code].
+ *
+ * Reused code that has been adapted by the author is labeled [Adapted ].
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 @Suppress("DEPRECATION")
 class CreateEventActivity : BaseActivity() {
     // GLOBAL VARIABLES
     var binding: ActivityCreateBoardBinding? = null
-    private var mSelectedImageFileUri: Uri? = null
     private lateinit var mUserName: String
-    private var mBoardImageUrl: String = ""
-    private var eventLatitude: Double? = null
-    private var eventLongitude: Double? = null
+    private var mSelectedImageFileUri: Uri? = null // Uri value for event image
+    private var mEventImageUrl: String = "" // URL for event image
+    private var eventLatitude: Double? = null // Latitude value of event location
+    private var eventLongitude: Double? = null // Longitude value of event location
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
-    private var mSelectedDueDateMilliSeconds: Long = 0
-    private var mSelectedTime: String = ""
-
+    private var mSelectedEventDate: Long = 0 // Selected Event Date
+    private var mSelectedTime: String = "" // Selected Event Time
 
     // Constants for permission code
     companion object {
         private const val PLACE_AUTOCOMPLETE_REQUEST_CODE = 3
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -74,16 +85,17 @@ class CreateEventActivity : BaseActivity() {
         setContentView(binding!!.root)
         setupActionBar()
 
-
         //retrieves the intent extra by using the name key
         if (intent.hasExtra(Constants.NAME)) {
             //initialises this variable with the user's name that was passed with the intent
             mUserName = intent.getStringExtra(Constants.NAME).toString()
         }
 
+        //Initialise Fused location provider
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        //ensure the Places API is initialised
+
+        //Initialize the places sdk if it is not initialized earlier using the api key.
         if (!Places.isInitialized()) {
             Places.initialize(
                 this,
@@ -91,8 +103,8 @@ class CreateEventActivity : BaseActivity() {
             )
         }
 
-        //handles the functionality when the user selects the board image
-        binding?.ivBoardImage?.setOnClickListener {
+        //handles the functionality when the user selects the event image
+        binding?.ivEventImage?.setOnClickListener {
             /* Application first checks if the user has granted permission to read files from the devices storage media
                before displaying the image chooser
              */
@@ -129,7 +141,6 @@ class CreateEventActivity : BaseActivity() {
                         .build(this)
                 startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE)
 
-
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -137,12 +148,12 @@ class CreateEventActivity : BaseActivity() {
 
         binding?.tvUseCurrentLocation?.setOnClickListener {
             if (!isLocationEnabled()) {
-
                 Toast.makeText(this, "Your location provider is turned off", Toast.LENGTH_SHORT)
                     .show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
             } else {
+                // Location Permission requests with Dexter
                 Dexter.withActivity(this).withPermissions(
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -155,7 +166,6 @@ class CreateEventActivity : BaseActivity() {
                             }
                         }
                     }
-
                     @RequiresApi(Build.VERSION_CODES.M)
                     override fun onPermissionRationaleShouldBeShown(
                         permissions: MutableList<PermissionRequest>?,
@@ -167,21 +177,19 @@ class CreateEventActivity : BaseActivity() {
                 }).onSameThread()
                     .check()
             }
-
-
         }
 
         binding?.etEventDate?.setOnClickListener {
             showDatePicker()
         }
         binding?.etEventTime?.setOnClickListener {
-
             showTimePicker()
         }
+
         //handles the functionality when user selects the create button
         binding!!.btnCreate.setOnClickListener {
             if (mSelectedImageFileUri != null) {
-                uploadBoardImage()
+                uploadEventImage()
             } else {
                 showProgressDialog(resources.getString(R.string.please_wait))
                 createEvent()
@@ -190,26 +198,32 @@ class CreateEventActivity : BaseActivity() {
     }
 
 
-    //method is responsible setting up the event details to be stored in cloud Firestore
+    /**
+     * method is responsible setting up the event details to be stored in cloud Firestore
+     */
     private fun createEvent() {
+        //arraylist will store all the users assigned to the event
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(getCurrentUserID())
+
+        // Retrieves the entered details from the event form
         val etEventName = binding?.etEventName?.text.toString()
         val etEventLocation = binding?.etEventLocation?.text.toString()
         val etEventDate = binding?.etEventDate?.text.toString()
 
+        // validates the information is entered correctly
         if (validateEditForm(etEventName, etEventLocation, etEventDate)) {
             //board information that will be stored in Firestore
             val event = Event(
                 binding?.etEventName?.text.toString(),
-                mBoardImageUrl,
+                mEventImageUrl,
                 mUserName,
                 assignedUsersArrayList,
                 creatorID = getCurrentUserID(),
                 eventLocation = etEventLocation,
                 latitude = eventLatitude!!,
                 longitude = eventLongitude!!,
-                eventDate = mSelectedDueDateMilliSeconds,
+                eventDate = mSelectedEventDate,
                 eventDescription = binding?.etEventDescription?.text.toString(),
                 eventTime = mSelectedTime
             )
@@ -222,6 +236,9 @@ class CreateEventActivity : BaseActivity() {
 
     }
 
+    /**
+     * Method ensures all information is entered in the event form
+     */
     private fun validateEditForm(
         eventName: String,
         eventLocation: String,
@@ -246,7 +263,9 @@ class CreateEventActivity : BaseActivity() {
         }
     }
 
-    // Checks if the current location of the user is retrievable or not
+    /**
+     * method verifies if location or GPS is enabled for the users device
+     */
     private fun isLocationEnabled(): Boolean {
         val locationManager: LocationManager =
             getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -255,10 +274,14 @@ class CreateEventActivity : BaseActivity() {
         )
     }
 
+    /**
+     * A method to request the current location. Using the fused location provider
+     */
     @SuppressLint("MissingPermission") // Suppressed because location permission has already been checked
     private fun requestNewLocationData() {
         val mLocationRequest = LocationRequest()
 
+        // Configures location settings
         mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         mLocationRequest.interval = 1000
         mLocationRequest.numUpdates = 1
@@ -271,6 +294,9 @@ class CreateEventActivity : BaseActivity() {
         hideProgressDialog()
     }
 
+    /**
+     * A location callback object of fused location provider client where we will get current location details
+     */
     private val mLocationCallBack = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val mLastLocation: Location = locationResult.lastLocation
@@ -284,9 +310,10 @@ class CreateEventActivity : BaseActivity() {
                 this@CreateEventActivity,
                 eventLatitude!!, eventLongitude!!
             )
+            //Call the AsyncTask class for getting an address from the latitude and longitude.
             addressTask.setAddressListener(object : GetAddressFromLatLng.AddressListener {
                 override fun onAddressFound(address: String?) {
-                    binding?.etEventLocation?.setText(address)
+                    binding?.etEventLocation?.setText(address) // Address is set to the edittext
                 }
 
                 override fun onError() {
@@ -297,12 +324,15 @@ class CreateEventActivity : BaseActivity() {
         }
     }
 
-    //method handles the uploading of board images to cloud storage securely
-    private fun uploadBoardImage() {
+    /**
+     * method handles the uploading of event images to cloud storage securely
+     */
+
+    private fun uploadEventImage() {
         showProgressDialog(resources.getString(R.string.please_wait))
         //reference to firebase storage
         val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-            "BOARD_IMAGE" +
+            "EVENT_IMAGE" +
                     System.currentTimeMillis() + "." + Constants.getFileExtension(
                 this,
                 mSelectedImageFileUri
@@ -323,7 +353,7 @@ class CreateEventActivity : BaseActivity() {
                     "Downloadable Image URL", it.toString()
                 )
                 //stores the image uri in this variable
-                mBoardImageUrl = it.toString()
+                mEventImageUrl = it.toString()
                 //only successful storage of board image will call this createBoard() method
                 createEvent()
             }
@@ -334,7 +364,8 @@ class CreateEventActivity : BaseActivity() {
     }
 
 
-    //this function is called if the event is created and stored successfully in Firestore
+    /** Method is called if the event is created and stored successfully in Firestore
+     */
     fun eventCreatedSuccessfully() {
         hideProgressDialog()
         setResult(Activity.RESULT_OK)
@@ -356,14 +387,20 @@ class CreateEventActivity : BaseActivity() {
 
     }
 
-
+    /**
+     * Receives the result from a previous call to startActivityForResult
+     * @param resultCode The integer result code returned by the child activity through its setResult().
+     * @Param requestCode The integer request code originally supplied to startActivityForResult(), allowing you to identify where this result came from
+     * @param data  An Intent, which can return result data to the caller
+     */
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
             mSelectedImageFileUri = data.data
             try {
-                binding?.ivBoardImage?.let {
+                // Loads the selected image from gallery to imageview
+                binding?.ivEventImage?.let {
                     Glide
                         .with(this)
                         .load(mSelectedImageFileUri)
@@ -387,7 +424,7 @@ class CreateEventActivity : BaseActivity() {
                     }
                 }
                 AutocompleteActivity.RESULT_ERROR -> {
-                    // Handle the error.
+                    // Handles the error.
                     data?.let {
                         val status = Autocomplete.getStatusFromIntent(data)
                         Log.i(TAG, status.statusMessage.toString())
@@ -401,6 +438,9 @@ class CreateEventActivity : BaseActivity() {
         }
     }
 
+    /**
+     * method handles the request permission result
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -421,25 +461,32 @@ class CreateEventActivity : BaseActivity() {
         }
     }
 
+    /**
+     * Method to display a date picker dialog to user
+     */
     private fun showDatePicker() {
         val c = Calendar.getInstance()
         val yearSelected = c.get(Calendar.YEAR) // Returns the value of the given calendar year
-        val monthSelected = c.get(Calendar.MONTH)
-        val daySelected = c.get(Calendar.DAY_OF_MONTH)
+        val monthSelected = c.get(Calendar.MONTH) // Returns the value of the given calendar Month
+        val daySelected = c.get(Calendar.DAY_OF_MONTH) // Returns the value of the given day of month
 
         DatePickerDialog(
             this,
             android.R.style.Theme_DeviceDefault_Light_Dialog,
             { _, year, month, day ->
+                // Appends a 0 to the start of day if month is less than 10
                 val sDayOfMonth = if (day < 10) "0$day" else "$day"
+                // Appends a 0 to the start of month  if less than 10
                 val sMonthOfYear = if ((month + 1) < 10) "0${month + 1}" else "${month + 1}"
-
+                // Sets the edit text to the selected date
                 val selectedDate = "$sDayOfMonth/$sMonthOfYear/$year"
                 binding?.etEventDate?.setText(selectedDate)
 
+                // Prepares the date format to be displayed
                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
                 val theDate = sdf.parse(selectedDate)
-                mSelectedDueDateMilliSeconds = theDate!!.time
+                //initialises variable
+                mSelectedEventDate = theDate!!.time
             },
             yearSelected,
             monthSelected,
@@ -447,6 +494,9 @@ class CreateEventActivity : BaseActivity() {
         ).show()
     }
 
+    /**
+     * Method to display time picker to user
+     */
     private fun showTimePicker() {
         val t = Calendar.getInstance()
         val hourOfDay = t.get(Calendar.HOUR_OF_DAY)
@@ -455,12 +505,14 @@ class CreateEventActivity : BaseActivity() {
         TimePickerDialog(
             this,
             android.R.style.Theme_DeviceDefault_Light_Dialog, { _, hour, minute ->
+                //appends a 0 if hour is less than 10
                 val sHour = if (hour < 10) "0${hour}" else "$hour"
+                //appends a 0 if minute is less than 10
                 val sMinute = if (minute < 10) "0${minute}" else "$minute"
-
+                // Sets the edit text to the selected time
                 val selectedTime = "$sHour:$sMinute"
                 binding?.etEventTime?.setText(selectedTime)
-
+                //initialises variable
                 mSelectedTime = selectedTime
             },
             hourOfDay,

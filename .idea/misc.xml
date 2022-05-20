@@ -9,6 +9,7 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/bg_nav_header.xml" value="0.357" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_decline_request.xml" value="0.3385" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_personal_bg.xml" value="0.312" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_personal_custom.xml" value="0.363" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_personal_default.xml" value="0.324" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_personal_pressed.xml" value="0.312" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/drawable/btn_send_request.xml" value="0.3385" />
@@ -101,9 +102,9 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/dialog_color_list.xml" value="0.40017101325352716" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/dialog_list.xml" value="0.40017101325352716" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/dialog_progress.xml" value="0.4302536231884058" />
-        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/dialog_search_friend.xml" value="0.40017101325352716" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/dialog_search_friend.xml" value="0.25" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/fragment_maps.xml" value="0.32535271483539974" />
-        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/item_assign_friend.xml" value="0.5" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/item_assign_friend.xml" value="0.1" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/item_attendee.xml" value="0.40017101325352716" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/item_board.xml" value="0.3" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/item_card_color.xml" value="0.40017101325352716" />
@@ -117,9 +118,10 @@
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/layout/tool_bar_chat_log.xml" value="0.6666666666666666" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/menu/actionbar_layout.xml" value="0.4875" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/menu/activity_main_drawer.xml" value="0.5" />
-        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/menu/menu_add_friend.xml" value="0.40017101325352716" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/menu/menu_add_friend.xml" value="0.15" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/menu/menu_delete_event.xml" value="0.40017101325352716" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/menu/menu_friends.xml" value="0.3666666666666667" />
+        <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/menu/menu_requests.xml" value="0.4241128687473279" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/menu/nav_menu.xml" value="0.4875" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/menu/search_menu.xml" value="0.4166666666666667" />
         <entry key="..\:/Project_Repo/StudentPal/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3" />

@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -23,7 +22,6 @@ import com.example.studentpal.view.events.AssignFriendsActivity
 import com.example.studentpal.view.events.EditEventActivity
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.common.Constants
-import com.example.studentpal.view.events.MainActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,7 +34,7 @@ open class EventItemsAdapter(private val context: Context, private var list: Arr
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MyViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.item_board, parent, false)
+            LayoutInflater.from(context).inflate(R.layout.item_event, parent, false)
         )
     }
 

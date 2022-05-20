@@ -18,22 +18,24 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
-import com.example.studentpal.view.friends.FindFriends
-import com.example.studentpal.view.friends.FriendsActivity
-import com.example.studentpal.view.messages.LatestMessagesActivity
-import com.example.studentpal.view.registration.IntroActivity
-import com.example.studentpal.view.adapter.EventItemsAdapter
+import com.example.studentpal.common.Constants
 import com.example.studentpal.databinding.ActivityMainBinding
 import com.example.studentpal.model.entities.Event
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.common.Constants
+import com.example.studentpal.model.remote.EventDatabase.deleteUserEventsData
 import com.example.studentpal.model.remote.EventDatabase.getEventsList
+import com.example.studentpal.model.remote.UsersDatabase.deleteUserData
 import com.example.studentpal.model.remote.UsersDatabase.loadUserData
 import com.example.studentpal.model.remote.UsersDatabase.updateUserProfileData
 import com.example.studentpal.view.BaseActivity
+import com.example.studentpal.view.adapter.EventItemsAdapter
+import com.example.studentpal.view.friends.FindFriends
+import com.example.studentpal.view.friends.FriendsActivity
 import com.example.studentpal.view.friends.RequestsActivity
+import com.example.studentpal.view.messages.LatestMessagesActivity
 import com.example.studentpal.view.profile.MyProfileActivity
 import com.example.studentpal.view.profile.PostsActivity
+import com.example.studentpal.view.registration.IntroActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -41,36 +43,45 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 
+/**
+ * This activity is the main component of the application. Users will be able to navigate
+ * around the app via the navigation menu. The users scheduled events will be displayed here.
+ *
+ * The code displayed was adapted from Denis Panjuta's Trello clone (see references file)
+ * However, the author significantly evolved the code produced by Panjuta to accommodate the project requirements.
+ *
+ * All code that was created by the author will be labelled [My Code].
+ *
+ * Reused code that has been adapted by the author is labeled [Adapted ].
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
-
+    //Global variables
     private var binding: ActivityMainBinding? = null
-    private var drawer: DrawerLayout? = null
+    private var drawer: DrawerLayout? = null // Navigation drawer layout
     private lateinit var builder: AlertDialog.Builder
     private var db: FirebaseFirestore? = null
     private var mainRecyclerView: RecyclerView? = null
     private var eventTextView: TextView? = null
-    private lateinit var refreshLayout: SwipeRefreshLayout
-
-    // A global variable for User Name
+    private lateinit var refreshLayout: SwipeRefreshLayout // Allows the screen to be swipe refreshed
     private lateinit var mUserName: String
-
-    // A global variable for SharedPreferences
     private lateinit var mSharedPreferences: SharedPreferences
-
 
     //Constant values
     companion object {
         const val MY_PROFILE_REQUEST_CODE: Int = 11
         const val CREATE_EVENT_REQUEST_CODE: Int = 12
-        const val EDIT_EVENT_REQUEST_CODE: Int = 13
     }
 
-    // This function is auto created by Android when the Activity Class is created.
+    /**
+     *  This function is auto created by Android when the Activity Class is created.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-
+        //initialise the drawer layout
         drawer = binding?.drawerLayout
 
         setupActionBar()
@@ -99,7 +110,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.d("FCM token update", "token: ${it.result}")
-                        // Get new FCM registration token and update it
+                        // Get new FCM registration token and update it in users firestore
                         updateFCMToken(it.result)
                     } else
                         Log.d("FCM token update failed", "token: ${it.result}")
@@ -111,9 +122,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
          */
         loadUserData(this, true)
 
-        //create board action button can be clicked
-        binding?.appBarMain?.fabCreateBoard?.setOnClickListener {
-            //creates an intent that sends user to the Create board activity
+        //create event action button can be clicked
+        binding?.appBarMain?.fabCreateEvent?.setOnClickListener {
+            //creates an intent that sends user to the Create Event activity
             val intent = Intent(this, CreateEventActivity::class.java)
             /* sends the users name with an intent via a HashMap format
                which can be retrieved using the name key
@@ -122,23 +133,29 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             //handles updates to the main activity events when a new event is created
             startActivityForResult(intent, CREATE_EVENT_REQUEST_CODE)
         }
+        // initialise and set the refresh layout
         refreshLayout = binding?.appBarMain?.root?.findViewById(R.id.refresh_view_main)!!
         refreshLayout.setOnRefreshListener { updateMainUI() }
     }
 
-    //method handles the displaying of event items in the main activity UI
-    fun populateBoardsListToUI(boardsList: ArrayList<Event>) {
+    /**
+     * [Adapted ]: method handles the displaying of event items in the main activity UI.
+     * Updates the event text and enables the event items to be clickable.
+     *
+     * @param eventsList the list of events to be loaded into the recyclerview
+     */
+    fun populateEventsListToUI(eventsList: ArrayList<Event>) {
         hideProgressDialog()
 
-        /* if the boards list size is greater than 0 we can set the visibility of the recycler view to visible
-         * and set the no events textview to gone
+        /* [My Code]: if the events list size is greater than 0 we can set the visibility of the recycler view to visible
+         * and set the events textview
          */
-        if (boardsList.size > 0) {
+        if (eventsList.size > 0) {
             eventTextView?.setText(R.string.all_events)
             mainRecyclerView?.layoutManager = LinearLayoutManager(this)
             mainRecyclerView?.setHasFixedSize(true)
-
-            val adapter = EventItemsAdapter(this, boardsList)
+            //initialise adapter for recyclerview
+            val adapter = EventItemsAdapter(this, eventsList)
             mainRecyclerView?.adapter = adapter
 
             //handles the functionality when an event card is selected
@@ -153,19 +170,21 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }
             })
         } else
-        //if no events are listed "No Event" will be displayed
+        // if no events are listed "No Event" will be displayed
             eventTextView?.setText(R.string.no_events)
-
     }
 
-
+    /**
+     * method starts an activity and receives a result back
+     */
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
+            //Loads the users updated data
             loadUserData(this)
         }
-        //Updates the main activity when a new event is created
+        // Updates the main activity when a new event is created
         else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_EVENT_REQUEST_CODE) {
             getEventsList(this)
 
@@ -174,6 +193,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+    /**
+     * A method to setup action bar
+     */
     private fun setupActionBar() {
         val toolBar = binding?.appBarMain?.toolbarMainActivity
         setSupportActionBar(toolBar)
@@ -184,8 +206,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+    /**
+     * A method for opening and closing the Navigation Drawer
+     */
     private fun toggleDrawer() {
-
         if (drawer?.isDrawerOpen(GravityCompat.START) == true) {
             drawer?.closeDrawer(GravityCompat.START)
         } else {
@@ -201,7 +225,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-    // Function handles the selecting of menu items in the drawer
+    /**
+     * Method handles the selecting of menu items in the drawer
+     */
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_my_profile -> {
@@ -210,28 +236,32 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     MY_PROFILE_REQUEST_CODE
                 )
             }
+            //My Code: navigates users to the active users activity
             R.id.nav_active_users -> {
                 startActivity(Intent(this, FindFriends::class.java))
-
             }
+            //My Code: navigates users to the posts activity
             R.id.nav_posts -> {
                 startActivity(Intent(this, PostsActivity::class.java))
             }
+            //My Code: navigates users to the friends activity
             R.id.nav_friends -> {
                 startActivity(Intent(this, FriendsActivity::class.java))
             }
+            //My Code: navigates users to the friends requests activity
             R.id.nav_requests -> {
                 startActivity(Intent(this, RequestsActivity::class.java))
-
             }
+            //My Code: navigates users to the messages activity
             R.id.nav_messages -> {
                 startActivity(Intent(this, LatestMessagesActivity::class.java))
             }
             R.id.nav_sign_out -> {
                 signOutUser()
-
+                // removes all values from the preferences
                 mSharedPreferences.edit().clear().apply()
             }
+            //My Code: deletes account and exits the application
             R.id.nav_delete_account -> {
                 deleteAccount()
             }
@@ -240,34 +270,22 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-    //my code
+    /**
+     * [My code ]: Method deletes the users firestore documents and authentication details. Exits the user from the application
+     */
     private fun deleteAccount() {
+        // Configures the alert dialog
         builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
         builder.setTitle("Alert")
             .setMessage("Do you want to delete account?")
             .setCancelable(true)
             .setPositiveButton("Yes") { _, _ ->
-                db = FirebaseFirestore.getInstance()
-                db!!.collection(Constants.USERS)
-                    .document(getCurrentUserID())
-                    .delete()
-                    .addOnSuccessListener {
-                        Log.d(
-                            "FirestoreDelete",
-                            "User account deleted from FireStore."
-                        )
-                    }
-                val user = Firebase.auth.currentUser!!
-                user.delete()
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d("DeleteAccount", "User account deleted.")
-                        }
-                    }.addOnFailureListener {
-                        Log.d("DeleteAccount", "User account delete failed.")
-                    }
+                // when user selects "Yes", delete user data in firestore
+                deleteUserData(getCurrentUserID())
+                deleteUserEventsData(getCurrentUserID())
+                //navigates user back to intro screen
                 val intent = Intent(this, IntroActivity::class.java)
-                //close
+                //clears the stack of activities opened
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 
                 startActivity(intent)
@@ -304,18 +322,22 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //only retrieves the events list from Firestore if the readBoardsList is true
         if (readBoardsList) {
             showProgressDialog(resources.getString(R.string.please_wait))
-           getEventsList(this)
+            getEventsList(this)
         }
     }
 
-    //Method responsible for refreshing the Main activity when an event item has been deleted/edited
+    /**
+     * Method responsible for refreshing the Main activity when an event item has been deleted/edited
+     */
     private fun updateMainUI() {
         val intent = Intent(this, MainActivity::class.java)
         startActivityForResult(intent, CREATE_EVENT_REQUEST_CODE)
         refreshLayout.isRefreshing = false
     }
 
-    // A function to notify the token is updated successfully in the database.
+    /**
+     * A function to notify the token is updated successfully in the users database.
+     */
     fun tokenUpdateSuccess() {
         hideProgressDialog()
         // Here we have added a another value in shared preference that the token is updated in the database successfully.
@@ -327,14 +349,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         loadUserData(this, true)
     }
 
-    // A function to update the user's FCM token into the database.
+    /**
+     * A function to update the user's FCM token in the database.
+     */
     private fun updateFCMToken(token: String) {
         val userHashMap = HashMap<String, Any>()
         userHashMap[Constants.FCM_TOKEN] = token
         showProgressDialog(resources.getString(R.string.please_wait))
         // Update the data in the database.
         updateUserProfileData(this, userHashMap)
-
 
     }
 }

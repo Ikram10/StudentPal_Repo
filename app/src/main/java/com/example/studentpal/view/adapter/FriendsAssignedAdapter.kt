@@ -41,7 +41,7 @@ open class FriendsAssignedAdapter(
                 .into(holder.itemView.findViewById(R.id.iv_friend_image))
 
             holder.itemView.findViewById<TextView>(R.id.tv_member_name).text = model.name
-            holder.itemView.findViewById<TextView>(R.id.tv_member_username).text = model.email
+            holder.itemView.findViewById<TextView>(R.id.tv_member_username).text = model.username
         }
 
 

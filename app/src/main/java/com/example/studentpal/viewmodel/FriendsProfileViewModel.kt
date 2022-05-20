@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 class FriendsProfileViewModel : ViewModel() {
     // current user profile details
     private val _currentUser = MutableLiveData<User>()
+
     // public getter
     val currentUser: LiveData<User>
         get() = _currentUser
@@ -85,34 +86,23 @@ class FriendsProfileViewModel : ViewModel() {
              * No friend request is pending
              */
             AccountStates.DEFAULT -> {
-                val friendRequest =
-                    FriendRequest(
-                        PENDING,
-                        getCurrentUserId(),
-                        friendDetails.value?.id!!
-                    )
+                val friendRequest = FriendRequest(PENDING, getCurrentUserId(),
+                    friendDetails.value?.id!!)
 
                 // stores the friend request in Firestore
-                storeFriendRequest(
-                    activity,
-                    friendRequest,
-                    friendDetails,
-                    currentUser
-                )
+                storeFriendRequest(activity, friendRequest, friendDetails,
+                    currentUser)
             }
-
             /* Current user sent a friend request
              * The button has transformed to a Cancel request button
              */
             AccountStates.SENT_REQUEST -> {
-
                 deleteSenderFriendRequest(activity, friendDetails.value)
             }
             // Current User declined a friend request
             AccountStates.DECLINED_REQUEST -> {
                 deleteReceiverFriendRequest(activity, friendDetails.value)
             }
-
             // Current user is a recipient of a friend request
             AccountStates.RECEIVED_REQUEST -> {
                 FriendshipsDatabase.createFriendship(
@@ -121,7 +111,6 @@ class FriendsProfileViewModel : ViewModel() {
                     currentUser.value!!
                 )
             }
-
             /* Both users are now friends
              * Button transforms to a message button
              */
@@ -131,7 +120,8 @@ class FriendsProfileViewModel : ViewModel() {
                 activity.startActivity(intent)
             }
 
-            else -> {}
+            else -> {
+            }
         }
     }
 
@@ -155,7 +145,11 @@ class FriendsProfileViewModel : ViewModel() {
         if (currentState.value == AccountStates.FRIEND) {
             if (friendDetails.value?.id != null) {
                 // Removes Friendship document between the two users from database
-                FriendshipsDatabase.removeFriendship(activity, friendDetails.value, currentUser.value)
+                FriendshipsDatabase.removeFriendship(
+                    activity,
+                    friendDetails.value,
+                    currentUser.value
+                )
             }
             /* Current state: User has received the friend request
              * Button has transformed to a "Decline Friend Request" button

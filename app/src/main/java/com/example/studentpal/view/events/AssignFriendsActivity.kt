@@ -28,11 +28,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
-
+/**
+ * This activity is responsible for assigning users to an event
+ *
+ * The code displayed was adapted from Denis Panjuta's Trello clone (see references file)
+ *
+ * All code that was created by the author will be labelled [My Code].
+ *
+ * Reused code that has been adapted by the author is labeled [Adapted ].
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 class AssignFriendsActivity : BaseActivity() {
     private var binding: ActivityAssignFriendsBinding? = null
-    private lateinit var mEventDetails : Event
-    private lateinit var mAssignedFriendsList : ArrayList<User>
+    private lateinit var mEventDetails : Event // events information
+    private lateinit var mAssignedFriendsList : ArrayList<User> //array list of users assigned to the event
 
     /* Notifies the app if any changes were made
      * Purpose is to avoid reloading the callback activity if no changes were made in this activity
@@ -47,8 +57,10 @@ class AssignFriendsActivity : BaseActivity() {
 
         //retrieves the Event details passed from the main activity
         if (intent.hasExtra(Constants.EVENT_DETAIL)) {
+            //initialises the event details
             mEventDetails = intent.getParcelableExtra(Constants.EVENT_DETAIL)!!
             showProgressDialog(resources.getString(R.string.please_wait))
+            // retrieves all the users assigned to the event
             getAssignedFriendsListDetails(this, mEventDetails.assignedTo)
         }
 
@@ -56,6 +68,9 @@ class AssignFriendsActivity : BaseActivity() {
 
     }
 
+    /**
+     * method sets up the action bar
+     */
     private fun setupActionBar() {
         val toolbar = binding?.toolbarAssignFriendsActivity
         setSupportActionBar(toolbar)
@@ -72,32 +87,45 @@ class AssignFriendsActivity : BaseActivity() {
         }
     }
 
-    fun setUpFriendsList(list: ArrayList<User>){
+    /**
+     * method sets up the recycler view that will display the list of assigned members
+     */
+    fun setUpAssignedList(list: ArrayList<User>){
         mAssignedFriendsList = list
         hideProgressDialog()
 
+        //Linear layout recycler view
         binding?.rvFriendsActivity?.layoutManager = LinearLayoutManager(this)
         binding?.rvFriendsActivity?.setHasFixedSize(true)
-
+        //initialises the adapter
         val adapter = FriendsAssignedAdapter(this, list)
         binding?.rvFriendsActivity?.adapter = adapter
     }
 
+    /**
+     * method assigns user to the events assigned to arraylist
+     */
     fun friendDetails(user: User){
         //adds the friends user id to the assigned to array list
         mEventDetails.assignedTo.add(user.id)
         assignMemberToEvent(this,mEventDetails,user)
     }
 
+    /**
+     * Adds a add user button to the action bar
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_add_friend, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
+    /**
+     * Opens a search user dialog when add user button is selected.
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.action_add_friend -> {
-                dialogSearchFriend()
+                dialogSearchUser()
                 return true
             }
 
@@ -105,22 +133,30 @@ class AssignFriendsActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun dialogSearchFriend(){
+    /**
+     * [Adapted ]:Method responsible for displaying a search dialog to search for users
+     * The author implemented a username search in the search dialog
+     */
+    private fun dialogSearchUser(){
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_search_friend)
         dialog.findViewById<TextView>(R.id.tv_add).setOnClickListener {
 
-            val email = dialog.findViewById<AppCompatEditText>(R.id.et_search_friend_email).text.toString().trim {
+            /* My Code: retrieves the username entered in the search dialog
+             * Author implemented a Username search
+             */
+            val username = dialog.findViewById<AppCompatEditText>(R.id.et_search_friend_username).text.toString().trim {
                 //removes spaces when searching for a friend
                 it <= ' '
             }
 
-            if (email.isNotEmpty()){
+            if (username.isNotEmpty()){
                 dialog.dismiss()
                 showProgressDialog(resources.getString(R.string.please_wait))
-                getFriendDetails(this, email)
+                    // passes the username searched and adds it to the arraylist if found in Firestore
+                getFriendDetails(this, username)
             } else {
-                Toast.makeText(this, "Please enter friends email address", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Please enter a username", Toast.LENGTH_LONG).show()
             }
         }
         dialog.findViewById<TextView>(R.id.tv_cancel).setOnClickListener {
@@ -128,16 +164,20 @@ class AssignFriendsActivity : BaseActivity() {
         }
         dialog.show()
     }
-    /* ensures the user(friend) is assigned to the assigned array list
-     * Only called when a new friend has been assigned to the event
+
+    /** Method ensures the user(friend) is assigned to the assigned array list
+     *  Only called when a new friend has been assigned to the event
      */
     fun friendAssignedSuccess(user: User){
         hideProgressDialog()
         mAssignedFriendsList
+        //Adds the user to the array list
         mAssignedFriendsList.add(user)
         //reloads the activity
         anyChangesMade = true
-        setUpFriendsList(mAssignedFriendsList)
+        setUpAssignedList(mAssignedFriendsList)
+
+        //Sends a notification to the user who has been assigned to event
         NotificationData(
             "Event Invite",
             "You have received an Event invite from ${mAssignedFriendsList[0].name}").also {
@@ -146,7 +186,9 @@ class AssignFriendsActivity : BaseActivity() {
 
     }
 
-    //reloads the activity when user clicks the back button if any changes made in this activity
+    /**
+     * reloads the activity when user clicks the back button if any changes made in this activity
+     */
     override fun onBackPressed() {
         if (anyChangesMade) {
             setResult(Activity.RESULT_OK)
@@ -155,10 +197,11 @@ class AssignFriendsActivity : BaseActivity() {
     }
 
 
-    // Sends notification to firebase server
+    /**
+     *  Sends notification to firebase server
+     */
     private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
         try {
-
             //network request: Post request
             val response = RetrofitInstance.api.postNotification(notification)
             if (response.isSuccessful) {
@@ -176,5 +219,4 @@ class AssignFriendsActivity : BaseActivity() {
     companion object {
         private const val TAG = "AssignFriendActivity"
     }
-
 }

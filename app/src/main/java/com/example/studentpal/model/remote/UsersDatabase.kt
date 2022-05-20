@@ -13,7 +13,9 @@ import com.example.studentpal.view.profile.MyProfileActivity
 import com.example.studentpal.view.registration.SignInActivity
 import com.example.studentpal.view.registration.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.*
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
 /**
@@ -106,12 +108,14 @@ object UsersDatabase {
         }
     }
 
-    // Retrieves the current user document and converts it to to a User object
+    /**
+     * [My Code ]:Retrieves the current user document and converts it to to a User object
+     */
     suspend fun  fetchCurrentUser(): User? {
             //A reference to currently signed in user in Firestore document
             val docRef = db.document(getCurrentUserId())
             return try {
-
+                // converts the document to a user object and returns it
             docRef.get().await().toObject(User::class.java)
 
             } catch (e: Exception) {
@@ -121,7 +125,9 @@ object UsersDatabase {
         }
     }
 
-    // My code: Retrieves all users apart from current user from the database
+    /**
+     * [My code ]: Retrieves all users apart from current user from the database
+     */
     fun getAllUsers(activity: FindFriends) {
         db.whereNotEqualTo("id", getCurrentUserId())
             .addSnapshotListener(object : EventListener<QuerySnapshot> {
@@ -132,11 +138,14 @@ object UsersDatabase {
                         return
                     }
                     for (dc: DocumentChange in value?.documentChanges!!) {
+                        // When a new user is added to the to the database...
                         if (dc.type == DocumentChange.Type.ADDED) {
+                            //add the new user to the user list
                             val user = dc.document.toObject(User::class.java)
                             userList.add(user)
                         }
                     }
+                    // refreshes the recyclerview by adding the new user item
                     activity.setUpUsersList(userList)
                 }
             })
@@ -299,9 +308,9 @@ object UsersDatabase {
     }
 
     //retrieves friend details by querying for their email in firestore
-    fun getFriendDetails(activity: AssignFriendsActivity, email: String) {
+    fun getFriendDetails(activity: AssignFriendsActivity, username: String) {
         db
-            .whereEqualTo(Constants.EMAIL, email)
+            .whereEqualTo(Constants.USERNAME, username)
             .get()
             .addOnSuccessListener {
                 if (it.documents.size > 0) {
@@ -312,7 +321,7 @@ object UsersDatabase {
                     activity.friendDetails(user!!)
                 } else {
                     activity.hideProgressDialog()
-                    activity.showErrorSnackBar("No friend found with the entered email")
+                    activity.showErrorSnackBar("No friend found with the username provided")
                 }
             }
     }
@@ -332,7 +341,7 @@ object UsersDatabase {
                 }
 
                 if (activity is AssignFriendsActivity) {
-                    activity.setUpFriendsList(usersList)
+                    activity.setUpAssignedList(usersList)
 
                 } else
                     if (activity is EditEventActivity)
@@ -351,6 +360,33 @@ object UsersDatabase {
                             it
                         )
                     }
+            }
+    }
+
+    /**
+     * [My Code ]: Method responsible for deleting the users firestore and authentication data and makes a call
+     * to delete all the events users has created
+     */
+    fun deleteUserData(userId : String) {
+        db
+            .document(userId)
+            .delete() // Deletes users firestore user document
+            .addOnCompleteListener {
+                if (it.isSuccessful){
+                    Log.d(TAG, "User document deleted")
+                    val user = Firebase.auth.currentUser!!
+                    //deletes user authentication details
+                    user.delete()
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.d(TAG, "User account deleted.")
+                            }
+                        }.addOnFailureListener {
+                            Log.d("DeleteAccount", "User account delete failed.")
+                        }
+                } else {
+                    Log.d(TAG, "User document failed to delete", it.exception)
+                }
             }
     }
 

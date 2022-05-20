@@ -54,9 +54,13 @@ class MapActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         // Gets the Earth location of the event
-        val position = LatLng(eventDetail!!.latitude, eventDetail!!.longitude)
+        val position =
+            LatLng(eventDetail!!
+                .latitude, eventDetail!!.longitude)
         // Adds a marker to the respective latitude and longitude location
-        googleMap.addMarker(MarkerOptions().position(position).title(eventDetail!!.eventLocation))
+        googleMap
+            .addMarker(MarkerOptions()
+            .position(position).title(eventDetail!!.eventLocation))
         // Map zooms in on the location marker by a float value of 15
         val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(position, 15f)
         // Animates the map view to automatically zoom in to the location

@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
  *
  * The author made use of code found in the Firebase Documentation to implement the Sign up functionality.
  *
- * {@see [Firebase Documentation](https://firebase.google.com/docs/auth)
+ * { [Firebase Documentation](https://firebase.google.com/docs/auth)
  * @see[com.example.studentpal.common.References]
  * @see viewModel
  */

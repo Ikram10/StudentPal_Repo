@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
@@ -20,12 +21,34 @@ class FriendsListAdapter(var context: Context,  var list: ArrayList<User>)
                     fun bindItem(user: User){
                         itemBinding.cvName.text = user.name
                         itemBinding.cvUsername.text = user.username
+                        itemBinding.civStatus.text = user.status
                         Glide
                             .with(context)
                             .load(user.image)
                             .centerCrop()
                             .placeholder(R.drawable.ic_user_place_holder)
                             .into(itemBinding.ivProfileImage)
+
+                        when (user.status) {
+                            "Available" -> {
+                                // Change colour green when status message is Available
+                                itemBinding.civStatus.setTextColor(
+                                    ContextCompat.getColor(
+                                        context,
+                                        R.color.available
+                                    )
+                                )
+                            }
+                            // Change colour red when status message is Available
+                            "Unavailable" -> {
+                                itemBinding.civStatus.setTextColor(
+                                    ContextCompat.getColor(
+                                        context,
+                                        R.color.unavailable
+                                    )
+                                )
+                            }
+                        }
 
                         itemBinding.btnViewProfile.setOnClickListener {
                             val intent = Intent(it.context, FriendProfile::class.java)
