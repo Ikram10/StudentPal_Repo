@@ -181,12 +181,14 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                             .centerCrop()
                             .placeholder(R.drawable.ic_nav_user)
                             .into(it)
+
+                        // reset to default after loading
+                        !viewModel.profileImgSelected
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-                // reset to default after loading
-                !viewModel.profileImgSelected
+
             }
 
             //My Code: If statement added to know where to load the image data
@@ -205,12 +207,13 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                             .placeholder(R.drawable.add_screen_image_placeholder)
                             .into(it)
 
+                        // reset to default after loading
+                        !viewModel.profileCoverImgSelected
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-                // reset to default after loading
-                !viewModel.profileCoverImgSelected
+
             }
         }
     }

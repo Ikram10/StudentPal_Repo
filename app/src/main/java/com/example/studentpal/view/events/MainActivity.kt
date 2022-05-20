@@ -37,9 +37,6 @@ import com.example.studentpal.view.profile.MyProfileActivity
 import com.example.studentpal.view.profile.PostsActivity
 import com.example.studentpal.view.registration.IntroActivity
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -61,7 +58,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private var binding: ActivityMainBinding? = null
     private var drawer: DrawerLayout? = null // Navigation drawer layout
     private lateinit var builder: AlertDialog.Builder
-    private var db: FirebaseFirestore? = null
     private var mainRecyclerView: RecyclerView? = null
     private var eventTextView: TextView? = null
     private lateinit var refreshLayout: SwipeRefreshLayout // Allows the screen to be swipe refreshed
@@ -146,7 +142,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
      */
     fun populateEventsListToUI(eventsList: ArrayList<Event>) {
         hideProgressDialog()
-
         /* [My Code]: if the events list size is greater than 0 we can set the visibility of the recycler view to visible
          * and set the events textview
          */

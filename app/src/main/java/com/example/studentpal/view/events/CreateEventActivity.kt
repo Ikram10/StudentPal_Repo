@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.example.studentpal.BuildConfig
 import com.example.studentpal.R
 import com.example.studentpal.common.Constants
 import com.example.studentpal.common.utils.GetAddressFromLatLng
@@ -98,8 +99,7 @@ class CreateEventActivity : BaseActivity() {
         //Initialize the places sdk if it is not initialized earlier using the api key.
         if (!Places.isInitialized()) {
             Places.initialize(
-                this,
-                resources.getString(R.string.google_maps_api_key)
+                this, Constants.MAPS_API_KEY
             )
         }
 
@@ -379,7 +379,7 @@ class CreateEventActivity : BaseActivity() {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_round_arrow_back_24)
-            actionBar.title = resources.getString(R.string.create_board_title)
+            actionBar.title = "Create Event"
         }
         binding?.toolbarCreateBoardActivity?.setNavigationOnClickListener {
             onBackPressed()

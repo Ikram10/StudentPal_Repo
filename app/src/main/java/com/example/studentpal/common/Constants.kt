@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import com.example.studentpal.BuildConfig
 
 object Constants {
     // user related Constants
@@ -15,13 +16,17 @@ object Constants {
     const val IMAGE: String = "image"
     const val NAME: String = "name"
     const val STATUS: String = "status"
-    const val EMAIL: String = "email"
     const val ID : String = "id"
     const val COVER_IMAGE = "coverImage"
     const val NUMBER_FRIENDS = "numFriends"
     const val SENDER: String = "sender"
     const val RECEIVER: String = "receiver"
     const val POSTS: String = "posts"
+
+    /**
+     * GOOGLE MAPS API KEY : This needs to be filled
+     */
+    const val MAPS_API_KEY = BuildConfig.MAPS_API_KEY
 
     // Friend Requests related Constants
     const val FRIENDSHIPS = "friendships" // friendships collection
@@ -45,7 +50,11 @@ object Constants {
     // START
     const val FCM_BASE_URL:String = "https://fcm.googleapis.com"
     const val CONTENT_TYPE = "application/json"
-    const val FCM_SERVER_KEY:String = "AAAA5KLpOgc:APA91bEriQauq41gnZxAUt42ZxVU7c_cGzegCqd74Krc0038V2bLd9OJnmpSF0FhIc7DXTYEyZ1db_FKimnpspwNr3gA1Mj3ENbiQqP00X_UrCFUHppCoS8Eskh_gASSx9zjEWR2h0cX"
+
+    /**
+     * FCM SERVER KEY NEEDS TO BE FILLED
+     */
+    const val FCM_SERVER_KEY:String = BuildConfig.FCM_SERVER_KEY
     const val FCM_KEY_TITLE:String = "title"
     const val FCM_KEY_MESSAGE:String = "message"
     // END

@@ -415,12 +415,12 @@ object FriendshipsDatabase {
                         doc.reference.delete().addOnCompleteListener {
                             if (it.isSuccessful) {
                                 UsersDatabase.decrementFriendsCount(
-                                    currentUser,
-                                    friendDetails
+                                    currentUser!!,
+                                    friendDetails!!
                                 )
                                 Toast.makeText(
                                     activity,
-                                    "You unfriended ${friendDetails?.name}",
+                                    "You unfriended ${friendDetails.name}",
                                     Toast.LENGTH_LONG
                                 ).show()
                                 // Modify account state to default, because users are not friends anymore
@@ -447,12 +447,12 @@ object FriendshipsDatabase {
                             .addOnCompleteListener {
                                 if (it.isSuccessful) {
                                     UsersDatabase.decrementFriendsCount(
-                                        currentUser,
-                                        friendDetails
+                                        currentUser!!,
+                                        friendDetails!!
                                     )
                                     Toast.makeText(
                                         activity,
-                                        "You unfriended ${friendDetails?.name}",
+                                        "You unfriended ${friendDetails.name}",
                                         Toast.LENGTH_LONG
                                     ).show()
                                     // Modify account state to default, because users are not friends anymore

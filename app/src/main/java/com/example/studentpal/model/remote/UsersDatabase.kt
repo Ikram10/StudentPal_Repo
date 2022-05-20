@@ -49,7 +49,6 @@ object UsersDatabase {
         mFireStore.collection(Constants.USERS)
             // The document id is the current user's id
             .document(getCurrentUserId()).get()
-
             .addOnSuccessListener {
                 Log.i(activity.javaClass.simpleName, it.toString())
                 // Here we have received the document snapshot which is converted into the User Data model object.
@@ -110,6 +109,7 @@ object UsersDatabase {
 
     /**
      * [My Code ]:Retrieves the current user document and converts it to to a User object
+     * @return the user being fetched
      */
     suspend fun  fetchCurrentUser(): User? {
             //A reference to currently signed in user in Firestore document
@@ -170,7 +170,9 @@ object UsersDatabase {
             }
     }
 
-
+    /**
+     * Method returns the the user id of the currently logged in user
+     */
     fun getCurrentUserId(): String {
         val currentUser = FirebaseAuth.getInstance().currentUser
         var currentUserID = ""
@@ -182,21 +184,24 @@ object UsersDatabase {
         return currentUserID
     }
 
+    /**
+     * Method updates the users profile data stored in Firestore
+     */
     fun updateUserProfileData(activity: Activity, userHashMap: HashMap<String, Any>) {
         db.document(getCurrentUserId()).update(userHashMap)
             .addOnSuccessListener {
                 Log.i(activity.javaClass.simpleName, "Profile data updated successfully")
                 when (activity) {
                     is MainActivity -> {
+                        //updates the fcm token in the database
                         activity.tokenUpdateSuccess()
                     }
                     is MyProfileActivity -> {
+                        // Confirms profile data has been updated successfully
                         activity.profileUpdateSuccess()
                     }
                 }
-
             }.addOnFailureListener {
-
                 when (activity) {
                     is MainActivity -> {
                         activity.hideProgressDialog()
@@ -215,6 +220,11 @@ object UsersDatabase {
 
     }
 
+    /**
+     * [My Code ]: Method fetches a list of users from firestore
+     * @param userStringList a list of user id's of the users being fetched
+     * @return the list of users
+     */
     suspend fun fetchUsersById(userStringList: List<String>) : List<User> {
         return try {
             val userList = arrayListOf<User>()
@@ -225,18 +235,24 @@ object UsersDatabase {
                     .await()
                     .documents
                     .mapNotNull {
+                        //converts each object retrieved into a User object
                         val user = it.toObject(User::class.java)
+                        //add the user object to user list
                         userList.add(user!!)
                     }
             }
+            //returns the user list
              userList
         } catch (e: Exception) {
             Log.e(TAG, e.message.toString())
+            // returns empty list
             emptyList()
         }
     }
 
-    //My code
+    /**
+     * [My Code ]: Method increments the user's friends count and the friend's friend count by 1
+     */
     fun incrementFriendsCount(user: User, friend: User) {
         db
             .document(user.id)
@@ -264,10 +280,13 @@ object UsersDatabase {
                 }
             }
     }
-
-    fun decrementFriendsCount(user: User?, friend: User?) {
+    /**
+     * [My Code ]: Method decrements the user's friends count and the friend's friend count by 1
+     */
+    fun decrementFriendsCount(user: User, friend: User) {
+        // retrieve user's document
        db
-           .document(user!!.id)
+           .document(user.id)
             .update(Constants.NUMBER_FRIENDS, FieldValue.increment(-1)).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.d("Decrement Success", "${user.name} friend count = ${user.numFriends}")
@@ -276,8 +295,9 @@ object UsersDatabase {
                 }
             }
 
+           //retrieve friend's document
         db
-            .document(friend!!.id)
+            .document(friend.id)
             .update(Constants.NUMBER_FRIENDS, FieldValue.increment(-1)).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.d(
@@ -293,7 +313,11 @@ object UsersDatabase {
             }
     }
 
-    // Retrieves the event host from database
+    /**
+     *  [My Code ]: Retrieves the event host from database
+     *  @param userId the user id of the event host to retrieve their document
+     *  @return the event host
+     */
    suspend fun getEventHost(userId: String) : User? {
         return try {
             db
@@ -307,16 +331,19 @@ object UsersDatabase {
         }
     }
 
-    //retrieves friend details by querying for their email in firestore
+    /**
+     * Method retrieves friend details by querying for their username in firestore
+     */
     fun getFriendDetails(activity: AssignFriendsActivity, username: String) {
         db
             .whereEqualTo(Constants.USERNAME, username)
             .get()
             .addOnSuccessListener {
+
                 if (it.documents.size > 0) {
-                    /* Emails are unique
-                 * If an email exists in Firestore there can only be one (one email per user)
-                 */
+                    /* Username's are unique
+                    *  If a username exists in Firestore there can only be one (one username per user)
+                    */
                     val user = it.documents[0].toObject(User::class.java)
                     activity.friendDetails(user!!)
                 } else {
@@ -326,6 +353,10 @@ object UsersDatabase {
             }
     }
 
+    /**
+     * Method retrieves all the users assigned to a specific event
+     * @param assignedTo the list of user id's of the users assigned to the event
+     */
     fun getAssignedFriendsListDetails(activity: Activity, assignedTo: ArrayList<String>) {
         db
             .whereIn(Constants.ID, assignedTo)
@@ -333,10 +364,11 @@ object UsersDatabase {
             .addOnSuccessListener {
                 Log.e(activity.javaClass.simpleName, it.documents.toString())
                 val usersList: ArrayList<User> = ArrayList()
-                // Convert all the document snapshots to the object using the user data model class.
-                for (doc in it.documents) {
 
+                for (doc in it.documents) {
+                    // Convert all the document snapshots to the object using the user data model class.
                     val user = doc.toObject(User::class.java)
+                    // add the user object to the user list
                     usersList.add(user!!)
                 }
 

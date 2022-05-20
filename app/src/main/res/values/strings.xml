@@ -91,7 +91,6 @@
     <string name="add_friend">Add Friend</string>
     <string name="event_name">Event Name</string>
     <string name="card_color">Card Color</string>
-    <string name="google_maps_api_key" tools:ignore="Typos">AIzaSyB1Gr1nQyk0wegekififdc3W8pXI-O6dLU</string>
     <string name="use_current_location">Use Current Location</string>
     <string name="default_notification_channel_id">studentpal_notification_channel_id</string>
     <string name="send_friend_request">Send Friend Request</string>

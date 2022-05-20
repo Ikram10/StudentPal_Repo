@@ -11,10 +11,26 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.text.SimpleDateFormat
 import java.util.*
+/**
+ * This object contains all the functionalities responsible for retrieving and storing user content
+ * (e.g images) to Firebase Storage
+ *
+ * The author implemented an object to create a singleton of the database, that can be accessed
+ * anywhere in the code
+ *
+ * Parts of this code in this object was adapted from Denis Panjuta's code as it taught
+ * the author how to integrate firebase into the application.
+ *
+ * @see com.example.studentpal.common.References
+ */
 
 object Storage {
+    // Converts the date into a readable format
     private val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
 
+    /**
+     * Method to upload images to Firebase storage
+     */
     fun uploadToStorage(
         activity: PostsActivity,
         uri: Uri,
