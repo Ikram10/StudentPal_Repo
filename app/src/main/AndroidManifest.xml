@@ -76,7 +76,11 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
+<<<<<<< HEAD
             android:value= "Constants.MAPS_API_KEY" />
+=======
+            android:value= "$Constants.MAPS_API_KEY" />
+>>>>>>> 3afaf2263d39944ecda4c05a4a03bf24a5e1eeba
 
         <activity
             android:name=".view.events.EditEventActivity"
