@@ -19,7 +19,6 @@ This project is developed for Android devices enabling users to:
 2.	Once successfully installed, launch Android studio and select the option to “Open an existing Android Studio Project”
 =======
 2.	Once successfully installed, launch Android studio and select the option to “Open an existing Android Studio Project” 
->>>>>>> 3afaf2263d39944ecda4c05a4a03bf24a5e1eeba
 
 3.	If the project files are not downloaded, they can be located by accessing [StudentPal’s GitHub repository](https://github.com/Ikram10/StudentPal_Repo)
 
@@ -39,7 +38,6 @@ This project is developed for Android devices enabling users to:
 
 6.	Copy and paste both generated keys into the correct constant values in the project's 
 [Constant File](https://github.com/Ikram10/StudentPal_Repo/blob/master/app/src/main/java/com/example/studentpal/common/Constants.kt) by replacing the “BuildConfig” values.
->>>>>>> 3afaf2263d39944ecda4c05a4a03bf24a5e1eeba
 
 
 7.	Once the API keys have been added, press the Run button, ensuring the app module is selected
@@ -49,4 +47,4 @@ This project is developed for Android devices enabling users to:
 8.	Selection of a physical or virtual device is required to run the app. See [Android Studio's device manager guide](https://developer.android.com/studio/run/managing-avds) to correctly set up a device.
 =======
 8.	Selection of a physical or virtual device is required to run the app. See [Android Studio's device manager guide](https://developer.android.com/studio/run/managing-avds) to correctly set up a device.
->>>>>>> 3afaf2263d39944ecda4c05a4a03bf24a5e1eeba
+
