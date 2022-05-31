@@ -3,7 +3,7 @@
 Social Platform with an integrating scheduling system designed to enhance student time-management and organizational skills.
 
 This project is developed for Android devices enabling users to:
-*Create and customize their profiles
+* Create and customize their profiles
 * Search and send friend requests to other users
 * Search and send friend requests to other users
 * Schedule and invite other user to events (social or study)
