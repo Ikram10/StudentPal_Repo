@@ -32,7 +32,9 @@ object EventDatabase {
      * @param event required to query the specific event document from firestore
      * @param user the user that is being assigned to the event
      */
-    fun assignMemberToEvent(activity: AssignFriendsActivity, event: Event, user: User) {
+    fun assignMemberToEvent(
+        activity: AssignFriendsActivity,
+        event: Event, user: User) {
         //hash map of assigned to field in Firestore (Event documents)
         val assignedToHashMap = HashMap<String, Any>()
         assignedToHashMap[Constants.ASSIGNED_TO] = event.assignedTo

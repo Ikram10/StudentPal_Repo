@@ -8,6 +8,13 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.example.studentpal.R
 
+/**
+ * This class is responsible for constructing the reminder Broadcast
+ *
+ * The code in this file was reused from CodeWithCal notifications tutorial (CodeWithCal, 2021)
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 const val notificationID = 1
 const val channelID = "channel1"
 const val titleExtra = "titleExtra"

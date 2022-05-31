@@ -1,5 +1,6 @@
 package com.example.studentpal.viewmodel
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.DialogInterface
@@ -31,7 +32,6 @@ class EventInfoViewModel: ViewModel() {
     var event: Event? = null
     // Event host
     var host = MutableLiveData<User>()
-
     /**
      * [My Code]: Sets the host variable by retrieving the host from the
      * database
@@ -42,7 +42,6 @@ class EventInfoViewModel: ViewModel() {
              host.value = getEventHost(creatorID)!!
          }
     }
-
     /**
      * [Adapted ]: Method creates the Android Sharesheet and prepares the content of the share
      */
@@ -51,7 +50,6 @@ class EventInfoViewModel: ViewModel() {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(
-
                 Intent.EXTRA_TEXT,
                 "Event Name: ${event?.name}\n" +
                         "Description: ${event?.eventDescription}\n" +
@@ -60,7 +58,6 @@ class EventInfoViewModel: ViewModel() {
                         "Event Host: ${host.value?.name}")
             type = "text/plain"
         }
-
         val shareIntent = Intent.createChooser(sendIntent, null)
         activity.startActivity(shareIntent)
     }
@@ -72,29 +69,29 @@ class EventInfoViewModel: ViewModel() {
      * to receive notifications for scheduled events
      * @see com.example.studentpal.common.References
      */
+    @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.M)
     fun scheduleNotification(activity: EventInfoActivity) {
-        val intent = Intent(activity.applicationContext, ReminderBroadcast::class.java )
+        val intent = Intent(activity.applicationContext,
+            ReminderBroadcast::class.java )
         val title = event?.name
         val message = "This event is scheduled for today"
         intent.putExtra(titleExtra, title)
         intent.putExtra(messageExtra, message)
-
         val pendingIntent = PendingIntent.getBroadcast(
             activity.applicationContext,
             notificationID,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-
-        val alarmManager = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
+        val alarmManager = activity
+            .getSystemService(Context.ALARM_SERVICE) as AlarmManager
         //[My Code] : stores the data of event
         val notifyEventTime = event?.eventDate
-
         if (notifyEventTime != null) {
             //notifies user on the day of the event
-            alarmManager.setExactAndAllowWhileIdle(
+            alarmManager
+                .setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 notifyEventTime,
                 pendingIntent
@@ -102,7 +99,6 @@ class EventInfoViewModel: ViewModel() {
         }
         showAlert(activity)
     }
-
 
     /**
      * [My Code]: Displays an alert dialog on the day of the event

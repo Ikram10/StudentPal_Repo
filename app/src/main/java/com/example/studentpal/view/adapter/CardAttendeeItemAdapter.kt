@@ -9,7 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.model.entities.User
-
+/**
+ * This adapter will display a list of friends assigned to an event in the card Recycler view.
+ *
+ * The code displayed was adapted from Denis Panjuta's Trello clone (see references file).
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 open class CardAttendeeItemAdapter(
     private val context: Context,
     private val list: ArrayList<User>

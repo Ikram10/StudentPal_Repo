@@ -34,7 +34,6 @@ import kotlin.collections.set
  */
 
 class MyProfileViewModel(application: Application) : AndroidViewModel(application) {
-
     // current user profile details
     private val _currentUser = MutableLiveData<User>()
     val currentUser: LiveData<User>
@@ -57,7 +56,6 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
             _currentUser.value = fetchCurrentUser()!!
         }
     }
-
     /**
      * [Adapted ]: Uploads the selected loaded image to Firebase cloud storage
      *
@@ -68,7 +66,7 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
         activity.showProgressDialog("Please Wait")
         if (mSelectedImageFileUri != null) {
             val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-                "USER_IMAGE" +
+                "USER_IMAGE").child("" +
                         System.currentTimeMillis() + "." + Constants.getFileExtension(
                     activity,
                     mSelectedImageFileUri
@@ -94,7 +92,7 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
         }
         if (mSelectedCoverImageFileUri != null) {
             val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-                "COVER_IMAGE" +
+                "COVER_IMAGE").child("" +
                         System.currentTimeMillis() + "." + Constants.getFileExtension(
                     activity,
                     mSelectedCoverImageFileUri
@@ -132,26 +130,20 @@ class MyProfileViewModel(application: Application) : AndroidViewModel(applicatio
      * @param userStatus the modifed status entered in the Status edit text field
      */
     fun updateUserProfile(activity: MyProfileActivity, userName: String, userStatus : String) {
-
         val userHashMap = HashMap<String, Any>()
-
         var anyChangesMade = false
-
         if (mProfileImageURL.isNotEmpty() && mProfileImageURL != _currentUser.value?.image) {
             userHashMap[Constants.IMAGE] = mProfileImageURL
             anyChangesMade = true
         }
-
         if (mProfileCoverImageURL.isNotEmpty() && mProfileCoverImageURL != _currentUser.value?.coverImage) {
             userHashMap[Constants.COVER_IMAGE] = mProfileCoverImageURL
             anyChangesMade = true
         }
-
         if (userName != _currentUser.value?.name) {
             userHashMap[Constants.NAME] = userName
             anyChangesMade = true
         }
-
         if (userStatus != _currentUser.value?.status) {
             userHashMap[Constants.STATUS] = userStatus
             anyChangesMade = true

@@ -120,7 +120,6 @@ class EditEventActivity : BaseActivity() {
     private fun eventCardColorListDialog(){
         // initialises the colour list
         val colourList: ArrayList<String> = coloursList()
-
         val listDialog = object: EventCardColorListDialog(
             this,
             colourList,
@@ -134,7 +133,6 @@ class EditEventActivity : BaseActivity() {
         }
         listDialog.show()
     }
-
     /**
      * Method sets the background color for the color label and Event card
      */
@@ -143,7 +141,6 @@ class EditEventActivity : BaseActivity() {
         binding?.tvSelectLabelColor?.setBackgroundColor(Color.parseColor(mSelectedColor))
 
     }
-
     /**
      * method responsible for returning the list of event card colours
      *
@@ -162,7 +159,6 @@ class EditEventActivity : BaseActivity() {
 
         return colorsList
     }
-
     /**
      * Method sets up the action bar
      */
@@ -180,7 +176,6 @@ class EditEventActivity : BaseActivity() {
             onBackPressed()
         }
     }
-
     /**
      * Method updates the event details only if changes have been made
      */
@@ -203,7 +198,6 @@ class EditEventActivity : BaseActivity() {
         // Update the event information in the database
         updateEventDetails(this, eventHashMap, mEventDetails.documentID)
     }
-
     /**
      * Adds a delete icon button to the action bar
      */
@@ -211,7 +205,6 @@ class EditEventActivity : BaseActivity() {
         menuInflater.inflate(R.menu.menu_delete_event, menu)
         return super.onCreateOptionsMenu(menu)
     }
-
     /**
      * Deletes the event if delete button selected
      */
@@ -223,7 +216,6 @@ class EditEventActivity : BaseActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
     /**
      * Method responsible for deleting an event
      */
@@ -237,7 +229,6 @@ class EditEventActivity : BaseActivity() {
             Toast.makeText(this,"You don't have permission to delete event ", Toast.LENGTH_LONG).show()
         }
     }
-
     /**
      * Method displays a delete confirmation alert dialog to the user
      */

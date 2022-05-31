@@ -32,11 +32,12 @@ import java.util.*
  * All code that was created by the author is labeled with [My Code].
  *
  * @see[com.example.studentpal.common.References]
- * @see[authenticateUser]
+ * @see[signUpUser]
  * @see [sendVerificationEmail]
  */
 
 class SignUpViewModel : ViewModel(){
+
     /**
      * Method retrieves the current date
      */
@@ -54,25 +55,35 @@ class SignUpViewModel : ViewModel(){
      * @see invalidUsername
      *
      */
-    suspend fun authenticateUser(activity: SignUpActivity, name: String, email: String, password: String, username: String) {
+    suspend fun signUpUser(
+        activity: SignUpActivity,
+        name: String, email: String,
+        password: String,
+        username: String) {
         val mAuth = FirebaseAuth.getInstance()
-
         if (validateForm(activity,name, email, password, username)) {
             // Shifting execution of the code to the main thread
             withContext(Dispatchers.Main) {
                 activity.showProgressDialog("Please Wait")
             }
-                mAuth.createUserWithEmailAndPassword(email, password)
+                mAuth
+                    .createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
                             val firebaseUser: FirebaseUser = it.result!!.user!!
                             val registeredEmail = firebaseUser.email!!
                             val dateJoined = getCurrentDate()
                             // User object constructed to be stored in Firestore
-                            val user = User(firebaseUser.uid, name, registeredEmail, dateJoined, username = username)
+                            val user = User(
+                                firebaseUser.uid,
+                                name,
+                                registeredEmail,
+                                dateJoined,
+                                username = username)
                             // Verification email sent to the provided Sign Up email
                             sendVerificationEmail(activity,firebaseUser, user)
                         } else {
+                            Log.e(TAG, "Registration failed", it.exception)
                             // If a user with the same credentials already exists, registration will fail
                             Toast.makeText(activity, "Registration failed", Toast.LENGTH_LONG).show()
                             activity.hideProgressDialog()
@@ -85,8 +96,12 @@ class SignUpViewModel : ViewModel(){
      * Method responsible for sending verification email to the FirebaseUser
      */
     private fun sendVerificationEmail(
-        activity: SignUpActivity, fUser: FirebaseUser, user: User) {
-        fUser.sendEmailVerification().addOnSuccessListener {
+        activity: SignUpActivity, 
+        fUser: FirebaseUser, 
+        user: User) {
+        fUser
+            .sendEmailVerification()
+            .addOnSuccessListener {
             Toast.makeText(activity,
                 "Email verification link sent to ${fUser.email}",
                 Toast.LENGTH_LONG
@@ -94,8 +109,11 @@ class SignUpViewModel : ViewModel(){
             // Creates a document in Firestore populating the fields with user details
             registerUser(activity, user)
         }.addOnFailureListener {
-            Log.e(javaClass.simpleName, "error sending verification link")
-            Toast.makeText(activity, "Could not send email verification link", Toast.LENGTH_LONG).show()
+            Log.e(javaClass.simpleName, 
+                "error sending verification link")
+            Toast.makeText(activity, 
+                "Could not send email verification link",
+                Toast.LENGTH_LONG).show()
         }
     }
 
@@ -103,7 +121,12 @@ class SignUpViewModel : ViewModel(){
      * Method ensures Sign-Up form information provided is valid
      *
      */
-    private suspend fun validateForm(activity: SignUpActivity, name: String, email: String, password: String, username: String): Boolean {
+    private suspend fun validateForm(
+        activity: SignUpActivity,
+        name: String,
+        email: String,
+        password: String,
+        username: String): Boolean {
         return when {
             TextUtils.isEmpty(name) -> {
                 activity.showErrorSnackBar("Please enter a name")
@@ -118,7 +141,6 @@ class SignUpViewModel : ViewModel(){
             invalidPassword(activity,password) -> {
                 false
             }
-
             else -> {
                 return true
             }
@@ -189,6 +211,10 @@ class SignUpViewModel : ViewModel(){
      */
     private fun isEmailFormatValid(email: CharSequence?): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email!!).matches()
+    }
+
+    companion object {
+        const val TAG = "SignUpViewModel"
     }
 
 }

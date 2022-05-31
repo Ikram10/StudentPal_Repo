@@ -37,6 +37,8 @@ import com.example.studentpal.view.profile.MyProfileActivity
 import com.example.studentpal.view.profile.PostsActivity
 import com.example.studentpal.view.registration.IntroActivity
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -270,19 +272,29 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
      */
     private fun deleteAccount() {
         // Configures the alert dialog
-        builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
+        builder = AlertDialog.Builder(this,
+            R.style.MyDialogTheme)
         builder.setTitle("Alert")
             .setMessage("Do you want to delete account?")
             .setCancelable(true)
-            .setPositiveButton("Yes") { _, _ ->
+            .setPositiveButton("Yes") { _, _  ->
                 // when user selects "Yes", delete user data in firestore
                 deleteUserData(getCurrentUserID())
+                val user = Firebase.auth.currentUser!!
+                //deletes user authentication details
+                user.delete()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("userAuth", "User account deleted.")
+                        }
+                    }.addOnFailureListener {
+                        Log.d("DeleteAccount", "User account delete failed.")
+                    }
                 deleteUserEventsData(getCurrentUserID())
                 //navigates user back to intro screen
                 val intent = Intent(this, IntroActivity::class.java)
                 //clears the stack of activities opened
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-
                 startActivity(intent)
                 finish()
             }
@@ -290,6 +302,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 DialogInterface.cancel()
             }
             .show()
+            .getButton(AlertDialog.BUTTON_POSITIVE)
+            .setTextColor(resources.getColor(R.color.black))
     }
 
     /**

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- My Code -->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -110,10 +111,6 @@
                     android:textStyle="italic"
                     android:layout_marginTop="4dp"
                     />
-
-
-
-
                 <View
                     android:layout_width="320dp"
                     android:layout_height="1dp"
@@ -227,11 +224,32 @@
         </androidx.cardview.widget.CardView>
 
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_view_posts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_view_posts"
+            android:padding="8dp"
+            android:text="@string/view_posts"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/civ_friend_image"
+            app:layout_constraintEnd_toStartOf="@+id/civ_friend_image"
+            android:visibility="gone">
+
+        </androidx.appcompat.widget.AppCompatButton>
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/ll_btns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="156dp"
+            android:layout_marginTop="130dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/cv_friend_profile"
@@ -246,8 +264,7 @@
                 android:background="@drawable/btn_send_request"
                 android:text="Friend Request"
                 android:textSize="@dimen/btn_text_size"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/btn_decline_request" />
+                android:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_decline_request"
@@ -257,7 +274,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/btn_decline_request"
                 android:padding="10dp"
-                android:text="Decline Request"
+                android:text="@string/decline_request"
                 android:textSize="@dimen/btn_text_size"
                 android:visibility="gone"
                 tools:visibility="visible" />

@@ -34,7 +34,7 @@ class SignUpViewModelTest {
 
     @Test
     fun `is username unique - returns true`() = runBlocking {
-       val result =  viewModel.authenticateUser(SignUpActivity(), user1.name, user1.email, "", user1.username)
+       val result =  viewModel.signUpUser(SignUpActivity(), user1.name, user1.email, "", user1.username)
 
         result
     }

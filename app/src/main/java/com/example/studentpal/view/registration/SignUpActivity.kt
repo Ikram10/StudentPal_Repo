@@ -56,7 +56,7 @@ class SignUpActivity : BaseActivity() {
 
             // MyCode: Coroutine executed in IO thread because a network request is being made
             GlobalScope.launch(Dispatchers.IO) {
-                viewModel.authenticateUser(this@SignUpActivity, name, email, password, username)
+                viewModel.signUpUser(this@SignUpActivity, name, email, password, username)
             }
         }
 

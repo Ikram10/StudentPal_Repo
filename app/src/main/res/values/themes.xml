@@ -69,6 +69,7 @@
         <item name="android:background">@color/white</item>
         <item name="elevation">6dp</item>
         <item name="cornerRadius">10dp</item>
+
     </style>
 
     <style name="SearchBar" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">

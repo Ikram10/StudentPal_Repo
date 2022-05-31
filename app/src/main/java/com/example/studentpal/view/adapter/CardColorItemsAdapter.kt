@@ -9,8 +9,13 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studentpal.R
 
-/* This adapter intends to be used for inside the EventCardColorList Dialog.
- * Which displays a list of colors the user can select
+/**
+ * This adapter intends to be used for inside the EventCardColorList Dialog
+ * Which displays a list of colors the user can select.
+ *
+ * The code displayed was reused from Denis Panjuta's Trello clone (see references file).
+ *
+ * @see[com.example.studentpal.common.References]
  */
 class CardColorItemsAdapter(
     private val context : Context,
@@ -30,7 +35,7 @@ class CardColorItemsAdapter(
         if (holder is MyViewHolder) {
 
             holder.itemView.findViewById<View>(R.id.view_main).setBackgroundColor(Color.parseColor(item))
-            //if the item is the selected color
+            // if the item is the selected color display the colour to user
             if (item == mSelectedColor){
                 holder.itemView.findViewById<AppCompatImageView>(R.id.iv_selected_color).visibility = View.VISIBLE
             } else {

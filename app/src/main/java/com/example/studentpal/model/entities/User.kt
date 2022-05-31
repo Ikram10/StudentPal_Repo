@@ -4,8 +4,15 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.RequiresApi
-// User entity
-// User data class implements the Parcelable interface to allow user objects to be sent across activities with intents
+/**
+ * The User data class will hold all the information about the User
+ * User class implements the Parcelable interface allowing user instances to be written and restored from a parcel
+ * This interface allows user objects to be sent across activities with intents
+ *
+ * Code was adapted from Denis Panjuta's trello clone
+ * @see[com.example.studentpal.common.References]
+ *
+ */
 data class User (
     val id: String = "",
     val name: String = "",

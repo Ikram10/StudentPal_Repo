@@ -14,10 +14,10 @@ import com.example.studentpal.R
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.adapter.FriendsAssignedAdapter
 import com.example.studentpal.databinding.ActivityAssignFriendsBinding
-import com.example.studentpal.model.fcm.RetrofitInstance
+import com.example.studentpal.model.fcm.notification.RetrofitInstance
 import com.example.studentpal.model.entities.Event
-import com.example.studentpal.model.fcm.NotificationData
-import com.example.studentpal.model.fcm.PushNotification
+import com.example.studentpal.model.fcm.notification.NotificationData
+import com.example.studentpal.model.fcm.notification.PushNotification
 import com.example.studentpal.model.entities.User
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.remote.EventDatabase.assignMemberToEvent
@@ -141,25 +141,30 @@ class AssignFriendsActivity : BaseActivity() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_search_friend)
         dialog.findViewById<TextView>(R.id.tv_add).setOnClickListener {
-
             /* My Code: retrieves the username entered in the search dialog
              * Author implemented a Username search
              */
-            val username = dialog.findViewById<AppCompatEditText>(R.id.et_search_friend_username).text.toString().trim {
+            val username =
+                dialog
+                    .findViewById<AppCompatEditText>(R.id.et_search_friend_username)
+                    .text.toString().trim {
                 //removes spaces when searching for a friend
                 it <= ' '
             }
-
             if (username.isNotEmpty()){
                 dialog.dismiss()
                 showProgressDialog(resources.getString(R.string.please_wait))
                     // passes the username searched and adds it to the arraylist if found in Firestore
                 getFriendDetails(this, username)
             } else {
-                Toast.makeText(this, "Please enter a username", Toast.LENGTH_LONG).show()
+                Toast.makeText(this,
+                    "Please enter a username",
+                    Toast.LENGTH_LONG).show()
             }
         }
-        dialog.findViewById<TextView>(R.id.tv_cancel).setOnClickListener {
+        dialog
+            .findViewById<TextView>(R.id.tv_cancel)
+            .setOnClickListener {
             dialog.dismiss()
         }
         dialog.show()
@@ -170,20 +175,17 @@ class AssignFriendsActivity : BaseActivity() {
      */
     fun friendAssignedSuccess(user: User){
         hideProgressDialog()
-        mAssignedFriendsList
         //Adds the user to the array list
         mAssignedFriendsList.add(user)
         //reloads the activity
         anyChangesMade = true
         setUpAssignedList(mAssignedFriendsList)
-
         //Sends a notification to the user who has been assigned to event
         NotificationData(
             "Event Invite",
-            "You have received an Event invite from ${mAssignedFriendsList[0].name}").also {
+            "Event invite from ${mAssignedFriendsList[0].name}").also {
             sendNotification(PushNotification(it, user.fcmToken))
         }
-
     }
 
     /**

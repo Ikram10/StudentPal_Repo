@@ -44,10 +44,8 @@ class SplashActivity : AppCompatActivity() {
          * If user is logged and has verified email they will be directed to the main activity,
          */
         Handler(Looper.myLooper()!!).postDelayed({
-
             val currentUserID = getCurrentUserId()
             val fUser = FirebaseAuth.getInstance().currentUser
-
 
             // Checks if there is a user currently logged in
             if (fUser != null) {
@@ -62,8 +60,8 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(Intent(this, IntroActivity::class.java))
             }
             finish()
-        }, 2000)
-
+        },
+            2000)
 
         //hideSystemBars()
     }

@@ -32,7 +32,10 @@ class SignInViewModel : ViewModel() {
     /**
      * Method handles Sign-in using the email and password entered
      */
-    fun signInRegisteredUser(activity: SignInActivity, email: String, password: String ) {
+    fun signInUser(
+        activity: SignInActivity,
+        email: String,
+        password: String ) {
         auth = FirebaseAuth.getInstance()
         if (validateForm(activity,email, password)) {
             activity.showProgressDialog("Please Wait")
@@ -44,8 +47,12 @@ class SignInViewModel : ViewModel() {
                         // Checks if current user has verified their email
                         if (user!!.isEmailVerified) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("Sign in", "signInWithEmail: success ")
-                            startActivity(activity,Intent(activity, MainActivity::class.java), Bundle())
+                            Log.d("Sign in",
+                                "signInWithEmail: success ")
+                            startActivity(activity,
+                                Intent(activity,
+                                    MainActivity::class.java),
+                                Bundle())
                         } else {
                             Toast.makeText(
                                 activity,
@@ -56,7 +63,9 @@ class SignInViewModel : ViewModel() {
                         }
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w("Sign in", "signInWithEmail:failure", it.exception)
+                        Log.w("Sign in",
+                            "signInWithEmail:failure",
+                            it.exception)
                         Toast.makeText(
                             activity, "Authentication failed.",
                             Toast.LENGTH_LONG
@@ -64,7 +73,6 @@ class SignInViewModel : ViewModel() {
                     }
                 }
         }
-
     }
 
     /**

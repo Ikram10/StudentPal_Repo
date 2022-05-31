@@ -18,6 +18,15 @@ object References {
      */
 
     /**
+     * Author Name: Philipp Lackner
+     * Date: May 2020
+     * Title: Firebase Notifications
+     * Type: Source Code
+     * GitHub: https://github.com/philipplackner/FirebaseNotifications
+     *
+     */
+
+    /**
      * Author Name: CodeWithCal
      * Date: DECEMBER 2021
      * Title: Schedule Local Notifications Android Studio Kotlin Tutorial
@@ -33,6 +42,16 @@ object References {
      * Type: Source Code
      * Web Address: https://stackoverflow.com/questions/49551461/how-can-i-convert-a-long-value-to-date-time-and-convert-current-time-to-long-kot
      */
+
+    /**
+     * Author Name: Foxandroid
+     * Date:  22 May 2021
+     * Title: Filter Recyclerview using Search View
+     * Type: YouTube Tutorial
+     * Web Address: https://www.youtube.com/watch?v=Az-dhhEQXA8
+     */
+
+
 }
 
 

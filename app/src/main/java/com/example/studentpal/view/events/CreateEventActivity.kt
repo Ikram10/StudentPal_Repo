@@ -23,7 +23,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import com.example.studentpal.BuildConfig
 import com.example.studentpal.R
 import com.example.studentpal.common.Constants
 import com.example.studentpal.common.utils.GetAddressFromLatLng
@@ -148,7 +147,9 @@ class CreateEventActivity : BaseActivity() {
 
         binding?.tvUseCurrentLocation?.setOnClickListener {
             if (!isLocationEnabled()) {
-                Toast.makeText(this, "Your location provider is turned off", Toast.LENGTH_SHORT)
+                Toast.makeText(this,
+                    "Your location provider is turned off",
+                    Toast.LENGTH_SHORT)
                     .show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
@@ -173,7 +174,6 @@ class CreateEventActivity : BaseActivity() {
                     ) {
                         shouldShowRequestPermissionRationale("Current Location")
                     }
-
                 }).onSameThread()
                     .check()
             }
@@ -227,13 +227,11 @@ class CreateEventActivity : BaseActivity() {
                 eventDescription = binding?.etEventDescription?.text.toString(),
                 eventTime = mSelectedTime
             )
-
             //this function handles the creation of the board in cloud Firestore
             storeEvent(this, event)
         } else {
             hideProgressDialog()
         }
-
     }
 
     /**
@@ -300,7 +298,6 @@ class CreateEventActivity : BaseActivity() {
     private val mLocationCallBack = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val mLastLocation: Location = locationResult.lastLocation
-
             eventLatitude = mLastLocation.latitude
             Log.i("Current Latitude", "$eventLatitude")
             eventLongitude = mLastLocation.longitude
@@ -311,7 +308,8 @@ class CreateEventActivity : BaseActivity() {
                 eventLatitude!!, eventLongitude!!
             )
             //Call the AsyncTask class for getting an address from the latitude and longitude.
-            addressTask.setAddressListener(object : GetAddressFromLatLng.AddressListener {
+            addressTask.setAddressListener(
+                object : GetAddressFromLatLng.AddressListener {
                 override fun onAddressFound(address: String?) {
                     binding?.etEventLocation?.setText(address) // Address is set to the edittext
                 }
@@ -332,7 +330,7 @@ class CreateEventActivity : BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
         //reference to firebase storage
         val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-            "EVENT_IMAGE" +
+            "EVENT_IMAGES").child("" +
                     System.currentTimeMillis() + "." + Constants.getFileExtension(
                 this,
                 mSelectedImageFileUri
@@ -386,7 +384,6 @@ class CreateEventActivity : BaseActivity() {
         }
 
     }
-
     /**
      * Receives the result from a previous call to startActivityForResult
      * @param resultCode The integer result code returned by the child activity through its setResult().

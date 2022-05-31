@@ -98,29 +98,34 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                 //The user will be prompted to grant permission to read files from devices media storage
                 if (ContextCompat.checkSelfPermission(
                         this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
+                        Manifest
+                            .permission
+                            .READ_EXTERNAL_STORAGE
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
                     // Displays users image gallery
-                    Constants.showImageChooser(this)
+                    Constants
+                        .showImageChooser(this)
                 } else {
-                    ActivityCompat.requestPermissions(
-                        this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    ActivityCompat
+                        .requestPermissions(
+                        this,
+                            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                         Constants.READ_STORAGE_PERMISSION_CODE
                     )
                 }
             }
             //My Code: Reused the same functionality produced by Panjuta to add a cover image
             btnAddCoverImage -> {
-
                 //My Code: Distinguishes between the buttons that are selected.
                 //If the cover image is selected, this variable is set to true.
                 viewModel.profileCoverImgSelected = true
-
                 //The user will be prompted to grant permission to read files from devices media storage
                 if (ContextCompat.checkSelfPermission(
                         this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
+                        Manifest
+                            .permission
+                            .READ_EXTERNAL_STORAGE
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
                     // if permission granted, show image chooser
@@ -129,12 +134,12 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
 
                     // prompt user to grant permission to media storage
                     ActivityCompat.requestPermissions(
-                        this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                        this,
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                         Constants.READ_STORAGE_PERMISSION_CODE
                     )
                 }
             }
-
             //The user will be able to click on the update button
             btnUpdate -> {
                 val name = binding?.etName?.text.toString()
@@ -165,13 +170,12 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == Constants.PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
-
+        if (resultCode == Activity.RESULT_OK
+            && requestCode == Constants.PICK_IMAGE_REQUEST_CODE
+            && data!!.data != null) {
             //My Code: If statement added to know where to load the image data
             if (viewModel.profileImgSelected) {
-
                 viewModel.mSelectedImageFileUri = data.data
-
                 try {
                     //If profile image is selected, loads image into the profile image
                     binding?.ivProfileUserImage?.let {
@@ -181,23 +185,17 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                             .centerCrop()
                             .placeholder(R.drawable.ic_nav_user)
                             .into(it)
-
                         // reset to default after loading
                         !viewModel.profileImgSelected
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-
             }
-
             //My Code: If statement added to know where to load the image data
             if (viewModel.profileCoverImgSelected) {
-
                 viewModel.mSelectedCoverImageFileUri = data.data
-
                 try {
-
                     //If cover image is selected, loads image into the cover image
                     binding?.ciMyProfile?.let {
                         Glide
@@ -206,14 +204,12 @@ class MyProfileActivity : BaseActivity(), View.OnClickListener {
                             .centerCrop()
                             .placeholder(R.drawable.add_screen_image_placeholder)
                             .into(it)
-
                         // reset to default after loading
                         !viewModel.profileCoverImgSelected
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-
             }
         }
     }

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">StudentPal</string>
     <string name="sign_in">SIGN IN</string>
     <string name="sign_up">SIGN UP</string>
@@ -201,6 +201,9 @@
     <string name="declineFriendRequest">Decline Friend Request</string>
     <string name="unfriend">Unfriend</string>
     <string name="event_date">Event Date</string>
+    <string name="search_users">Search Users</string>
+    <string name="view_posts">View Posts</string>
+    <string name="decline_request">Decline Request</string>
 
 
 </resources>

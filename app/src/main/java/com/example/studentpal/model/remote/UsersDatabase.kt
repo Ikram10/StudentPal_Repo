@@ -339,7 +339,6 @@ object UsersDatabase {
             .whereEqualTo(Constants.USERNAME, username)
             .get()
             .addOnSuccessListener {
-
                 if (it.documents.size > 0) {
                     /* Username's are unique
                     *  If a username exists in Firestore there can only be one (one username per user)
@@ -406,16 +405,6 @@ object UsersDatabase {
             .addOnCompleteListener {
                 if (it.isSuccessful){
                     Log.d(TAG, "User document deleted")
-                    val user = Firebase.auth.currentUser!!
-                    //deletes user authentication details
-                    user.delete()
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Log.d(TAG, "User account deleted.")
-                            }
-                        }.addOnFailureListener {
-                            Log.d("DeleteAccount", "User account delete failed.")
-                        }
                 } else {
                     Log.d(TAG, "User document failed to delete", it.exception)
                 }

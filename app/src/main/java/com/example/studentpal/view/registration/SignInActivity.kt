@@ -44,7 +44,7 @@ class SignInActivity : BaseActivity() {
             val email: String = binding?.etEmailSignIn?.text.toString().trim { it <= ' ' }
             val password: String = binding?.etPasswordSignIn?.text.toString().trim { it <= ' ' }
 
-            viewModel.signInRegisteredUser(this,email, password)
+            viewModel.signInUser(this,email, password)
         }
 
         binding?.btnForgotPassword?.setOnClickListener {

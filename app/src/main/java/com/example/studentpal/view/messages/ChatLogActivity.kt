@@ -11,9 +11,9 @@ import com.example.studentpal.common.Constants
 import com.example.studentpal.databinding.ActivityChatLogBinding
 import com.example.studentpal.model.entities.ChatMessage
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.model.fcm.NotificationData
-import com.example.studentpal.model.fcm.PushNotification
-import com.example.studentpal.model.fcm.RetrofitInstance
+import com.example.studentpal.model.fcm.notification.NotificationData
+import com.example.studentpal.model.fcm.notification.PushNotification
+import com.example.studentpal.model.fcm.notification.RetrofitInstance
 import com.example.studentpal.model.remote.UsersDatabase.fetchCurrentUser
 import com.example.studentpal.view.BaseActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -99,7 +99,6 @@ class ChatLogActivity : BaseActivity() {
             .collection(Constants.USER_MESSAGES)
             .document(fromId)
             .collection(toId!!)
-
         reference.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 Log.w(TAG, "Listen Failed", error)
@@ -110,7 +109,8 @@ class ChatLogActivity : BaseActivity() {
                     when (dc.type) {
                         //when new message is added
                         DocumentChange.Type.ADDED -> {
-                            val chatMessage = dc.document.toObject(ChatMessage::class.java)
+                            val chatMessage = dc.document
+                                .toObject(ChatMessage::class.java)
                             Log.d(TAG, chatMessage.text)
                             // checks if message was sent by currently signed in user or from other user
                             if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
@@ -124,7 +124,8 @@ class ChatLogActivity : BaseActivity() {
                                         adapter.add(
                                             ChatFromItem(
                                                 chatMessage.text,
-                                                currentUser!!, chatMessage.timeStamp
+                                                currentUser!!,
+                                                chatMessage.timeStamp
                                             )
                                         )
                                     }
@@ -143,14 +144,9 @@ class ChatLogActivity : BaseActivity() {
                             //scrolls to the bottom of the chat log, to always display latest message
                             binding?.recyclerviewChatLog?.scrollToPosition(adapter.itemCount - 1)
                         }
-                        DocumentChange.Type.MODIFIED -> {
-
-                        }
-                        DocumentChange.Type.REMOVED -> {
-                        }
+                        else -> {}
                     }
                 }
-
             }
         }
     }

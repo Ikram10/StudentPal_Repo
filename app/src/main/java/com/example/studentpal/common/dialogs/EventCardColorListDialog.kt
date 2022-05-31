@@ -12,6 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studentpal.R
 import com.example.studentpal.view.adapter.CardColorItemsAdapter
+/**
+ * Abstract class for the event card color dialog.
+ *
+ * The code displayed was adapted from Denis Panjuta's Trello clone (Panjuta, 2021) (see references file)
+ * because it provided implementations for features that would be beneficial for the project.
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 
 //abstract: so it cannot be instantiated. Only inheritable.
 abstract class EventCardColorListDialog(
@@ -52,7 +60,7 @@ abstract class EventCardColorListDialog(
             object : CardColorItemsAdapter.OnItemClickListener {
             override fun onClick(position: Int, Color: String) {
                 dismiss() // dismisses this dialog
-                //when a color is clicked, a color will be passes as an argument which can be used here
+                //when a color is clicked, a color will be passed as an argument which can be used here
                 onItemSelected(Color)
             }
 

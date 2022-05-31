@@ -86,11 +86,15 @@ class FriendsProfileViewModel : ViewModel() {
              * No friend request is pending
              */
             AccountStates.DEFAULT -> {
-                val friendRequest = FriendRequest(PENDING, getCurrentUserId(),
+                val friendRequest =
+                    FriendRequest(PENDING,
+                        getCurrentUserId(),
                     friendDetails.value?.id!!)
 
                 // stores the friend request in Firestore
-                storeFriendRequest(activity, friendRequest, friendDetails,
+                storeFriendRequest(activity,
+                    friendRequest,
+                    friendDetails,
                     currentUser)
             }
             /* Current user sent a friend request
@@ -142,14 +146,14 @@ class FriendsProfileViewModel : ViewModel() {
      * @see AccountStates
      */
     fun performDecline(activity: FriendProfile) {
+        //Button is currently Unfriend
         if (currentState.value == AccountStates.FRIEND) {
             if (friendDetails.value?.id != null) {
                 // Removes Friendship document between the two users from database
                 FriendshipsDatabase.removeFriendship(
                     activity,
                     friendDetails.value,
-                    currentUser.value
-                )
+                    currentUser.value)
             }
             /* Current state: User has received the friend request
              * Button has transformed to a "Decline Friend Request" button
@@ -157,11 +161,8 @@ class FriendsProfileViewModel : ViewModel() {
             if (currentState.value == AccountStates.RECEIVED_REQUEST) {
                 val hashmap = HashMap<String, Any>()
                 hashmap[STATUS] = DECLINE
-
                 FriendshipsDatabase.declineRequest(activity, hashmap, friendDetails.value)
-
             }
         }
-
     }
 }

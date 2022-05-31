@@ -38,7 +38,7 @@ object Storage {
         imageCaption: String,
     ) {
         val postRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-            "POST_IMAGES" +
+            "POST_IMAGES").child( ""+
                     System.currentTimeMillis() + "." + Constants.getFileExtension(
                 activity,
                 uri

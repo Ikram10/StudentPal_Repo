@@ -16,7 +16,11 @@ import com.example.studentpal.model.entities.Post
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.google.firebase.firestore.FirebaseFirestore
-
+/**
+ * This adapter will display a list of users uploaded images in the Recycler view.
+ *
+ * The code was reused from previous examples implemented in this project, but was coded by the author to implement this feature.
+ */
 class ImagePostsAdapter(var context: Context, var list: ArrayList<Post>)
     : RecyclerView.Adapter<ImagePostsAdapter.ImagePostViewHolder>(){
 

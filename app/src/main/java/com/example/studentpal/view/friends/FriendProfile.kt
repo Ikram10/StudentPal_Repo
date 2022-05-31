@@ -12,8 +12,8 @@ import com.bumptech.glide.Glide
 import com.example.studentpal.R
 import com.example.studentpal.common.Constants
 import com.example.studentpal.databinding.ActivityViewFriendProfileBinding
-import com.example.studentpal.model.fcm.PushNotification
-import com.example.studentpal.model.fcm.RetrofitInstance
+import com.example.studentpal.model.fcm.notification.PushNotification
+import com.example.studentpal.model.fcm.notification.RetrofitInstance
 import com.example.studentpal.model.remote.PostsDatabase.getFriendsPosts
 import com.example.studentpal.view.BaseActivity
 import com.example.studentpal.view.messages.ChatLogActivity
@@ -23,7 +23,6 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
 /**
  * This activity is responsible for displaying a friends profile.
  *
@@ -32,15 +31,14 @@ import kotlinx.coroutines.launch
  * The entire code in this activity belongs to the author.
  */
 class FriendProfile : BaseActivity() {
-
     companion object {
         private const val TAG = "FriendProfile"
     }
-
     var binding: ActivityViewFriendProfileBinding? = null
     // Buttons
     private var btnPerform: AppCompatButton? = null
     private var btnDeclineFriendRequest: AppCompatButton? = null
+
     // View Model
     private lateinit var viewModel: FriendsProfileViewModel
 
@@ -82,6 +80,7 @@ class FriendProfile : BaseActivity() {
         btnDeclineFriendRequest?.setOnClickListener {
             viewModel.performDecline(this)
         }
+
     }
 
     /**
@@ -209,7 +208,7 @@ class FriendProfile : BaseActivity() {
     /**
      * This method is responsible for sending the notification to the Firebase server
      * This method starts a coroutine to execute the code in the IO thread
-     * @see [com.example.studentpal.model.fcm.RetrofitInstance]
+     * @see [com.example.studentpal.model.fcm.notification.RetrofitInstance]
      */
     fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
         try {

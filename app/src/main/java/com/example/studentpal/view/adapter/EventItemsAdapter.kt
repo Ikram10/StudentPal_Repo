@@ -25,10 +25,16 @@ import com.example.studentpal.common.Constants
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
-
+/**
+ * This adapter will display a list of events created by the user in a Recycler view.
+ *
+ * The code displayed was adapted from Denis Panjuta's Trello clone (see references file).
+ * However alterations were made to the code to suit the project's requirements.
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 open class EventItemsAdapter(private val context: Context, private var list: ArrayList<Event>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
 
     private var onClickListener: OnClickListener? = null
 
@@ -40,7 +46,7 @@ open class EventItemsAdapter(private val context: Context, private var list: Arr
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        /* list parameter contains an array list of Boards.
+        /* list parameter contains an array list of events.
          * position will provide a single Event object in the array
          */
         val model = list[position]
@@ -121,6 +127,7 @@ open class EventItemsAdapter(private val context: Context, private var list: Arr
                     it.context.startActivity(intent)
                 }
 
+            //handles navigation to the edit assign friends activity
             holder.itemView.findViewById<AppCompatImageButton>(R.id.assign_friends)
                 .setOnClickListener {
                     //intent passes this event details to the friends activity
@@ -133,7 +140,7 @@ open class EventItemsAdapter(private val context: Context, private var list: Arr
         }
     }
 
-    //converts the long value stored in Firestore to
+    //converts the long value stored in Firestore to a string
     private fun convertLongToTime(time: Long): String {
         val date = Date(time)
         val format = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)

@@ -8,12 +8,15 @@ import android.os.Parcelable
  * Event class implements the Parcelable interface allowing Event instances to be written and restored from a parcel
  * This interface allows Event objects to be sent across activities with intents
  *
+ * Code was adapted from Denis Panjuta's trello clone (Panjuta, 2021)
+ * @see[com.example.studentpal.common.References]
+ *
  */
 data class Event (
     val name: String = "",
     val image: String = "",
-    val createBy: String = "", // name of the user who created the board
-    val assignedTo: ArrayList<String> = ArrayList(), //list of users the board is assigned to
+    val createBy: String = "", // name of the user who created the event
+    val assignedTo: ArrayList<String> = ArrayList(), //list of users the event is assigned to
     var documentID: String = "",
     var eventDate: Long = 0,
     var eventDescription: String = "",
@@ -23,6 +26,7 @@ data class Event (
     var latitude: Double = 0.0,
     var longitude: Double = 0.0,
     var eventTime: String = ""
+
 
 
 ) : Parcelable {

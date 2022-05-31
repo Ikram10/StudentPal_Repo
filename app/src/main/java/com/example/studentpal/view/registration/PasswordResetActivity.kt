@@ -37,12 +37,18 @@ class PasswordResetActivity : AppCompatActivity() {
 
     private fun sendPasswordResetEmail() {
         val email = binding!!.etEmail.text.toString()
-        Firebase.auth.sendPasswordResetEmail(email)
+        Firebase
+            .auth
+            .sendPasswordResetEmail(email)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    Toast.makeText(this, "Password reset email sent", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,
+                        "Password reset email sent",
+                        Toast.LENGTH_LONG).show()
                 } else {
-                    Toast.makeText(this, "Error sending password reset email", Toast.LENGTH_LONG)
+                    Toast.makeText(this,
+                        "Error sending password reset email",
+                        Toast.LENGTH_LONG)
                         .show()
                 }
             }

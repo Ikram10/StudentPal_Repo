@@ -7,8 +7,8 @@ import androidx.lifecycle.LiveData
 import com.example.studentpal.common.Constants
 import com.example.studentpal.model.entities.FriendRequest
 import com.example.studentpal.model.entities.User
-import com.example.studentpal.model.fcm.NotificationData
-import com.example.studentpal.model.fcm.PushNotification
+import com.example.studentpal.model.fcm.notification.NotificationData
+import com.example.studentpal.model.fcm.notification.PushNotification
 import com.example.studentpal.model.remote.UsersDatabase.fetchUsersById
 import com.example.studentpal.model.remote.UsersDatabase.getCurrentUserId
 import com.example.studentpal.model.remote.UsersDatabase.incrementFriendsCount
@@ -80,7 +80,9 @@ object FriendshipsDatabase {
     suspend fun getFriendsList(): List<User> {
         //First query for friendShip documents where current user is receiver
         val receiverStringList = db
-            .whereEqualTo(Constants.RECEIVER, getCurrentUserId())
+            .whereEqualTo(
+                Constants.RECEIVER,
+                getCurrentUserId())
             .get()
             .await()
             .documents
@@ -89,7 +91,9 @@ object FriendshipsDatabase {
                 it.data?.get(Constants.SENDER) as String
             }
         val senderStringList = db
-            .whereEqualTo(Constants.SENDER, getCurrentUserId())
+            .whereEqualTo(
+                Constants.SENDER,
+                getCurrentUserId())
             .get()
             .await()
             .documents.mapNotNull {
@@ -98,7 +102,6 @@ object FriendshipsDatabase {
             }
         //combines the two strings list
         val friendsStringList = senderStringList + receiverStringList
-
         return fetchUsersById(friendsStringList)
     }
 
@@ -214,7 +217,11 @@ object FriendshipsDatabase {
     /**
      * Creates a friendship document in firestore between the two users
      */
-    fun createFriendship(activity: Activity, friend: User, currentUser: User) {
+    fun createFriendship(
+        activity:
+        Activity,
+        friend: User,
+        currentUser: User) {
         /*
          * Retrieve the friend request document between the two users
          * Delete the document, because users are now friends
@@ -234,7 +241,6 @@ object FriendshipsDatabase {
                                 hashMap[Constants.STATUS] = FRIEND
                                 hashMap[Constants.SENDER] = friend.id
                                 hashMap[Constants.RECEIVER] = getCurrentUserId()
-
                                 db.document()
                                     .set(hashMap, SetOptions.merge())
                                     .addOnCompleteListener {
@@ -247,8 +253,7 @@ object FriendshipsDatabase {
                                             Toast.makeText(
                                                 activity,
                                                 "You added a Friend",
-                                                Toast.LENGTH_LONG
-                                            )
+                                                Toast.LENGTH_LONG)
                                                 .show()
                                             currentState.value =
                                                 FriendsProfileViewModel.AccountStates.FRIEND
@@ -256,10 +261,7 @@ object FriendshipsDatabase {
                                     }
                             }
                     }
-
                 }
-
-
             }
     }
 

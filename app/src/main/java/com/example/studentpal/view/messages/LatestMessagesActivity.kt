@@ -83,22 +83,25 @@ class LatestMessagesActivity : BaseActivity() {
                 "https://studentpal-8f3d3-default-rtdb.europe-west1.firebasedatabase.app/")
                 .getReference("/latest-messages/$fromId")
 
-
         ref.addChildEventListener(object : ChildEventListener {
             //listens for new messages added
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+            override fun onChildAdded(snapshot: DataSnapshot,
+                                      previousChildName: String?) {
+                val chatMessage = snapshot
+                    .getValue(ChatMessage::class.java) ?: return
                 latestMessageMap[snapshot.key!!] = chatMessage
                 refreshRecyclerViewMessage()
 
             }
             //listens for changes made to messages in the database
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+            override fun onChildChanged(
+                snapshot: DataSnapshot,
+                previousChildName: String?) {
+                val chatMessage = snapshot
+                    .getValue(ChatMessage::class.java) ?: return
                 latestMessageMap[snapshot.key!!] = chatMessage
                 refreshRecyclerViewMessage()
             }
-
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 TODO("Not yet implemented")
             }
@@ -106,12 +109,9 @@ class LatestMessagesActivity : BaseActivity() {
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
                 TODO("Not yet implemented")
             }
-
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
-
-
         })
     }
 

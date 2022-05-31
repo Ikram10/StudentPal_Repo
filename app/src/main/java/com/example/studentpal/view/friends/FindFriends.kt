@@ -66,14 +66,11 @@ class FindFriends : BaseActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
                 usersAdapter?.filter?.filter(newText)
                 return false
             }
-
         })
-
         return super.onCreateOptionsMenu(menu)
     }
 

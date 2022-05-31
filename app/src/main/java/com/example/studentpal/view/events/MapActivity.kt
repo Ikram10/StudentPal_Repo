@@ -12,10 +12,20 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-
+/**
+ * This activity is responsible for displaying a map of the event's location to the user.
+ *
+ * The author used the [Maps SDK documentation](https://developers.google.com/maps/documentation/android-sdk/overview)
+ * to understand the content and apply it to the project.
+ *
+ * The code displayed was reused from Denis Panjuta's Trello clone (see references file)
+ *
+ * @see[com.example.studentpal.common.References]
+ */
 
 class MapActivity : BaseActivity(), OnMapReadyCallback {
-    private var eventDetail: Event? = null //Global variable
+    //Global variables
+    private var eventDetail: Event? = null
     private var binding : ActivityMapBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +33,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback {
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
+        // retrieves the event details from the intent
         if (intent.hasExtra(Constants.EVENT_DETAIL)) {
             eventDetail = intent.getParcelableExtra(Constants.EVENT_DETAIL)
         }
@@ -30,6 +41,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback {
         if (eventDetail != null){
             setupActionBar()
 
+            //initialise the map fragment
             val supportMapFragment: SupportMapFragment =
                 supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
 
@@ -37,6 +49,9 @@ class MapActivity : BaseActivity(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * method sets up the Action bar
+     */
     private fun setupActionBar() {
         setSupportActionBar(binding?.toolbarMap)
 
@@ -52,6 +67,9 @@ class MapActivity : BaseActivity(), OnMapReadyCallback {
 
     }
 
+    /**
+     * Callback interface for when the map is ready to be used.
+     */
     override fun onMapReady(googleMap: GoogleMap) {
         // Gets the Earth location of the event
         val position =
@@ -60,7 +78,9 @@ class MapActivity : BaseActivity(), OnMapReadyCallback {
         // Adds a marker to the respective latitude and longitude location
         googleMap
             .addMarker(MarkerOptions()
-            .position(position).title(eventDetail!!.eventLocation))
+                .position(position)
+                .title(eventDetail!!
+                    .eventLocation))
         // Map zooms in on the location marker by a float value of 15
         val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(position, 15f)
         // Animates the map view to automatically zoom in to the location

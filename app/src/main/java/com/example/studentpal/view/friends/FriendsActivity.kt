@@ -40,7 +40,6 @@ class FriendsActivity : BaseActivity() {
              */
             setUpFriendsList(it as ArrayList<User>)
         }
-
         setupActionBar()
 
     }
@@ -59,7 +58,6 @@ class FriendsActivity : BaseActivity() {
     private fun setUpFriendsList(friendsList: ArrayList<User>){
         binding?.rvFriends?.layoutManager = GridLayoutManager(this, 2)
         binding?.rvFriends?.setHasFixedSize(true)
-
         friendsAdapter = FriendsListAdapter(this, friendsList)
         binding?.rvFriends?.adapter = friendsAdapter
     }
