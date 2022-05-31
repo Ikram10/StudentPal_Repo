@@ -58,6 +58,7 @@ object Constants {
     const val FCM_TOKEN = "fcmToken"
     /**
      * FCM SERVER KEY NEEDS TO BE FILLED
+     * Ensure the key is entered as a string by surrounding it with " "
      *
      * Check project report for set up instructions
      */
@@ -67,7 +68,8 @@ object Constants {
 
     //END
     /**
-     * GOOGLE MAPS API KEY : This needs to be filled
+     * GOOGLE MAPS API KEY : This needs to be filled.
+     * Ensure the key is entered as a string by surrounding it with " "
      *
      * Check project report for set up instructions
      */
