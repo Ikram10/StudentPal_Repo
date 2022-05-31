@@ -1,17 +1,12 @@
-<<<<<<< HEAD
-# StudentPal
-=======
+
 # StudentPal 	
->>>>>>> 3afaf2263d39944ecda4c05a4a03bf24a5e1eeba
+
 Social Platform with an integrating scheduling system designed to enhance student time-management and organizational skills.
 
 This project is developed for Android devices enabling users to:
-*	Create and customize their profiles
-<<<<<<< HEAD
+*Create and customize their profiles
 * Search and send friend requests to other users
-=======
-* Search and send friend requests to other users 
->>>>>>> 3afaf2263d39944ecda4c05a4a03bf24a5e1eeba
+* Search and send friend requests to other users
 * Schedule and invite other user to events (social or study)
 * Post images
 * Interact with other students through the chat interface
